@@ -8,6 +8,7 @@ import ElectricBorder from '@/components/bits/ElectricBorder';
 import SplitText from '@/components/bits/SplitText';
 import { useState } from 'react';
 import UniversalAlert from '@/components/custom /UniversalAlert';
+import { authAPI } from '@/lib/api/config';
 
 type AlertState = {
   show: boolean;
@@ -35,6 +36,14 @@ const LoginPage = () => {
       title,
       description,
     });
+  };
+
+  const login = async () => {
+    const result = await authAPI.login({
+      email: 'admin@cloudbits.it',
+      password: 'Cloudbits@25',
+    });
+    return result;
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -141,7 +150,6 @@ const LoginPage = () => {
           className="w-full h-full"
         />
       </div>
-
       <div className="flex h-full w-full items-center justify-center px-4">
         <ElectricBorder
           color="#7df9ff"
@@ -202,7 +210,11 @@ const LoginPage = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full mt-8">
+                <Button
+                  /*    type="submit"*/
+                  className="w-full mt-8"
+                  onClick={() => login()}
+                >
                   Accedi
                 </Button>
               </form>
@@ -210,7 +222,7 @@ const LoginPage = () => {
           </Card>
         </ElectricBorder>
       </div>
-
+      =SOMMA()
       <UniversalAlert
         title={alert.title}
         description={alert.description}

@@ -1,0 +1,152 @@
+/**** per testare test che ta comenti imagine con titolo  e span sotto e totale test
+
+ };
+ const [activeTestTab, setActiveTestTab] = useState<string>('strength');
+
+ const testCategories = [
+ {
+ id: 'strength',
+ name: 'Test di Forza',
+ count: 12,
+ icon: Activity,
+ color: 'text-red-400',
+ },
+ {
+ id: 'balance',
+ name: 'Test di Equilibrio',
+ count: 7,
+ icon: Stethoscope,
+ color: 'text-green-400',
+ },
+ {
+ id: 'endurance',
+ name: 'Test di Resistenza',
+ count: 5,
+ icon: TestTube,
+ color: 'text-blue-400',
+ },
+ {
+ id: 'coordination',
+ name: 'Test di Coordinazione',
+ count: 9,
+ icon: ClipboardList,
+ color: 'text-yellow-400',
+ },
+ ];
+ <SidebarGroup>
+ <SidebarGroupLabel className="text-slate-400 font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden">
+ Test di Valutazione
+ </SidebarGroupLabel>
+ <SidebarGroupContent>
+ <div className="space-y-1">
+ {testCategories.map(category => {
+ const Icon = category.icon;
+ return (
+ <Button
+ key={category.id}
+ variant={
+ activeTestTab === category.id ? 'default' : 'ghost'
+ }
+ className={`w-full justify-start p-3 h-auto transition-all duration-200 ${
+ activeTestTab === category.id
+ ? 'bg-slate-800 text-slate-200 shadow-lg shadow-slate-900/20'
+ : 'hover:bg-slate-800/30 hover:text-slate-200 text-slate-400'
+ }`}
+ onClick={() => setActiveTestTab(category.id)}
+ >
+ <Icon
+ className={`h-4 w-4 mr-3 ${
+ activeTestTab === category.id
+ ? 'text-white'
+ : category.color
+ }`}
+ />
+ <div className="flex flex-col items-start group-data-[collapsible=icon]:hidden">
+ <span className="text-sm font-medium">
+ {category.name}
+ </span>
+ <span
+ className={`text-xs ${
+ activeTestTab === category.id
+ ? 'text-slate-300'
+ : 'text-slate-600'
+ }`}
+ >
+ {category.count} test disponibili
+ </span>
+ </div>
+ <Badge
+ variant={
+ activeTestTab === category.id ? 'secondary' : 'outline'
+ }
+ className={`ml-auto group-data-[collapsible=icon]:hidden ${
+ activeTestTab === category.id
+ ? 'bg-slate-700/50 text-slate-200 border-slate-600/30'
+ : 'bg-slate-800/70 text-slate-300 border-slate-700/50'
+ }`}
+ >
+ {category.count}
+ </Badge>
+ </Button>
+ );
+ })}
+ </div>
+ </SidebarGroupContent>
+ </SidebarGroup>
+
+ */
+
+
+       {/*** PROFILE CARD COME FOOTER  ****/}
+       {/*      <SidebarFooter className="border-t border-slate-800/50 p-4 group-data-[collapsible=icon]:hidden">
+         <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-slate-800/50 to-slate-700/30 p-3">
+           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700">
+             <User className="h-4 w-4 text-slate-300" />
+           </div>
+           <div className="flex flex-col">
+             <span className="text-sm font-medium text-slate-300">
+               Dr. Mario Rossi
+             </span>
+             <span className="text-xs text-slate-400">Fisioterapista</span>
+           </div>
+         </div>
+       </SidebarFooter>*/}
+
+
+
+        {/* Tab per Test di Valutazione */}
+
+        {/*     <SidebarSeparator className="bg-slate-800/50" />*/}
+        {/** Navigazione Secondaria normale come dashboard  **/}
+        {/*        <SidebarGroup>
+          <SidebarGroupLabel className="text-slate-400 font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden">
+            Strumenti
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="hover:bg-slate-800/50 hover:text-slate-200 transition-colors text-slate-400"
+                >
+                  <a className="flex items-center gap-3">
+                    <BookOpen className="h-4 w-4 text-slate-500" />
+                    <span>Documentazione</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="hover:bg-slate-800/50 hover:text-slate-200 transition-colors text-slate-400"
+                >
+                  <a href="/settings" className="flex items-center gap-3">
+                    <Settings className="h-4 w-4 text-slate-500" />
+                    <span>Impostazioni</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>*/}s
