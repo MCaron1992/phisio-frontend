@@ -2,10 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import ReactQueryProvider from '@/providers/react-query-provider';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AppSidebar } from '@/components/layouts/AppSideBar';
 import ConditionalLayout from '@/components/layouts/ConditionalLayout';
-
+import '../components/custom /loader.css';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],

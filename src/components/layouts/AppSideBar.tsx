@@ -63,20 +63,13 @@ import {
 export function AppSidebar() {
   const { toggleSidebar, state } = useSidebar();
   const [activeTestTab, setActiveTestTab] = useState<string>('strength');
-  const { isExpanded, toggle } = useExpandedFolders(
-    [
-      'utente',
-      'studio',
-      'utente_ruoli',
-      'terapia_problema',
-      'test_metriche',
-      'anatomia',
-      'sport_strument',
-    ],
-    {
-      storageKey: 'ea:sidebar:expanded',
-    }
-  );
+  const { isExpanded, toggle, hydrated } = useExpandedFolders([], {
+    storageKey: 'ea:sidebar:expanded',
+  });
+
+  if (!hydrated) {
+    return null;
+  }
 
   /*  const [expandedFolders, setExpandedFolders] = useState<string[]>([
     'utente',
@@ -106,7 +99,7 @@ export function AppSidebar() {
   return (
     <Sidebar className="scrollbar-hidden">
       <SidebarHeader className="border-b border-slate-800/50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 p-4">
-        <button className="flex items-center gap-3 w-full">
+        <Link href="/" className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-700/30 backdrop-blur-sm group-hover:bg-slate-600/40 transition-colors">
             <img src="/logo_white.png" alt="Logo" className="h-8 w-8" />
           </div>
@@ -125,28 +118,10 @@ export function AppSidebar() {
               textAlign="center"
             />
           </div>
-        </button>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent className="space-y-2 p-2 ">
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className="hover:bg-slate-800/50 hover:text-slate-200 transition-colors text-slate-400"
-                >
-                  <Link href="/" className="flex items-center gap-3">
-                    <LayoutDashboard className="h-4 w-4 text-slate-500" />
-                    <span>Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         <SidebarGroup className="rounded-xl backdrop-blur-sm border border-amber-50/50">
           <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text">
             Gestione Utente

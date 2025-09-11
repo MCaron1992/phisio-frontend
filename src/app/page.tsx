@@ -1,10 +1,19 @@
+import { Loader } from '@/components/custom /Loader';
+
 const Dashboard = () => {
   return (
     <div>
-      <h1>Dashboard</h1>
-      <p>Welcome to the dashboard!</p>
+      <Loader />
     </div>
   );
 };
 
 export default Dashboard;
+
+const style = {
+  marginLeft: '270px',
+  width: '50rem',
+  height: '40rem',
+
+  borderRadius: '10px',
+};

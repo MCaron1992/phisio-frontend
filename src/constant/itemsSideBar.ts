@@ -46,12 +46,6 @@ export const itemsStudio = [
 ];
 export const itemsUtenteRuoli = [
   {
-    key: 'ruolo-elenco',
-    label: 'Ruolo',
-    icon: Shield,
-    href: '/config/ruolo',
-  },
-  {
     key: 'fascia_eta-elenco',
     label: 'Fascia età',
     icon: Users,
@@ -156,6 +150,12 @@ export const itemsSportStrumenti = [
     label: 'Sport',
     icon: Trophy,
     href: '/config/sport',
+  },
+  {
+    key: 'ruolo-elenco',
+    label: 'Ruolo',
+    icon: Shield,
+    href: '/config/ruolo',
   },
   {
     key: 'strumento-elenco',

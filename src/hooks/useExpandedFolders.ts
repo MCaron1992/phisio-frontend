@@ -1,38 +1,40 @@
-'use client';
-
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 type StorageKey = string;
 
-/**
-
- * Gestisce un set di folder ID espansi con persistenza opzionale.
- * Gestione stato cartelle espanse/compresse in una sidebar ad albero con presistenza in localStorage.
- */
 export function useExpandedFolders(
-  initial: string[] = [],
+  initial: string[] = [], // fallback
   options?: { storageKey?: StorageKey }
 ) {
   const storageKey = options?.storageKey ?? 'sidebar:expandedFolders';
 
+  // stato hydrated per evitare mismatch SSR/CSR
+  const [hydrated, setHydrated] = useState(false);
+
   const [expanded, setExpanded] = useState<Set<string>>(() => {
-    if (typeof window === 'undefined') return new Set(initial);
+    if (typeof window === 'undefined') {
+      return new Set(); // lato server → tutto chiuso
+    }
     try {
       const raw = window.localStorage.getItem(storageKey);
       if (raw) return new Set<string>(JSON.parse(raw));
     } catch {}
-    return new Set(initial);
+    return new Set(); // default: tutto chiuso
   });
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
     try {
       window.localStorage.setItem(
         storageKey,
         JSON.stringify(Array.from(expanded))
       );
     } catch {}
-  }, [expanded, storageKey]);
+  }, [expanded, storageKey, hydrated]);
 
   const isExpanded = useCallback((id: string) => expanded.has(id), [expanded]);
 
@@ -65,5 +67,5 @@ export function useExpandedFolders(
 
   const list = useMemo(() => Array.from(expanded), [expanded]);
 
-  return { isExpanded, toggle, expand, collapse, list };
+  return { isExpanded, toggle, expand, collapse, list, hydrated };
 }

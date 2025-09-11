@@ -133,3 +133,319 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* DataTable Styles */
+@layer components {
+  .data-table-container {
+    @apply relative overflow-hidden;
+  }
+  
+  .data-table-glass {
+    @apply bg-background/80 backdrop-blur-sm border border-border/50;
+  }
+  
+  .data-table-row-hover {
+    @apply transition-all duration-300 hover:bg-accent/30 hover:shadow-lg hover:scale-[1.01] hover:z-10 relative;
+  }
+  
+  .data-table-cell-animation {
+    @apply transition-all duration-300;
+  }
+  
+  .data-table-sort-icon {
+    @apply transition-all duration-300 hover:scale-110 hover:rotate-12;
+  }
+  
+  .data-table-sort-icon-active {
+    @apply transition-all duration-500 transform scale-125 text-primary;
+  }
+  
+  .data-table-sort-icon-asc {
+    @apply transition-all duration-500 transform rotate-180 scale-125 text-primary;
+  }
+  
+  .data-table-sort-icon-desc {
+    @apply transition-all duration-500 transform rotate-0 scale-125 text-primary;
+  }
+  
+  .data-table-pagination-button {
+    @apply transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-md;
+  }
+  
+  .data-table-toolbar-glass {
+    @apply bg-background/50 backdrop-blur-sm border border-border/30;
+  }
+  
+  .data-table-loading-skeleton {
+    @apply animate-pulse bg-muted/50;
+  }
+  
+  .data-table-empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-muted-foreground;
+  }
+  
+  .data-table-selection-checkbox {
+    @apply transition-all duration-300 hover:scale-125 hover:rotate-12;
+  }
+  
+  .data-table-action-button {
+    @apply transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-lg;
+  }
+  
+  .data-table-filter-badge {
+    @apply transition-all duration-300 hover:scale-110 hover:shadow-md;
+  }
+  
+  .data-table-header-cell {
+    @apply transition-all duration-300 hover:bg-accent/50 hover:shadow-sm;
+  }
+  
+  .data-table-header-cell-sortable {
+    @apply cursor-pointer hover:bg-accent/50 hover:shadow-sm hover:scale-[1.02] select-none;
+  }
+  
+  .data-table-body-cell {
+    @apply transition-all duration-300 hover:bg-accent/20;
+  }
+  
+  .data-table-row-animation {
+    @apply transition-all duration-500 ease-out;
+  }
+  
+  .data-table-row-enter {
+    @apply opacity-0 transform translate-y-4 scale-95;
+  }
+  
+  .data-table-row-enter-active {
+    @apply opacity-100 transform translate-y-0 scale-100;
+  }
+  
+  .data-table-row-exit {
+    @apply opacity-100 transform translate-y-0 scale-100;
+  }
+  
+  .data-table-row-exit-active {
+    @apply opacity-0 transform translate-y-4 scale-95;
+  }
+  
+  .data-table-sort-indicator {
+    @apply transition-all duration-500 ease-in-out;
+  }
+  
+  .data-table-sort-indicator-active {
+    @apply transform scale-125 text-primary drop-shadow-sm;
+  }
+  
+  .data-table-hover-glow {
+    @apply hover:shadow-lg hover:shadow-primary/20;
+  }
+  
+  .data-table-selection-glow {
+    @apply ring-2 ring-primary/30 ring-offset-2 ring-offset-background;
+  }
+  
+  .data-table-search-input {
+    @apply transition-all duration-300 focus:ring-2 focus:ring-primary/20 focus:scale-[1.02];
+  }
+  
+  .data-table-pagination-info {
+    @apply text-sm text-muted-foreground transition-all duration-300;
+  }
+  
+  .data-table-selected-row {
+    @apply bg-primary/5 border-l-4 border-l-primary shadow-lg shadow-primary/10;
+  }
+  
+  .data-table-hover-row {
+    @apply hover:bg-accent/30 hover:shadow-lg hover:scale-[1.01] hover:z-10 relative;
+  }
+  
+  .data-table-sortable-header {
+    @apply cursor-pointer hover:bg-accent/50 hover:shadow-sm hover:scale-[1.02] select-none transition-all duration-300;
+  }
+  
+  .data-table-sort-animation {
+    @apply transition-all duration-500 ease-in-out;
+  }
+  
+  .data-table-sort-animation-asc {
+    @apply transform rotate-180 scale-110;
+  }
+  
+  .data-table-sort-animation-desc {
+    @apply transform rotate-0 scale-110;
+  }
+  
+  .data-table-sort-animation-inactive {
+    @apply transform rotate-0 scale-100;
+  }
+  
+  .data-table-cell-hover {
+    @apply transition-all duration-300 hover:bg-accent/20 hover:scale-[1.01];
+  }
+  
+  .data-table-badge-animation {
+    @apply transition-all duration-300 hover:scale-110 hover:shadow-md;
+  }
+  
+  .data-table-button-animation {
+    @apply transition-all duration-300 hover:scale-110 active:scale-95 hover:shadow-lg;
+  }
+  
+  .data-table-loading-shimmer {
+    @apply animate-pulse bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 bg-[length:200%_100%] animate-[shimmer_2s_ease-in-out_infinite];
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  .data-table-fade-in {
+    @apply animate-in fade-in-0 duration-500;
+  }
+  
+  .data-table-slide-in {
+    @apply animate-in slide-in-from-bottom-4 duration-500;
+  }
+  
+  .data-table-scale-in {
+    @apply animate-in zoom-in-95 duration-300;
+  }
+  
+  .data-table-loading-overlay {
+    @apply absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10;
+  }
+  
+  .data-table-empty-icon {
+    @apply text-6xl opacity-30 mb-4;
+  }
+  
+  .data-table-empty-text {
+    @apply text-lg font-medium text-muted-foreground;
+  }
+  
+  .data-table-toolbar-section {
+    @apply flex items-center space-x-2;
+  }
+  
+  .data-table-toolbar-search {
+    @apply relative flex-1 max-w-sm;
+  }
+  
+  .data-table-toolbar-filters {
+    @apply flex items-center space-x-2;
+  }
+  
+  .data-table-toolbar-actions {
+    @apply flex items-center space-x-2;
+  }
+  
+  .data-table-pagination-controls {
+    @apply flex items-center space-x-1;
+  }
+  
+  .data-table-pagination-info {
+    @apply flex items-center space-x-2 text-sm text-muted-foreground;
+  }
+  
+  .data-table-pagination-size-selector {
+    @apply flex items-center space-x-2;
+  }
+  
+  .data-table-page-button {
+    @apply h-8 w-8 p-0 transition-all duration-200 hover:scale-105 active:scale-95;
+  }
+  
+  .data-table-page-button-active {
+    @apply bg-primary text-primary-foreground shadow-md;
+  }
+  
+  .data-table-page-button-inactive {
+    @apply bg-background/50 backdrop-blur-sm border-border/50 hover:bg-accent/50;
+  }
+  
+  .data-table-page-ellipsis {
+    @apply h-8 w-8 flex items-center justify-center text-muted-foreground;
+  }
+  
+  .data-table-row-actions-trigger {
+    @apply h-8 w-8 p-0 hover:bg-accent/50 transition-all duration-200;
+  }
+  
+  .data-table-row-actions-menu {
+    @apply w-48 bg-background/95 backdrop-blur-sm border-border/50 shadow-lg;
+  }
+  
+  .data-table-row-actions-item {
+    @apply flex items-center space-x-2 cursor-pointer transition-all duration-200;
+  }
+  
+  .data-table-row-actions-item-destructive {
+    @apply text-destructive hover:text-destructive hover:bg-destructive/10;
+  }
+  
+  .data-table-row-actions-item-default {
+    @apply text-foreground hover:bg-accent;
+  }
+  
+  .data-table-row-actions-item-outline {
+    @apply text-foreground hover:bg-accent;
+  }
+  
+  .data-table-filter-section {
+    @apply p-4 bg-muted/30 backdrop-blur-sm rounded-lg border border-border/50 space-y-3;
+  }
+  
+  .data-table-filter-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+  
+  .data-table-filter-field {
+    @apply space-y-2;
+  }
+  
+  .data-table-filter-label {
+    @apply text-sm font-medium text-foreground/80;
+  }
+  
+  .data-table-filter-input {
+    @apply bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50 transition-all duration-200;
+  }
+  
+  .data-table-active-filters {
+    @apply flex flex-wrap gap-2;
+  }
+  
+  .data-table-active-filter-badge {
+    @apply bg-primary/10 text-primary border-primary/20;
+  }
+  
+  .data-table-active-filter-badge-accent {
+    @apply bg-accent/10 text-accent-foreground border-accent/20;
+  }
+  
+  .data-table-active-filter-remove {
+    @apply h-auto p-0 ml-2 hover:bg-transparent;
+  }
+  
+  .data-table-toolbar-reset {
+    @apply text-muted-foreground hover:text-foreground transition-colors;
+  }
+  
+  .data-table-toolbar-filter-button {
+    @apply bg-background/50 backdrop-blur-sm border-border/50 hover:bg-accent/50 transition-all duration-200;
+  }
+  
+  .data-table-toolbar-search-icon {
+    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4;
+  }
+  
+  .data-table-toolbar-search-input {
+    @apply pl-10 bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50 transition-all duration-200;
+  }
+  
+  .data-table-toolbar-filter-badge {
+    @apply ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs;
+  }
+}
