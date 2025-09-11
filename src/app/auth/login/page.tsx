@@ -8,7 +8,7 @@ import ElectricBorder from '@/components/bits/ElectricBorder';
 import SplitText from '@/components/bits/SplitText';
 import { useState } from 'react';
 import UniversalAlert from '@/components/custom /UniversalAlert';
-import { authAPI } from '@/lib/api/config';
+import { useAuth } from '@/hooks/useAuth';
 
 type AlertState = {
   show: boolean;
@@ -18,6 +18,8 @@ type AlertState = {
 };
 
 const LoginPage = () => {
+  const { login, isLoggingIn } = useAuth();
+
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     type: 'success',
@@ -38,22 +40,13 @@ const LoginPage = () => {
     });
   };
 
-  const login = async () => {
-    const result = await authAPI.login({
-      email: 'admin@cloudbits.it',
-      password: 'Cloudbits@25',
-    });
-    return result;
-  };
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    // Validazione base
     if (!email || !password) {
       showAlert(
         'warning',
@@ -72,67 +65,31 @@ const LoginPage = () => {
       return;
     }
 
-    try {
-      // Simula una chiamata API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simula loading
-
-      // Simula successo/fallimento basato su email
-      if (email === 'test@test.com' && password === 'password') {
-        showAlert(
-          'success',
-          'Login riuscito!',
-          "Hai effettuato l'accesso con successo!"
-        );
-
-        // Reindirizza dopo successo
-        setTimeout(() => {
-          console.log('Redirect to dashboard');
-          // window.location.href = '/dashboard';
-        }, 2000);
-      } else {
-        showAlert(
-          'error',
-          'Credenziali non valide',
-          'Email o password errate. Riprova.'
-        );
+    login(
+      { email, password },
+      {
+        onSuccess: () => {
+          showAlert(
+            'success',
+            'Login riuscito!',
+            "Hai effettuato l'accesso con successo!"
+          );
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 1500);
+        },
+        onError: () => {
+          showAlert(
+            'error',
+            'Credenziali non valide',
+            'Email o password errate. Riprova.'
+          );
+        },
       }
-    } catch (error) {
-      showAlert(
-        'error',
-        'Errore del server',
-        'Si è verificato un errore. Riprova più tardi.'
-      );
-      console.error('Login failed:', error);
-    }
-  };
-
-  const handleAlertClose = () => {
-    setAlert(prev => ({ ...prev, show: false }));
-  };
-
-  const testSuccessAlert = () => {
-    showAlert(
-      'success',
-      'Operazione riuscita!',
-      'Tutto è andato per il meglio.'
     );
   };
 
-  const testErrorAlert = () => {
-    showAlert('error', 'Errore critico!', 'Qualcosa è andato storto.');
-  };
-
-  const testWarningAlert = () => {
-    showAlert(
-      'warning',
-      'Attenzione!',
-      'Controlla i tuoi dati prima di procedere.'
-    );
-  };
-
-  const testInfoAlert = () => {
-    showAlert('info', 'Informazione', 'Questo è un messaggio informativo.');
-  };
+  const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
   return (
     <div className="relative w-screen h-screen overflow-hidden bg-gray-900">
@@ -154,7 +111,7 @@ const LoginPage = () => {
         <ElectricBorder
           color="#7df9ff"
           speed={0.5}
-          chaos={30}
+          chaos={4}
           thickness={2}
           style={{ borderRadius: 16 }}
         >
@@ -211,11 +168,11 @@ const LoginPage = () => {
                 </div>
 
                 <Button
-                  /*    type="submit"*/
+                  type="submit"
                   className="w-full mt-8"
-                  onClick={() => login()}
+                  disabled={isLoggingIn}
                 >
-                  Accedi
+                  {isLoggingIn ? 'Accesso in corso...' : 'Accedi'}
                 </Button>
               </form>
             </CardContent>
@@ -237,3 +194,29 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+/*
+
+const testSuccessAlert = () => {
+  showAlert(
+    'success',
+    'Operazione riuscita!',
+    'Tutto è andato per il meglio.'
+  );
+};
+
+const testErrorAlert = () => {
+  showAlert('error', 'Errore critico!', 'Qualcosa è andato storto.');
+};
+
+const testWarningAlert = () => {
+  showAlert(
+    'warning',
+    'Attenzione!',
+    'Controlla i tuoi dati prima di procedere.'
+  );
+};
+
+const testInfoAlert = () => {
+  showAlert('info', 'Informazione', 'Questo è un messaggio informativo.');
+};*/

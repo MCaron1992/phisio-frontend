@@ -59,10 +59,14 @@ import {
   itemsUtente,
   itemsUtenteRuoli,
 } from '@/constant/itemsSideBar';
+import { useAuth } from '@/hooks/useAuth';
 
 export function AppSidebar() {
   const { toggleSidebar, state } = useSidebar();
   const [activeTestTab, setActiveTestTab] = useState<string>('strength');
+  const { user, isLoadingUser } = useAuth();
+
+  console.log('user : ', user);
   const { isExpanded, toggle, hydrated } = useExpandedFolders([], {
     storageKey: 'ea:sidebar:expanded',
   });
@@ -186,6 +190,33 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="border-t border-slate-800/50 p-4 group-data-[collapsible=icon]:hidden">
+        <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-slate-800/50 to-slate-700/30 p-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700">
+            <User className="h-4 w-4 text-slate-300" />
+          </div>
+          <div className="flex flex-col">
+            {isLoadingUser ? (
+              <>
+                <span className="text-sm font-medium text-slate-300">
+                  Loading...
+                </span>
+              </>
+            ) : user ? (
+              <>
+                <span className="text-sm font-medium text-slate-300">
+                  {user.data.nome} {user.data.cognome}
+                </span>
+                <span className="text-xs text-slate-400">
+                  {user.data.ruolo}
+                </span>
+              </>
+            ) : (
+              <span className="text-sm text-slate-400">Non loggato</span>
+            )}
+          </div>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   );
 }
