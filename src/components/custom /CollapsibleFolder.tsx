@@ -43,20 +43,20 @@ export function CollapsibleFolder({
     <section className={className} aria-labelledby={`folder-${id}-label`}>
       <Button
         variant="ghost"
-        className="w-full justify-start p-2 h-auto hover:bg-slate-800/50 text-slate-400"
+        className="w-full justify-start  h-auto hover:bg-white text-slate-400"
         onClick={() => onToggle(id)}
         aria-expanded={open}
         aria-controls={`section-${id}`}
       >
         {open ? (
-          <ChevronDown className="h-4 w-4 mr-2 text-slate-500" />
+          <ChevronDown className="h-4 w-4  text-slate-500" />
         ) : (
-          <ChevronRight className="h-4 w-4 mr-2 text-slate-500" />
+          <ChevronRight className="h-4 w-4  text-slate-500" />
         )}
         {open ? (
-          <IconOpen className="h-4 w-4 mr-2 text-slate-500" />
+          <IconOpen className="h-4 w-4  text-slate-500" />
         ) : (
-          <IconClosed className="h-4 w-4 mr-2 text-slate-500" />
+          <IconClosed className="h-4 w-4  text-slate-500" />
         )}
         <span
           id={`folder-${id}-label`}
@@ -75,8 +75,13 @@ export function CollapsibleFolder({
         {items?.map(item => {
           const Icon = item.icon;
           const content = (
-            <span className="flex items-center gap-2 text-slate-400 hover:text-slate-200">
-              {Icon && <Icon className="h-3 w-3 text-slate-500" />}
+            <span
+              className="group/item flex w-full items-center gap-2 px-2 py-1 rounded-md cursor-pointer
+             text-slate-400 hover:bg-slate-800/50 hover:text-white transition-colors"
+            >
+              {Icon && (
+                <Icon className="h-3 w-3 text-slate-500 group-hover/item:text-white" />
+              )}
               <span className="text-xs">{item.label}</span>
               {item.extra}
             </span>

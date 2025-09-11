@@ -110,7 +110,21 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+:root {
+  --sidebar: 15 23 42;
+  --sidebar-foreground: 248 250 252;
+  --sidebar-accent: 30 41 59;
+  --sidebar-accent-foreground: 248 250 252;
+  --sidebar-border: 51 65 85;
+}
 
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none !important;
+}
+.scrollbar-hidden {
+  -ms-overflow-style: none  !important;
+  scrollbar-width: none  !important;;
+}
 @layer base {
   * {
     @apply border-border outline-ring/50;

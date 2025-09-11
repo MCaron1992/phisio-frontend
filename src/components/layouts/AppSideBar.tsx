@@ -104,16 +104,9 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar
-      variant="inset"
-      collapsible="icon"
-      className="border-r border-slate-800/50 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
-    >
+    <Sidebar className="scrollbar-hidden">
       <SidebarHeader className="border-b border-slate-800/50 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-700 p-4">
-        <button
-          onClick={toggleSidebar}
-          className="flex items-center gap-3 w-full text-left hover:bg-white/10 rounded-lg p-2 -m-4 transition-colors group"
-        >
+        <button className="flex items-center gap-3 w-full">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-700/30 backdrop-blur-sm group-hover:bg-slate-600/40 transition-colors">
             <img src="/logo_white.png" alt="Logo" className="h-8 w-8" />
           </div>
@@ -135,7 +128,7 @@ export function AppSidebar() {
         </button>
       </SidebarHeader>
 
-      <SidebarContent className="space-y-2 p-2">
+      <SidebarContent className="space-y-2 p-2 ">
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -154,8 +147,8 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-slate-400 font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden">
+        <SidebarGroup className="rounded-xl backdrop-blur-sm border border-amber-50/50">
+          <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text">
             Gestione Utente
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -175,9 +168,8 @@ export function AppSidebar() {
             />
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarSeparator className="bg-slate-800/50" />
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-slate-400 font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden">
+        <SidebarGroup className="rounded-xl backdrop-blur-sm border border-amber-50/50">
+          <SidebarGroupLabel className="font-semibold text-xs uppercase tracking-wider group-data-[collapsible=icon]:hidden text-transparent bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text">
             Configurazioni di Sistema
           </SidebarGroupLabel>
           <SidebarGroupContent>
