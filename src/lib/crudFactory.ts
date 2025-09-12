@@ -9,7 +9,7 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
       queryKey: [queryKey, params],
       queryFn: async () => {
         const res = await api.post(baseUrl, params ?? {});
-        return res.data;
+        return res.data.data;
       },
     });
 

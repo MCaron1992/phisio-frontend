@@ -1,6 +1,6 @@
 import { createCrudHooks } from '@/lib/crudFactory';
 
-interface Approccio {
+export interface Approccio {
   id: number;
   nome: string;
   descrizione?: string;

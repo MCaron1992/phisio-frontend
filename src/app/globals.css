@@ -138,6 +138,8 @@
 @layer components {
   .data-table-container {
     @apply relative overflow-hidden;
+    /* Prevent any overflow during animations */
+    contain: layout style;
   }
   
   .data-table-glass {
@@ -145,7 +147,7 @@
   }
   
   .data-table-row-hover {
-    @apply transition-all duration-300 hover:bg-accent/30 hover:shadow-lg hover:scale-[1.01] hover:z-10 relative;
+    @apply transition-all duration-300 hover:bg-accent/30 hover:shadow-lg hover:z-10 relative;
   }
   
   .data-table-cell-animation {
@@ -210,6 +212,20 @@
   
   .data-table-row-animation {
     @apply transition-all duration-500 ease-out;
+    /* Prevent overflow during animations */
+    transform-origin: center;
+    will-change: transform;
+    /* Elegant row separator */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  
+  .data-table-row-animation:last-child {
+    border-bottom: none;
+  }
+  
+  /* Dark theme row separator */
+  .dark .data-table-row-animation {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
   
   .data-table-row-enter {
@@ -257,11 +273,11 @@
   }
   
   .data-table-hover-row {
-    @apply hover:bg-accent/30 hover:shadow-lg hover:scale-[1.01] hover:z-10 relative;
+    @apply hover:bg-accent/30 hover:shadow-lg hover:z-10 relative;
   }
   
   .data-table-sortable-header {
-    @apply cursor-pointer hover:bg-accent/50 hover:shadow-sm hover:scale-[1.02] select-none transition-all duration-300;
+    @apply cursor-pointer hover:bg-accent/50 hover:shadow-sm select-none transition-all duration-300;
   }
   
   .data-table-sort-animation {
@@ -281,7 +297,7 @@
   }
   
   .data-table-cell-hover {
-    @apply transition-all duration-300 hover:bg-accent/20 hover:scale-[1.01];
+    @apply transition-all duration-300 hover:bg-accent/20;
   }
   
   .data-table-badge-animation {
@@ -438,7 +454,7 @@
   }
   
   .data-table-toolbar-search-icon {
-    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4;
+    @apply absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4 z-10;
   }
   
   .data-table-toolbar-search-input {
@@ -447,5 +463,49 @@
   
   .data-table-toolbar-filter-badge {
     @apply ml-2 h-5 w-5 p-0 flex items-center justify-center text-xs;
+  }
+
+  /* Responsive DataTable Styles */
+  .data-table-responsive {
+    @apply overflow-x-auto overflow-y-visible;
+    /* Prevent horizontal scroll during animations */
+    contain: layout;
+  }
+  
+  .data-table-responsive table {
+    @apply min-w-full;
+  }
+  
+  .data-table-responsive th,
+  .data-table-responsive td {
+    @apply whitespace-nowrap;
+  }
+  
+  .data-table-responsive .data-table-description-cell {
+    @apply whitespace-normal break-words max-w-xs md:max-w-md lg:max-w-lg;
+  }
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .data-table-responsive th,
+    .data-table-responsive td {
+      @apply px-2 py-3 text-sm;
+    }
+    
+    .data-table-responsive .data-table-description-cell {
+      @apply max-w-[200px] text-xs;
+    }
+  }
+  
+  /* Tablet optimizations */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .data-table-responsive th,
+    .data-table-responsive td {
+      @apply px-3 py-4;
+    }
+    
+    .data-table-responsive .data-table-description-cell {
+      @apply max-w-[300px] text-sm;
+    }
   }
 }

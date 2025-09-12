@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, X, RotateCcw } from 'lucide-react';
+import { Search, Filter, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -69,17 +69,29 @@ export function DataTableToolbar<T>({
               transition={{ duration: 0.3 }}
             >
               <motion.div
-                animate={{ rotate: search ? 360 : 0 }}
-                transition={{ duration: 0.5 }}
+                animate={{ 
+                  scale: search ? 1.1 : 1,
+                  color: search ? 'hsl(var(--primary))' : 'hsl(var(--muted-foreground))'
+                }}
+                transition={{ duration: 0.2 }}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 z-10"
               >
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Search className="h-4 w-4" />
               </motion.div>
-              <Input
-                placeholder={searchPlaceholder}
-                value={search}
-                onChange={(e) => onSearch(e.target.value)}
-                className="pl-10 data-table-search-input bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50"
-              />
+              <motion.div
+                animate={{
+                  scale: search ? 1.02 : 1,
+                  boxShadow: search ? '0 0 0 2px hsl(var(--primary) / 0.2)' : 'none'
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <Input
+                  placeholder={searchPlaceholder}
+                  value={search}
+                  onChange={(e) => onSearch(e.target.value)}
+                  className="pl-10 data-table-search-input bg-background/50 backdrop-blur-sm border-border/50 focus:border-primary/50"
+                />
+              </motion.div>
             </motion.div>
           )}
           
@@ -117,17 +129,6 @@ export function DataTableToolbar<T>({
             </motion.div>
           )}
 
-          {hasActiveFilters && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onResetFilters}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <RotateCcw className="h-4 w-4 mr-2" />
-              Reset
-            </Button>
-          )}
         </div>
       </div>
 

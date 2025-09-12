@@ -71,7 +71,7 @@ export const itemsTerapiaProblema = [
     key: 'approccio_terapeutico-elenco',
     label: 'Approccio terapeutico',
     icon: Stethoscope,
-    href: '/config/approccio-terapeutico',
+    href: '/system/terapia',
   },
   {
     key: 'meccanismo_problema-elenco',

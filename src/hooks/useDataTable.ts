@@ -6,7 +6,7 @@ import {
 } from '@/types/data-table';
 
 export function useDataTable<T extends Record<string, any>>({
-  data,
+  data = [],
   columns,
   searchKey = 'search',
   onSearch,
@@ -31,16 +31,17 @@ export function useDataTable<T extends Record<string, any>>({
   });
 
   const filteredData = useMemo(() => {
-    if (!enableGlobalFilter || !state.search) return data;
-
-    return data.filter(item => {
-      const searchValue = state.search.toLowerCase();
-      return columns.some(column => {
-        if (column.accessorKey) {
-          const value = item[column.accessorKey];
-          return value?.toString().toLowerCase().includes(searchValue);
-        }
-        return false;
+    if (!enableGlobalFilter || !state.search) return data ?? [];
+    return (data ?? []).filter(item => {
+      return data.filter(item => {
+        const searchValue = state.search.toLowerCase();
+        return columns.some(column => {
+          if (column.accessorKey) {
+            const value = item[column.accessorKey];
+            return value?.toString().toLowerCase().includes(searchValue);
+          }
+          return false;
+        });
       });
     });
   }, [data, state.search, columns, enableGlobalFilter]);
@@ -92,11 +93,12 @@ export function useDataTable<T extends Record<string, any>>({
   ]);
 
   const paginatedData = useMemo(() => {
-    if (!enablePagination) return sortedData;
+    if (!enablePagination) return sortedData ?? [];
 
+    const arr = Array.isArray(sortedData) ? sortedData : [];
     const startIndex = (state.page - 1) * state.pageSize;
     const endIndex = startIndex + state.pageSize;
-    return sortedData.slice(startIndex, endIndex);
+    return arr.slice(startIndex, endIndex);
   }, [sortedData, state.page, state.pageSize, enablePagination]);
 
   const totalPages = useMemo(() => {

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import api from '@/lib/axios';
+import { getToken } from '@/lib/auth-storage';
 
 type LoginPayload = { email: string; password: string };
 
@@ -12,7 +13,7 @@ export function useAuth() {
       const res = await api.get('/auth/me');
       return res.data;
     },
-    enabled: !!localStorage.getItem('token'),
+    enabled: !!getToken(),
   });
 
   const loginMutation = useMutation({

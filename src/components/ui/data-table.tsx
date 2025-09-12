@@ -73,13 +73,13 @@ export function DataTable<T extends Record<string, any>>({
   const getSortIcon = (columnId: string) => {
     const isActive = state.sortColumn === columnId;
     const isAsc = state.sortDirection === 'asc';
-    
+
     if (!isActive) {
       return (
         <ArrowUpDown className="h-4 w-4 text-muted-foreground data-table-sort-icon hover:scale-110 hover:rotate-12 transition-all duration-300" />
       );
     }
-    
+
     return (
       <motion.div
         initial={false}
@@ -89,7 +89,7 @@ export function DataTable<T extends Record<string, any>>({
         }}
         transition={{
           duration: 0.5,
-          ease: "easeInOut",
+          ease: 'easeInOut',
         }}
         className="data-table-sort-indicator-active"
       >
@@ -120,15 +120,12 @@ export function DataTable<T extends Record<string, any>>({
   if (loading) {
     return (
       <div className={cn('space-y-4', className)}>
-        {/* Toolbar skeleton */}
         <div className="flex items-center justify-between">
           <Skeleton className="h-10 w-64" />
           <Skeleton className="h-10 w-24" />
         </div>
-
-        {/* Table skeleton */}
-        <div className="rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm">
-          <Table>
+        <div className="overflow-hidden rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm">
+          <Table className="table-fixed w-full">
             <TableHeader>
               <TableRow>
                 {enableSelection && (
@@ -175,7 +172,6 @@ export function DataTable<T extends Record<string, any>>({
 
   return (
     <div className={cn('space-y-4', className)}>
-      {/* Toolbar */}
       <DataTableToolbar
         search={state.search}
         onSearch={handleSearch}
@@ -188,11 +184,11 @@ export function DataTable<T extends Record<string, any>>({
         enableColumnFilters={enableColumnFilters}
       />
 
-      {/* Table */}
-      <div className="rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm overflow-hidden">
-        <Table>
+      <div className="data-table-container overflow-hidden rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm">
+        <div className="data-table-responsive overflow-x-auto overflow-y-visible">
+          <Table className="min-w-full">
           <TableHeader>
-            <TableRow className="hover:bg-transparent border-b-border/50">
+            <TableRow className="hover:bg-transparent">
               {enableSelection && (
                 <TableHead className="w-12">
                   <Checkbox
@@ -209,7 +205,7 @@ export function DataTable<T extends Record<string, any>>({
                 <TableHead
                   key={column.id}
                   className={cn(
-                    'font-medium text-foreground/80 data-table-header-cell',
+                    'font-medium text-foreground/80 data-table-header-cell text-left',
                     column.width,
                     column.align === 'center' && 'text-center',
                     column.align === 'right' && 'text-right',
@@ -219,11 +215,13 @@ export function DataTable<T extends Record<string, any>>({
                 >
                   <motion.div
                     className={cn(
-                      'flex items-center space-x-2',
+                      'flex items-center space-x-2 justify-start',
                       column.align === 'center' && 'justify-center',
                       column.align === 'right' && 'justify-end'
                     )}
-                    whileHover={{ scale: 1.02 }}
+                    whileHover={{ 
+                      backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                    }}
                     transition={{ duration: 0.2 }}
                   >
                     <span>{column.header}</span>
@@ -257,26 +255,26 @@ export function DataTable<T extends Record<string, any>>({
                 paginatedData.map((row, index) => {
                   const rowId = getRowId(row, index);
                   const isSelected = isRowSelected(rowId);
-                  
+
                   return (
                     <motion.tr
                       key={rowId}
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                      transition={{ 
-                        duration: 0.4, 
+                      transition={{
+                        duration: 0.4,
                         delay: index * 0.05,
-                        ease: "easeOut"
+                        ease: 'easeOut',
                       }}
-                      whileHover={{ 
-                        scale: 1.01, 
-                        y: -2,
-                        transition: { duration: 0.2 }
+                      whileHover={{
+                        backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                        transition: { duration: 0.2 },
                       }}
                       className={cn(
-                        'border-b-border/50 data-table-row-animation',
-                        isSelected && 'data-table-selected-row data-table-selection-glow',
+                        'data-table-row-animation',
+                        isSelected &&
+                          'data-table-selected-row data-table-selection-glow',
                         'data-table-hover-row'
                       )}
                     >
@@ -302,7 +300,9 @@ export function DataTable<T extends Record<string, any>>({
                         <TableCell
                           key={column.id}
                           className={cn(
-                            'data-table-body-cell data-table-cell-hover',
+                            'data-table-body-cell data-table-cell-hover text-left',
+                            'whitespace-normal break-words',
+                            column.id === 'descrizione' && 'data-table-description-cell',
                             column.align === 'center' && 'text-center',
                             column.align === 'right' && 'text-right'
                           )}
@@ -329,6 +329,7 @@ export function DataTable<T extends Record<string, any>>({
             </AnimatePresence>
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {enablePagination && paginationState.totalPages > 1 && (
