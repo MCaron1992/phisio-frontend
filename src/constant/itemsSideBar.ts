@@ -46,38 +46,32 @@ export const itemsStudio = [
 ];
 export const itemsUtenteRuoli = [
   {
-    key: 'fascia_eta-elenco',
+    key: 'fascia-eta',
     label: 'Fascia età',
     icon: Users,
-    href: '/config/fascia-eta',
+    href: '/system/fascia-eta',
   },
   {
-    key: 'stato_di_salute-elenco',
+    key: 'stato-salute',
     label: 'Stato di salute',
     icon: Heart,
-    href: '/config/stato-di-salute',
-  },
-  {
-    key: 'livello_sportivo-elenco',
-    label: 'Livello sportivo',
-    icon: Trophy,
-    href: '/config/livello-sportivo',
+    href: '/system/stato-salute',
   },
 ];
 
 // ⚕️ Terapia & Problema
 export const itemsTerapiaProblema = [
   {
-    key: 'approccio_terapeutico-elenco',
+    key: 'approccio-terapeutico',
     label: 'Approccio terapeutico',
     icon: Stethoscope,
     href: '/system/terapia',
   },
   {
-    key: 'meccanismo_problema-elenco',
+    key: 'meccanismi-problema',
     label: 'Meccanismo problema',
     icon: Brain,
-    href: '/config/meccanismo-problema',
+    href: '/system/meccanismi-problema',
   },
 ];
 
@@ -87,59 +81,59 @@ export const itemsTestMetriche = [
     key: 'test-elenco',
     label: 'Test',
     icon: Activity,
-    href: '/config/test',
+    href: '/system/test',
   },
   {
-    key: 'categoria_funzionale-elenco',
+    key: 'categoria-funzionale',
     label: 'Categoria funzionale',
     icon: LineChart,
-    href: '/config/categoria-funzionale',
+    href: '/system/categoria-funzionale',
   },
   {
     key: 'metrica-elenco',
     label: 'Metrica',
     icon: BarChart2,
-    href: '/config/metrica',
+    href: '/system/metrica',
   },
   {
-    key: 'unita_di_misura-elenco',
+    key: 'unita-misura',
     label: 'Unità di misura',
     icon: Ruler,
-    href: '/config/unita-di-misura',
+    href: '/system/unita-misura',
   },
   {
-    key: 'test_metrica_unita-elenco',
+    key: 'test-metrica-unita',
     label: 'Test - Metrica - Unità',
     icon: TestTube,
-    href: '/config/test-metrica-unita',
+    href: '/system/test-metrica-unita',
   },
 ];
 
 // 🦵 Anatomia
 export const itemsAnatomia = [
   {
-    key: 'arto-elenco',
+    key: 'arto',
     label: 'Arto',
     icon: Activity,
-    href: '/config/arto',
+    href: '/system/arto',
   },
   {
-    key: 'regione_anatomica-elenco',
+    key: 'regione-anatomica',
     label: 'Regione anatomica',
     icon: Layers,
-    href: '/config/regione-anatomica',
+    href: '/system/regione-anatomica',
   },
   {
-    key: 'struttura_principale-elenco',
+    key: 'struttura-principale',
     label: 'Struttura principale',
     icon: Dumbbell,
-    href: '/config/struttura-principale',
+    href: '/system/struttura-principale',
   },
   {
-    key: 'struttura_specifica-elenco',
+    key: 'struttura-specifica',
     label: 'Struttura specifica',
     icon: Microscope,
-    href: '/config/struttura-specifica',
+    href: '/system/struttura-specifica',
   },
 ];
 
@@ -149,18 +143,24 @@ export const itemsSportStrumenti = [
     key: 'sport-elenco',
     label: 'Sport',
     icon: Trophy,
-    href: '/config/sport',
+    href: '/system/sport',
   },
   {
     key: 'ruolo-elenco',
     label: 'Ruolo',
     icon: Shield,
-    href: '/config/ruolo',
+    href: '/system/ruolo-sport',
+  },
+  {
+    key: 'livello-sportivo',
+    label: 'Livello sportivo',
+    icon: Trophy,
+    href: '/system/livello-sportivo',
   },
   {
     key: 'strumento-elenco',
     label: 'Strumento',
     icon: Zap,
-    href: '/config/strumento',
+    href: '/system/strumento',
   },
 ];

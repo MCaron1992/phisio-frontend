@@ -1,15 +1,15 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import { Metrica, useMetriche, useDeleteMetrica } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useMetriche();
+  const { mutate: deleteMetirca } = useDeleteMetrica();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<Metrica>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -37,22 +37,22 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<Metrica>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteMetirca({ id: row.id }),
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner btnLabel="Nuova metrica" title="Metrica">
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca approccio..."
-        emptyMessage="Nessun approccio trovato"
+        searchPlaceholder="Cerca metrica..."
+        emptyMessage="Nessuna metrica trovata."
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}
