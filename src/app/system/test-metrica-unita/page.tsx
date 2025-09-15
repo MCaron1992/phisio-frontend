@@ -46,7 +46,7 @@ const ApprocciTable = () => {
   return (
     <TableConatiner
       btnLabel={'Nuovo Approccio'}
-      title={" non l'ho fatta tabella ancora vuota "}
+      title={" non l'ho fatta non c e crud  "}
     >
       <DataTable
         data={data ?? []}
