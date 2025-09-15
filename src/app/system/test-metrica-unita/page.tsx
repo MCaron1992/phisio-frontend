@@ -44,7 +44,10 @@ const ApprocciTable = () => {
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner
+      btnLabel={'Nuovo Approccio'}
+      title={" non l'ho fatta tabella ancora vuota "}
+    >
       <DataTable
         data={data ?? []}
         columns={columns}

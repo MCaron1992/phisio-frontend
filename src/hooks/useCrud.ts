@@ -135,7 +135,7 @@ export const {
  *
  * */
 
-export interface RegioniAnatomiche {
+export interface RegioniAnatomicha {
   id: number;
   nome: string;
   descrizione?: string;
@@ -149,7 +149,7 @@ export const {
   useStore: useCreateRegioneAnatomica,
   useUpdate: useUpdateRegioneAnatomica,
   useDestroy: useDeleteRegioneAnatomica,
-} = createCrudHooks<RegioniAnatomiche>(
+} = createCrudHooks<RegioniAnatomicha>(
   '/system/regioni-anatomiche',
   'regioni-anatomiche'
 );
@@ -159,12 +159,13 @@ export const {
  * Ruolo-Sport
  * */
 
-export interface Ruoli {
+export interface Ruoli_Sport {
   id: number;
   nome: string;
   descrizione?: string;
   created_at?: string;
   updated_at?: string;
+  sport?: Sport;
 }
 export const {
   useIndex: useRuoli,
@@ -172,7 +173,7 @@ export const {
   useStore: useCreateRuolo,
   useUpdate: useUpdateRuolo,
   useDestroy: useDeleteRuolo,
-} = createCrudHooks<Ruoli>('/system/ruoli', 'ruoli');
+} = createCrudHooks<Ruoli_Sport>('/system/ruoli', 'ruoli');
 /**
  *Sport
  *
@@ -286,27 +287,6 @@ export const {
 
 /**
  *
- *
- * */
-
-export interface Teams {
-  id: number;
-  nome: string;
-  descrizione?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export const {
-  useIndex: useTeams,
-  useShow: useTeam,
-  useStore: useCreateTeam,
-  useUpdate: useUpdateTeam,
-  useDestroy: useDeleteTeam,
-} = createCrudHooks<Teams>('/system/teams', 'teams');
-
-/**
- *
  * Terapia
  * */
 
@@ -346,6 +326,27 @@ export const {
   useUpdate: useUpdateTest,
   useDestroy: useDeleteTest,
 } = createCrudHooks<Test>('/system/test', 'test');
+
+/**
+ *
+ *
+ * */
+
+export interface Teams {
+  id: number;
+  nome: string;
+  descrizione?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export const {
+  useIndex: useTeams,
+  useShow: useTeam,
+  useStore: useCreateTeam,
+  useUpdate: useUpdateTeam,
+  useDestroy: useDeleteTeam,
+} = createCrudHooks<Teams>('/system/teams', 'teams');
 
 /**
  *

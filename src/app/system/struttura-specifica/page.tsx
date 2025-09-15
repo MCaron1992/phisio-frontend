@@ -1,15 +1,19 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import {
+  StruttureSpecifiche,
+  useStruttureSpecifiche,
+  useDeleteStrutturaSpecifica,
+} from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useStruttureSpecifiche();
+  const { mutate: deleteStrutturaSpecifica } = useDeleteStrutturaSpecifica();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<StruttureSpecifiche>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -37,22 +41,25 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<StruttureSpecifiche>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteStrutturaSpecifica({ id: row.id }),
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner
+      btnLabel={'Nuova Struttura Specifica '}
+      title={'Struttura Specifica'}
+    >
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca approccio..."
-        emptyMessage="Nessun approccio trovato"
+        searchPlaceholder="Cerca struttura specifica..."
+        emptyMessage="Nessuna struttura specifica trovata"
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}

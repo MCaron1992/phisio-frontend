@@ -1,15 +1,15 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import { Sport, useSport, useDeleteSport } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useSport();
+  const { mutate: deleteSport } = useDeleteSport();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<Sport>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -17,14 +17,6 @@ const ApprocciTable = () => {
       sortable: true,
       filterable: true,
       width: 'w-32 md:w-40',
-    },
-    {
-      id: 'descrizione',
-      header: 'Descrizione',
-      accessorKey: 'descrizione',
-      sortable: true,
-      filterable: true,
-      width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
       id: 'ultimo-aggiornamento',
@@ -37,22 +29,22 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<Sport>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteSport({ id: row.id }),
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner btnLabel={'Nuovo Sport'} title={'Sport'}>
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca approccio..."
-        emptyMessage="Nessun approccio trovato"
+        searchPlaceholder="Cerca sport..."
+        emptyMessage="Nessun sport trovato"
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}

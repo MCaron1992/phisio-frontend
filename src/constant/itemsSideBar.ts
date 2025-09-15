@@ -146,6 +146,12 @@ export const itemsSportStrumenti = [
     href: '/system/sport',
   },
   {
+    key: 'squadra-elenco',
+    label: 'Squadre',
+    icon: Trophy,
+    href: '/system/teams',
+  },
+  {
     key: 'ruolo-elenco',
     label: 'Ruolo',
     icon: Shield,

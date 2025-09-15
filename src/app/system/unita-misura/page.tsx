@@ -1,15 +1,19 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import {
+  UnitaMisura,
+  useUnitaMisura,
+  useDeleteUnitaMisura,
+} from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useUnitaMisura();
+  const { mutate: deleteUnitaMisura } = useDeleteUnitaMisura();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<UnitaMisura>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -37,10 +41,10 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<UnitaMisura>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteUnitaMisura({ id: row.id }),
   });
 
   return (

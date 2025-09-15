@@ -1,15 +1,19 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import {
+  StrutturePrincipali,
+  useStrutturePrincipali,
+  useDeleteStrutturaPrincipale,
+} from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useStrutturePrincipali();
+  const { mutate: deleteStrutturaPrincipale } = useDeleteStrutturaPrincipale();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<StrutturePrincipali>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -37,22 +41,25 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<StrutturePrincipali>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteStrutturaPrincipale({ id: row.id }),
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner
+      btnLabel={'Nuova Struttura Principale '}
+      title={'Struttura Principale Coinvolta'}
+    >
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca approccio..."
-        emptyMessage="Nessun approccio trovato"
+        searchPlaceholder="Cerca struttura principale coinvoita..."
+        emptyMessage="Nessun struttura principale coinvoita trovato"
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}

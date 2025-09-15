@@ -1,15 +1,15 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import { Approccio, useApprocci, useDeleteApproccio } from '@/hooks/useCrud';
+import { Strumenti, useStrumenti, useDeleteStrumento } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
+  const { data, isLoading } = useStrumenti();
+  const { mutate: deleteStrumento } = useDeleteStrumento();
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<Strumenti>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -37,22 +37,22 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Approccio>({
+  const rowActions = RowActions<Strumenti>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteApproccio({ id: row.id }),
+    onDelete: row => deleteStrumento({ id: row.id }),
   });
 
   return (
-    <TableConatiner btnLabel={'Nuovo Approccio'} title={'Approcci Terapeutici'}>
+    <TableConatiner btnLabel={'Nuovo Strumento'} title={'Struementi'}>
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca approccio..."
-        emptyMessage="Nessun approccio trovato"
+        searchPlaceholder="Cerca strumento..."
+        emptyMessage="Nessun strumento trovato"
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}

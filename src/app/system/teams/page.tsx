@@ -1,19 +1,15 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableColumn } from '@/types/data-table';
-import {
-  RegioniAnatomicha,
-  useRegioniAnatomiche,
-  useDeleteRegioneAnatomica,
-} from '@/hooks/useCrud';
+import { Teams, useTeams, useDeleteTeam } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import RowActions from '@/components/custom /RowActions';
 
 const ApprocciTable = () => {
-  const { data, isLoading } = useRegioniAnatomiche();
-  const { mutate: deleteRegioneAnatomicha } = useDeleteRegioneAnatomica();
+  const { data, isLoading } = useTeams();
+  const { mutate: deleteTeams } = useDeleteTeam();
 
-  const columns: DataTableColumn<RegioniAnatomicha>[] = [
+  const columns: DataTableColumn<Teams>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -41,25 +37,22 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<RegioniAnatomicha>({
+  const rowActions = RowActions<Teams>({
     onView: row => console.log('Visualizza:', row),
     onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteRegioneAnatomicha({ id: row.id }),
+    onDelete: row => deleteTeams({ id: row.id }),
   });
 
   return (
-    <TableConatiner
-      btnLabel={'Nuova Regione Anatomica'}
-      title={'Approcci Regioni Anatomich'}
-    >
+    <TableConatiner btnLabel={'Nuovo Squadra'} title={'Squadre'}>
       <DataTable
         data={data ?? []}
         columns={columns}
         rowActions={rowActions}
         loading={isLoading}
         searchKey="nome"
-        searchPlaceholder="Cerca Regione Anatomica..."
-        emptyMessage="Nessuna Regione Anatomica trovata"
+        searchPlaceholder="Cerca squadra..."
+        emptyMessage="Nessuna squadra trovata"
         enableSelection={true}
         enableSorting={true}
         enablePagination={true}
