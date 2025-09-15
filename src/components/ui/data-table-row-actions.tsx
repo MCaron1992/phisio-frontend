@@ -2,9 +2,22 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MoreHorizontal, Trash2, Edit, Eye, Copy, Download } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Trash2,
+  Edit,
+  Eye,
+  Copy,
+  Download,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { DataTableAction } from '@/types/data-table';
 import { cn } from '@/lib/utils';
 
@@ -73,53 +86,56 @@ export function DataTableRowActions<T>({
           </Button>
         </motion.div>
       </DropdownMenuTrigger>
-      
-      <DropdownMenuContent 
-        align="end" 
+
+      <DropdownMenuContent
+        align="end"
         className="w-48 bg-background/95 backdrop-blur-sm border-border/50 shadow-lg"
         sideOffset={4}
       >
         <AnimatePresence>
-          {actions.map((action, index) => {
-            const isDisabled = action.disabled?.(row) || false;
-            
-            return (
-              <motion.div
-                key={action.id}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.1, delay: index * 0.05 }}
-              >
+          {actions
+            .filter(action => (action.show ? action.show(row) : true)) // 👈 filtro per show
+            .map((action, index) => {
+              const isDisabled = action.disabled?.(row) || false;
+
+              return (
                 <motion.div
-                  whileHover={{ scale: 1.02, x: 4 }}
-                  transition={{ duration: 0.2 }}
+                  key={action.id}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.1, delay: index * 0.05 }}
                 >
-                  <DropdownMenuItem
-                    onClick={() => {
-                      if (!isDisabled) {
-                        action.onClick(row);
-                        setIsOpen(false);
-                      }
-                    }}
-                    disabled={isDisabled}
-                    className={cn(
-                      'flex items-center space-x-2 cursor-pointer data-table-button-animation',
-                      getActionVariant(action.variant),
-                      isDisabled && 'opacity-50 cursor-not-allowed'
-                    )}
+                  <motion.div
+                    whileHover={{ scale: 1.02, x: 2 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    {action.icon || getActionIcon(action.id)}
-                    <span>{action.label}</span>
-                  </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        if (!isDisabled) {
+                          action.onClick(row);
+                          setIsOpen(false);
+                        }
+                      }}
+                      disabled={isDisabled}
+                      className={cn(
+                        'flex items-center space-x-2 cursor-pointer data-table-button-animation',
+                        getActionVariant(action.variant),
+                        isDisabled && 'opacity-50 cursor-not-allowed'
+                      )}
+                    >
+                      {action.icon || getActionIcon(action.id)}
+                      <span>{action.label}</span>
+                    </DropdownMenuItem>
+                  </motion.div>
+
+                  {index < actions.length - 1 &&
+                    action.variant === 'destructive' && (
+                      <DropdownMenuSeparator className="my-1" />
+                    )}
                 </motion.div>
-                
-                {index < actions.length - 1 && action.variant === 'destructive' && (
-                  <DropdownMenuSeparator className="my-1" />
-                )}
-              </motion.div>
-            );
-          })}
+              );
+            })}
         </AnimatePresence>
       </DropdownMenuContent>
     </DropdownMenu>

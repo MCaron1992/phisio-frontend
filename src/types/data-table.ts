@@ -18,6 +18,7 @@ export interface DataTableAction<T> {
   onClick: (row: T) => void;
   variant?: 'default' | 'destructive' | 'outline';
   disabled?: (row: T) => boolean;
+  show?: (row: T) => boolean;
 }
 
 export interface DataTableProps<T> {
