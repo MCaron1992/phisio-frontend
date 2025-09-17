@@ -1,13 +1,33 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
-import { DataTableColumn } from '@/types/data-table';
-import { Sport, useSport, useDeleteSport } from '@/hooks/useCrud';
+import { DataTableAction, DataTableColumn } from '@/types/data-table';
+import { Sport, useSport, useDeleteSport, useUpdateSport } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
-import RowActions from '@/components/custom /RowActions';
+import { useState } from 'react';
+import CustomDialog from '@/components/custom /CustomDialog';
+import { Edit, Eye, Trash2 } from 'lucide-react';
+import { Loader } from '@/components/custom /Loader';
+import UniversalAlert, {
+  AlertState,
+} from '@/components/custom /UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 
-const ApprocciTable = () => {
+const SportTable = () => {
   const { data, isLoading } = useSport();
   const { mutate: deleteSport } = useDeleteSport();
+  const { mutate: updateSport } = useUpdateSport();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedRow, setSelectedRow] = useState<Sport | null>(null);
+  const [title, setTitle] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const [alert, setAlert] = useState<AlertState>({
+    show: false,
+    type: 'success',
+    title: '',
+    description: '',
+  });
 
   const columns: DataTableColumn<Sport>[] = [
     {
@@ -17,6 +37,14 @@ const ApprocciTable = () => {
       sortable: true,
       filterable: true,
       width: 'w-32 md:w-40',
+    },
+    {
+      id: 'descrizione',
+      header: 'Descrizione',
+      accessorKey: 'descrizione',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
       id: 'ultimo-aggiornamento',
@@ -29,32 +57,116 @@ const ApprocciTable = () => {
     },
   ];
 
-  const rowActions = RowActions<Sport>({
-    onView: row => console.log('Visualizza:', row),
-    onEdit: row => console.log('Modifica:', row),
-    onDelete: row => deleteSport({ id: row.id }),
-  });
+  const rowActions: DataTableAction<Sport>[] = [
+    {
+      id: 'view',
+      label: 'Visualizza',
+      onClick: row => console.log('Visualizza', row),
+      icon: <Eye className="h-4 w-4" />,
+      show: () => false,
+    },
+    {
+      id: 'edit',
+      label: 'Modifica',
+      onClick: row => {
+        setTitle('Modifica Sport');
+        setSelectedRow(row);
+        setDialogOpen(true);
+      },
+      icon: <Edit className="h-4 w-4" />,
+    },
+    {
+      id: 'delete',
+      label: 'Elimina',
+      onClick: row => {
+        setSelectedRow(row);
+        setOpenDeleteDialog(true);
+      },
+      icon: <Trash2 className="h-4 w-4" />,
+      variant: 'destructive',
+    },
+  ];
+
+  const handleSave = (data: { newDescrizione: string }) => {
+    setLoading(true);
+    updateSport(data, {
+      onSuccess: () => {
+        setAlert({
+          show: true,
+          type: 'success',
+          title: 'Update successful',
+          description: 'The item was updated successfully.',
+        });
+        setDialogOpen(false);
+        setLoading(false);
+      },
+      onError: err => {
+        setAlert({
+          show: true,
+          type: 'error',
+          title: 'Update failed',
+          description: err?.message || 'An error occurred.',
+        });
+        setLoading(false);
+      },
+    });
+  };
+  const handelNewAction = () => {
+    setTitle('Nuovo Sport');
+    setSelectedRow(null);
+    setDialogOpen(true);
+  };
+  const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
   return (
-    <TableConatiner btnLabel={'Nuovo Sport'} title={'Sport'}>
-      <DataTable
-        data={data ?? []}
-        columns={columns}
-        rowActions={rowActions}
-        loading={isLoading}
-        searchKey="nome"
-        searchPlaceholder="Cerca sport..."
-        emptyMessage="Nessun sport trovato"
-        enableSelection={true}
-        enableSorting={true}
-        enablePagination={true}
-        pagination={{
-          page: 1,
-          pageSize: 10,
-          total: data?.length ?? 0,
-        }}
+    <>
+      <TableConatiner
+        btnLabel={'Nuovo Sport'}
+        title={'Sport'}
+        action={() => handelNewAction()}
+      >
+        <DataTable
+          data={data ?? []}
+          columns={columns}
+          rowActions={rowActions}
+          loading={isLoading}
+          searchKey="nome"
+          searchPlaceholder="Cerca sport..."
+          emptyMessage="Nessun sport trovato"
+          enableSelection={true}
+          enableSorting={true}
+          enablePagination={true}
+          pagination={{
+            page: 1,
+            pageSize: 10,
+            total: data?.length ?? 0,
+          }}
+        />
+      </TableConatiner>
+      <CustomDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onSave={handleSave}
+        descrizione={selectedRow?.descrizione}
+        title={title}
+        mode={selectedRow ? 'edit' : 'create'}
       />
-    </TableConatiner>
+      {loading && <Loader />}
+      <UniversalAlert
+        title={alert.title}
+        description={alert.description}
+        isVisible={alert.show}
+        onClose={handleAlertClose}
+        type={alert.type}
+        duration={3000}
+        position="top-right"
+      />
+      <DeleteConfirmDialog
+        onConfirm={() => deleteSport({ id: selectedRow?.id! })}
+        onClose={() => setOpenDeleteDialog(false)}
+        open={openDeleteDialog}
+      />
+    </>
   );
 };
-export default ApprocciTable;
+export default SportTable;

@@ -1,19 +1,39 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import { FasceEta, useFasceEta, useDeleteFasciaEta } from '@/hooks/useCrud';
+import {
+  FasceEta,
+  useFasceEta,
+  useDeleteFasciaEta,
+  useUpdateFasciaEta,
+} from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
-import RowActions from '@/components/custom /RowActions';
 import { useState } from 'react';
 import CustomDialog from '@/components/custom /CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
+import { Loader } from '@/components/custom /Loader';
+import UniversalAlert, {
+  AlertState,
+} from '@/components/custom /UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 
-const ApprocciTable = () => {
+const FasciaEtaTable = () => {
   const { data, isLoading } = useFasceEta();
   const { mutate: deleteFasciaEta } = useDeleteFasciaEta();
+  const { mutate: updateFasciaEta } = useUpdateFasciaEta();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<FasceEta | null>(null);
   const [title, setTitle] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  const [alert, setAlert] = useState<AlertState>({
+    show: false,
+    type: 'success',
+    title: '',
+    description: '',
+  });
+
   const columns: DataTableColumn<FasceEta>[] = [
     {
       id: 'descrizione',
@@ -61,12 +81,36 @@ const ApprocciTable = () => {
     },
   ];
 
-  const handleSave = () => {};
+  const handleSave = (data: { newDescrizione: string }) => {
+    setLoading(true);
+    updateFasciaEta(data, {
+      onSuccess: () => {
+        setAlert({
+          show: true,
+          type: 'success',
+          title: 'Update successful',
+          description: 'The item was updated successfully.',
+        });
+        setDialogOpen(false);
+        setLoading(false);
+      },
+      onError: err => {
+        setAlert({
+          show: true,
+          type: 'error',
+          title: 'Update failed',
+          description: err?.message || 'An error occurred.',
+        });
+        setLoading(false);
+      },
+    });
+  };
   const handelNewAction = () => {
     setTitle('Nuova Fascia eta');
     setSelectedRow(null);
     setDialogOpen(true);
   };
+  const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
   return (
     <>
@@ -97,11 +141,26 @@ const ApprocciTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione || ''}
+        descrizione={selectedRow?.descrizione}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
+      />
+      {loading && <Loader />}
+      <UniversalAlert
+        title={alert.title}
+        description={alert.description}
+        isVisible={alert.show}
+        onClose={handleAlertClose}
+        type={alert.type}
+        duration={3000}
+        position="top-right"
+      />
+      <DeleteConfirmDialog
+        onConfirm={() => deleteFasciaEta({ id: selectedRow?.id! })}
+        onClose={() => setOpenDeleteDialog(false)}
+        open={openDeleteDialog}
       />
     </>
   );
 };
-export default ApprocciTable;
+export default FasciaEtaTable;

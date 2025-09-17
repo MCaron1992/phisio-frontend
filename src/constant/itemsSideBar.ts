@@ -17,15 +17,16 @@ import {
 } from 'lucide-react';
 export const itemsUtente = [
   {
-    key: 'studio-elenco',
+    key: 'utente-elenco',
     label: 'Elenco',
     icon: Activity,
-    href: '/exercises/stretching',
+    href: '/utente/elenco',
   },
   {
-    key: 'studio-nuovo',
+    key: 'utente-nuovo',
     label: 'Nuovo',
     icon: Zap,
+    href: '/utente/new',
     onClick: () => console.log('Nuovo clicked!'),
   },
 ];
@@ -35,12 +36,13 @@ export const itemsStudio = [
     key: 'studio-elenco',
     label: 'Elenco',
     icon: Activity,
-    href: '/exercises/stretching',
+    href: '/studio/elenco',
   },
   {
     key: 'studio-nuovo',
     label: 'Nuovo',
     icon: Zap,
+    href: '/studio/new',
     onClick: () => console.log('Nuovo clicked!'),
   },
 ];
@@ -137,7 +139,6 @@ export const itemsAnatomia = [
   },
 ];
 
-// 🏅 Sport & Strumenti
 export const itemsSportStrumenti = [
   {
     key: 'sport-elenco',

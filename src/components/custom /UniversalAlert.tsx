@@ -9,6 +9,13 @@ import React, { useEffect, useState } from 'react';
 
 type AlertType = 'success' | 'error' | 'warning' | 'info';
 
+export type AlertState = {
+  show: boolean;
+  type: 'success' | 'error' | 'warning' | 'info';
+  title: string;
+  description: string;
+};
+
 interface UniversalAlertProps {
   title?: string;
   description?: string;

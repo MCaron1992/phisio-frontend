@@ -387,3 +387,54 @@ export const {
   useUpdate: useUpdateFaseTemporale,
   useDestroy: useDeleteFaseTemporale,
 } = createCrudHooks<any>('/system/fasi-temporali', 'fasi-temporali');
+
+/**
+ * Utente
+ *
+ * */
+export interface Utente {
+  id: number;
+  nome: string;
+  cognome?: string;
+  email: string;
+  email_verified_at?: string;
+  ruolo?: string;
+  attivo?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+export const {
+  useIndex: useUtenti,
+  useShow: useUtente,
+  useStore: useCreateUtente,
+  useUpdate: useUpdateUtente,
+  useDestroy: useDeleteUtente,
+} = createCrudHooks<Utente>('/users', 'users');
+
+/**
+ * Studio
+ *
+ * */
+export interface Studio {
+  id: number;
+  nome: string;
+  cognome?: string;
+  email: string;
+  email_verified_at?: string;
+  ruolo?: string;
+  attivo?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+export const {
+  useIndex: useStudi,
+  useShow: useStudio,
+  useStore: useCreateStudio,
+  useUpdate: useUpdateStudio,
+  useDestroy: useDeleteStudio,
+} = createCrudHooks<Studio>('/system/fasi-temporali', 'fasi-temporali');
+
+/**
+ * Giocatore
+ *
+ * */

@@ -7,15 +7,10 @@ import LightRays from '@/components/bits/LightBackground';
 import ElectricBorder from '@/components/bits/ElectricBorder';
 import SplitText from '@/components/bits/SplitText';
 import { useState } from 'react';
-import UniversalAlert from '@/components/custom /UniversalAlert';
+import UniversalAlert, {
+  AlertState,
+} from '@/components/custom /UniversalAlert';
 import { useAuth } from '@/hooks/useAuth';
-
-type AlertState = {
-  show: boolean;
-  type: 'success' | 'error' | 'warning' | 'info';
-  title: string;
-  description: string;
-};
 
 const LoginPage = () => {
   const { login, isLoggingIn } = useAuth();
@@ -179,44 +174,19 @@ const LoginPage = () => {
           </Card>
         </ElectricBorder>
       </div>
-      =SOMMA()
-      <UniversalAlert
-        title={alert.title}
-        description={alert.description}
-        isVisible={alert.show}
-        onClose={handleAlertClose}
-        type={alert.type}
-        duration={3000}
-        position="top-right"
-      />
+      <>
+        <UniversalAlert
+          title={alert.title}
+          description={alert.description}
+          isVisible={alert.show}
+          onClose={handleAlertClose}
+          type={alert.type}
+          duration={3000}
+          position="top-right"
+        />
+      </>
     </div>
   );
 };
 
 export default LoginPage;
-
-/*
-
-const testSuccessAlert = () => {
-  showAlert(
-    'success',
-    'Operazione riuscita!',
-    'Tutto è andato per il meglio.'
-  );
-};
-
-const testErrorAlert = () => {
-  showAlert('error', 'Errore critico!', 'Qualcosa è andato storto.');
-};
-
-const testWarningAlert = () => {
-  showAlert(
-    'warning',
-    'Attenzione!',
-    'Controlla i tuoi dati prima di procedere.'
-  );
-};
-
-const testInfoAlert = () => {
-  showAlert('info', 'Informazione', 'Questo è un messaggio informativo.');
-};*/

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,10 +22,6 @@ type Props = {
   title?: string;
 };
 
-function DialogFooter(props: { children: ReactNode }) {
-  return null;
-}
-
 const CustomDialog = ({
   open,
   mode,
@@ -34,9 +30,16 @@ const CustomDialog = ({
   descrizione,
   title,
 }: Props) => {
-  const isView = mode === 'view';
+  const [newDescrizione, setNewDescrizione] = useState(descrizione || '');
 
-  const [newDescrizione, setDescrizione] = useState(descrizione || '');
+  useEffect(() => {
+    if (descrizione) {
+      setNewDescrizione(descrizione);
+    } else {
+      setNewDescrizione('');
+    }
+  }, [descrizione]);
+
   const handleSubmit = () => {
     if (onSave) {
       onSave({ newDescrizione });
@@ -54,22 +57,14 @@ const CustomDialog = ({
         <div className="space-y-4 py-4">
           <Input
             placeholder="Descrizione"
-            value={descrizione}
-            onChange={e => setDescrizione(e.target.value)}
-            disabled={isView}
+            value={newDescrizione}
+            onChange={e => setNewDescrizione(e.target.value)}
           />
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Chiudi
-          </Button>
-          {!isView && (
-            <Button onClick={handleSubmit}>
-              {mode === 'create' ? 'Crea' : 'Aggiorna'}
-            </Button>
-          )}
-        </DialogFooter>
+        <Button onClick={handleSubmit}>
+          {mode === 'create' ? 'Crea' : 'Aggiorna'}
+        </Button>
       </DialogContent>
     </Dialog>
   );
