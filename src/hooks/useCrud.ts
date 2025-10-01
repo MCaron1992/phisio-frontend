@@ -313,8 +313,15 @@ export const {
 
 export interface Test {
   id: number;
-  nome: string;
-  descrizione?: string;
+  nome_abbreviato?: string;
+  nome_esteso?: string;
+  id_categoria_funzionale: number;
+  lateralita?: string;
+  istruzioni_verbali?: string;
+  categoria_funzionale?: CategoriaFunzionale;
+  tempo_di_recupero?: string;
+  foto?: string;
+  video?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -325,7 +332,7 @@ export const {
   useStore: useCreateuseTest,
   useUpdate: useUpdateTest,
   useDestroy: useDeleteTest,
-} = createCrudHooks<Test>('/system/test', 'test');
+} = createCrudHooks<Test>('/system/tests', 'test');
 
 /**
  *

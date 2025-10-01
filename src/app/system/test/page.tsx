@@ -4,13 +4,13 @@ import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import { Test, useTests, useDeleteTest, useUpdateTest } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom /CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom /Loader';
 import UniversalAlert, {
   AlertState,
 } from '@/components/custom /UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import Link from 'next/link';
 
 const TestTable = () => {
   const { data, isLoading } = useTests();
@@ -28,24 +28,72 @@ const TestTable = () => {
     title: '',
     description: '',
   });
-
   const columns: DataTableColumn<Test>[] = [
     {
-      id: 'nome',
-      header: 'Nome',
-      accessorKey: 'nome',
+      id: 'nome_abbreviato',
+      header: 'Nome breve',
+      accessorKey: 'nome_abbreviato',
       sortable: true,
       filterable: true,
-      width: 'w-32 md:w-40',
+      width: 'w-24 md:w-32',
     },
     {
-      id: 'descrizione',
-      header: 'Descrizione',
-      accessorKey: 'descrizione',
+      id: 'nome_esteso',
+      header: 'nome_esteso',
+      accessorKey: 'nome_esteso',
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
+    {
+      id: 'lateralita',
+      header: 'lateralita',
+      accessorKey: 'lateralita',
+      sortable: true,
+      filterable: true,
+      width: 'w-24 md:w-32',
+    },
+    {
+      id: 'istruzioni_verbali',
+      header: 'istruzioni_verbali',
+      accessorKey: 'istruzioni_verbali',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[500px]',
+    },
+    {
+      id: 'tempo_di_recupero',
+      header: 'tempo_di_recupero',
+      accessorKey: 'tempo_di_recupero',
+      sortable: true,
+      filterable: true,
+      width: 'w-24 md:w-32',
+      cell: ({ value }) => (
+        <div style={{ textAlign: 'center', width: '100%' }}>{value ?? '-'}</div>
+      ),
+    },
+    {
+      id: 'categoria_funzionale',
+      header: 'Categoria funzionale',
+      accessorKey: 'categoria_funzionale',
+      sortable: true,
+      filterable: true,
+      width: 'w-32 md:w-64 lg:w-[350px]',
+      cell: ({ row }) => {
+        const categoria = row.categoria_funzionale;
+        return categoria ? (
+          <Link
+            href={`/categorie-funzionali/${categoria.id}`}
+            className="lg:rt-r-weight-medium text-blue-600 hover:underline "
+          >
+            {categoria.nome}
+          </Link>
+        ) : (
+          '-'
+        );
+      },
+    },
+
     {
       id: 'ultimo-aggiornamento',
       header: 'ultimo aggiornamento',
@@ -143,14 +191,6 @@ const TestTable = () => {
           }}
         />
       </TableConatiner>
-      <CustomDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
-        title={title}
-        mode={selectedRow ? 'edit' : 'create'}
-      />
       {loading && <Loader />}
       <UniversalAlert
         title={alert.title}
@@ -162,7 +202,7 @@ const TestTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteTest({ id: selectedRow?.id! })}
+        onConfirm={() => selectedRow?.id && deleteTest({ id: selectedRow.id })}
         onClose={() => setOpenDeleteDialog(false)}
         open={openDeleteDialog}
       />
