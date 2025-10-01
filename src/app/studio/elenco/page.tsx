@@ -2,10 +2,10 @@
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
-  Utente,
-  useUtenti,
-  useDeleteUtente,
-  useUpdateUtente,
+  useStudi,
+  useDeleteStudio,
+  useUpdateStudio,
+  Studio,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import { useState } from 'react';
@@ -18,11 +18,12 @@ import UniversalAlert, {
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 
 const StudioPage = () => {
-  const { data, isLoading } = useUtenti();
-  const { mutate: deleteArto } = useDeleteUtente();
-  const { mutate: updateArto } = useUpdateUtente();
+  const { data, isLoading } = useStudi();
+  const studioData = data?.data;
+  const { mutate: deleteArto } = useDeleteStudio();
+  const { mutate: updateArto } = useUpdateStudio();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Studio | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -34,7 +35,7 @@ const StudioPage = () => {
     description: '',
   });
 
-  const columns: DataTableColumn<Utente>[] = [
+  const columns: DataTableColumn<Studio>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -44,12 +45,28 @@ const StudioPage = () => {
       width: 'w-32 md:w-40',
     },
     {
-      id: 'descrizione',
-      header: 'Descrizione',
-      accessorKey: 'descrizione',
+      id: 'indirizzo',
+      header: 'Indirizzo',
+      accessorKey: 'indirizzo',
       sortable: true,
       filterable: true,
-      width: 'w-64 md:w-96 lg:w-[500px]',
+      width: 'w-64 md:w-96 lg:w-[350px]',
+    },
+    {
+      id: 'telefono',
+      header: 'Telefono',
+      accessorKey: 'telefono',
+      sortable: true,
+      filterable: true,
+      width: 'w-32 md:w-40',
+    },
+    {
+      id: 'email',
+      header: 'Email',
+      accessorKey: 'email_contatto',
+      sortable: true,
+      filterable: true,
+      width: 'w-32 md:w-40',
     },
     {
       id: 'ultimo-aggiornamento',
@@ -62,7 +79,7 @@ const StudioPage = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Utente>[] = [
+  const rowActions: DataTableAction<Studio>[] = [
     {
       id: 'view',
       label: 'Visualizza',
@@ -126,18 +143,18 @@ const StudioPage = () => {
   return (
     <>
       <TableConatiner
-        btnLabel={'Nuovo Utente'}
-        title={'Utente'}
+        btnLabel={'Nuovo Studio'}
+        title={'Studio'}
         action={() => handelNewAction()}
       >
         <DataTable
-          data={data ?? []}
+          data={studioData ?? []}
           columns={columns}
           rowActions={rowActions}
           loading={isLoading}
           searchKey="nome"
-          searchPlaceholder="Cerca utente..."
-          emptyMessage="Nessun utente trovato"
+          searchPlaceholder="Cerca studio..."
+          emptyMessage="Nessun studio trovato"
           enableSelection={true}
           enableSorting={true}
           enablePagination={true}

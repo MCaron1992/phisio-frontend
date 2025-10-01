@@ -11,9 +11,10 @@ import UniversalAlert, {
 } from '@/components/custom /UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 import Link from 'next/link';
-
+import { useRouter } from 'next/navigation';
 const TestTable = () => {
   const { data, isLoading } = useTests();
+  const router = useRouter();
   const { mutate: deleteTest } = useDeleteTest();
   const { mutate: updateTest } = useUpdateTest();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -108,21 +109,13 @@ const TestTable = () => {
   const rowActions: DataTableAction<Test>[] = [
     {
       id: 'view',
-      label: 'Visualizza',
-      onClick: row => console.log('Visualizza', row),
-      icon: <Eye className="h-4 w-4" />,
-      show: () => false,
-    },
-    {
-      id: 'edit',
-      label: 'Modifica',
+      label: 'Dettaglio',
       onClick: row => {
-        setTitle('Modifica Test');
-        setSelectedRow(row);
-        setDialogOpen(true);
+        router.push(`/system/test/${row.id}`);
       },
-      icon: <Edit className="h-4 w-4" />,
+      icon: <Eye className="h-4 w-4" />,
     },
+
     {
       id: 'delete',
       label: 'Elimina',

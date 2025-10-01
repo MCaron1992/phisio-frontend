@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 export interface DataTableColumn<T> {
   id: string;
   header: string | ReactNode;
-  accessorKey?: keyof T;
+  accessorKey?: any;
   cell?: (props: { row: T; value: any }) => ReactNode;
   sortable?: boolean;
   filterable?: boolean;

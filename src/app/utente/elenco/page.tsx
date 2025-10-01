@@ -19,6 +19,7 @@ import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 
 const UsersPage = () => {
   const { data, isLoading } = useUtenti();
+  const userData = data?.data;
   const { mutate: deleteArto } = useDeleteUtente();
   const { mutate: updateArto } = useUpdateUtente();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,15 +42,40 @@ const UsersPage = () => {
       accessorKey: 'nome',
       sortable: true,
       filterable: true,
-      width: 'w-32 md:w-40',
+      width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
-      id: 'descrizione',
-      header: 'Descrizione',
-      accessorKey: 'descrizione',
+      id: 'cognome',
+      header: 'Cognome',
+      accessorKey: 'cognome',
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
+    },
+    {
+      id: 'email',
+      header: 'Email',
+      accessorKey: 'email',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[500px]',
+    },
+    {
+      id: 'ruolo',
+      header: 'Ruolo',
+      accessorKey: 'ruolo',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[500px]',
+    },
+    {
+      id: 'attivo',
+      header: 'Attivo',
+      accessorKey: 'attivo',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[500px]',
+      cell: ({ value }) => (value == true ? 'true' : 'false'),
     },
     {
       id: 'ultimo-aggiornamento',
@@ -131,7 +157,7 @@ const UsersPage = () => {
         action={() => handelNewAction()}
       >
         <DataTable
-          data={data ?? []}
+          data={userData ?? []}
           columns={columns}
           rowActions={rowActions}
           loading={isLoading}

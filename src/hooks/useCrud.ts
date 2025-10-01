@@ -308,7 +308,7 @@ export const {
 
 /**
  *
- * Terapia
+ * tests
  * */
 
 export interface Test {
@@ -328,7 +328,7 @@ export interface Test {
 
 export const {
   useIndex: useTests,
-  useShow: useuseTest,
+  useShow: useTest,
   useStore: useCreateuseTest,
   useUpdate: useUpdateTest,
   useDestroy: useDeleteTest,
@@ -416,7 +416,7 @@ export const {
   useStore: useCreateUtente,
   useUpdate: useUpdateUtente,
   useDestroy: useDeleteUtente,
-} = createCrudHooks<Utente>('/users', 'users');
+} = createCrudHooks<Utente>('/user', 'users');
 
 /**
  * Studio
@@ -439,7 +439,7 @@ export const {
   useStore: useCreateStudio,
   useUpdate: useUpdateStudio,
   useDestroy: useDeleteStudio,
-} = createCrudHooks<Studio>('/system/fasi-temporali', 'fasi-temporali');
+} = createCrudHooks<Studio>('/system/studio', 'studio');
 
 /**
  * Giocatore
