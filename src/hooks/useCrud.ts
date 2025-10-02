@@ -445,3 +445,21 @@ export const {
  * Giocatore
  *
  * */
+export interface Players {
+  id: number;
+  nome?: string;
+  cognome?: string;
+  data_nascita: string;
+  sesso?: string;
+  etnia?: string;
+  attivo?: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+export const {
+  useIndex: usePlayers,
+  useShow: usePlayer,
+  useStore: useCreatePlayer,
+  useUpdate: useUpdatePlayer,
+  useDestroy: useDeletePlayer,
+} = createCrudHooks<Players>('/giocatore', 'giocatore');

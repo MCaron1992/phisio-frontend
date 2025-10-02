@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { ArrowUpDown, ArrowUp } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -19,7 +19,7 @@ import { DataTableProps, DataTableColumn } from '@/types/data-table';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@radix-ui/react-checkbox';
 
-export function DataTable<T extends Record<string, any>>({
+export function DataTable<T extends Record<string, never>>({
   data,
   columns,
   searchKey = 'search',
@@ -195,7 +195,10 @@ export function DataTable<T extends Record<string, any>>({
                       checked={isAllSelected}
                       onCheckedChange={handleSelectAll}
                       ref={el => {
-                        if (el) el.indeterminate = isIndeterminate;
+                        if (el && 'indeterminate' in el) {
+                          (el as HTMLInputElement).indeterminate =
+                            isIndeterminate;
+                        }
                       }}
                       className="transition-all duration-200"
                     />

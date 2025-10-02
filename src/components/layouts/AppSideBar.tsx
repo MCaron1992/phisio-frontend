@@ -52,6 +52,7 @@ import { useExpandedFolders } from '@/hooks/useExpandedFolders';
 import { CollapsibleFolder } from '@/components/custom /CollapsibleFolder';
 import {
   itemsAnatomia,
+  itemsGiocatori,
   itemsSportStrumenti,
   itemsStudio,
   itemsTerapiaProblema,
@@ -144,6 +145,13 @@ export function AppSidebar() {
               isExpanded={isExpanded}
               onToggle={toggle}
               items={itemsStudio}
+            />
+            <CollapsibleFolder
+              id="giocatori"
+              label="Giocatori"
+              isExpanded={isExpanded}
+              onToggle={toggle}
+              items={itemsGiocatori}
             />
           </SidebarGroupContent>
         </SidebarGroup>

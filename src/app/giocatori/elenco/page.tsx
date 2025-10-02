@@ -2,10 +2,10 @@
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
-  Utente,
-  useUtenti,
-  useDeleteUtente,
-  useUpdateUtente,
+  Players,
+  useDeletePlayer,
+  usePlayers,
+  useUpdatePlayer,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import { useState } from 'react';
@@ -17,13 +17,14 @@ import UniversalAlert, {
 } from '@/components/custom /UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
 
-const UsersPage = () => {
-  const { data, isLoading } = useUtenti();
+const GicatoriPage = () => {
+  const { data, isLoading } = usePlayers();
+  console.log(data);
   const userData = data?.data;
-  const { mutate: deleteArto } = useDeleteUtente();
-  const { mutate: updateArto } = useUpdateUtente();
+  const { mutate: deleteArto } = useDeletePlayer();
+  const { mutate: updateArto } = useUpdatePlayer();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
+  const [selectedRow, setSelectedRow] = useState<null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -35,7 +36,7 @@ const UsersPage = () => {
     description: '',
   });
 
-  const columns: DataTableColumn<Utente>[] = [
+  const columns: DataTableColumn<Players>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -53,29 +54,28 @@ const UsersPage = () => {
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
-      id: 'email',
-      header: 'Email',
-      accessorKey: 'email',
+      id: 'data_nascita',
+      header: 'Data di nascita',
+      accessorKey: 'data_nascita',
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
-      id: 'ruolo',
-      header: 'Ruolo',
-      accessorKey: 'ruolo',
+      id: 'sesso',
+      header: 'Sesso',
+      accessorKey: 'sesso',
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
-      id: 'attivo',
-      header: 'Attivo',
-      accessorKey: 'attivo',
+      id: 'etnia',
+      header: 'Etnia',
+      accessorKey: 'etnia',
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
-      cell: ({ value }) => (value == true ? 'true' : 'false'),
     },
 
     {
@@ -86,6 +86,7 @@ const UsersPage = () => {
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
+
     {
       id: 'ultimo-aggiornamento',
       header: 'ultimo aggiornamento',
@@ -97,7 +98,7 @@ const UsersPage = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Utente>[] = [
+  const rowActions: DataTableAction<Players>[] = [
     {
       id: 'view',
       label: 'Visualizza',
@@ -161,8 +162,8 @@ const UsersPage = () => {
   return (
     <>
       <TableConatiner
-        btnLabel={'Nuovo Utente'}
-        title={'Utente'}
+        btnLabel={'Nuovo Giocatori'}
+        title={'Giocatori'}
         action={() => handelNewAction()}
       >
         <DataTable
@@ -171,8 +172,8 @@ const UsersPage = () => {
           rowActions={rowActions}
           loading={isLoading}
           searchKey="nome"
-          searchPlaceholder="Cerca utente..."
-          emptyMessage="Nessun utente trovato"
+          searchPlaceholder="Cerca giocatori..."
+          emptyMessage="Nessun giocatori trovato"
           enableSelection={true}
           enableSorting={true}
           enablePagination={true}
@@ -209,4 +210,4 @@ const UsersPage = () => {
     </>
   );
 };
-export default UsersPage;
+export default GicatoriPage;

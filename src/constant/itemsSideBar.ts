@@ -46,6 +46,21 @@ export const itemsStudio = [
     onClick: () => console.log('Nuovo clicked!'),
   },
 ];
+export const itemsGiocatori = [
+  {
+    key: 'giocatori-elenco',
+    label: 'Elenco',
+    icon: Activity,
+    href: '/giocatori/elenco',
+  },
+  {
+    key: 'giocatori-nuovo',
+    label: 'Nuovo',
+    icon: Zap,
+    href: '/giocatori/new',
+    onClick: () => console.log('Nuovo clicked!'),
+  },
+];
 export const itemsUtenteRuoli = [
   {
     key: 'fascia-eta',
