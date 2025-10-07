@@ -19,7 +19,7 @@ import { DataTableProps, DataTableColumn } from '@/types/data-table';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '@radix-ui/react-checkbox';
 
-export function DataTable<T extends Record<string, never>>({
+export function DataTable<T extends Record<string, any>>({
   data,
   columns,
   searchKey = 'search',
@@ -308,7 +308,7 @@ export function DataTable<T extends Record<string, never>>({
                               column.id === 'descrizione' &&
                                 'data-table-description-cell',
                               column.align === 'center' && 'text-center',
-                              column.align === 'right' && 'text-right'
+                              column.align === 'center' && 'text-right'
                             )}
                           >
                             <motion.div

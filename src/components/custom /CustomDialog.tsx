@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-type DialogMode = 'create' | 'edit' | 'view';
+export type DialogMode = 'create' | 'edit' | 'view';
 
 type Props = {
   open: boolean;

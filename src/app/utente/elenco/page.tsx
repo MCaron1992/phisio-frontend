@@ -1,31 +1,23 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import {
-  Utente,
-  useUtenti,
-  useDeleteUtente,
-  useUpdateUtente,
-} from '@/hooks/useCrud';
+import { Utente, useUtenti, useDeleteUtente } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom /CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
-import { Loader } from '@/components/custom /Loader';
 import UniversalAlert, {
   AlertState,
 } from '@/components/custom /UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const UsersPage = () => {
   const { data, isLoading } = useUtenti();
   const userData = data?.data;
-  const { mutate: deleteArto } = useDeleteUtente();
-  const { mutate: updateArto } = useUpdateUtente();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { mutate: DeleteUtente } = useDeleteUtente();
+  const router = useRouter();
   const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
-  const [title, setTitle] = useState('');
-  const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const [alert, setAlert] = useState<AlertState>({
@@ -66,7 +58,7 @@ const UsersPage = () => {
       accessorKey: 'ruolo',
       sortable: true,
       filterable: true,
-      width: 'w-64 md:w-96 lg:w-[500px]',
+      width: 'w-64 md:w-96 lg:w-[300px]',
     },
     {
       id: 'attivo',
@@ -74,17 +66,33 @@ const UsersPage = () => {
       accessorKey: 'attivo',
       sortable: true,
       filterable: true,
-      width: 'w-64 md:w-96 lg:w-[500px]',
+      width: 'w-64 md:w-96 lg:w-[300px]',
       cell: ({ value }) => (value == true ? 'true' : 'false'),
     },
-
     {
       id: 'studio',
       header: 'Studio',
       accessorKey: 'studio',
       sortable: true,
       filterable: true,
-      width: 'w-64 md:w-96 lg:w-[500px]',
+      width: 'w-64 md:w-96 lg:w-[300px]',
+      cell: ({ row }) => {
+        const studio = row.studi ?? [];
+        return (
+          <div>
+            {studio.length === 0 ? (
+              <span>-- --</span>
+            ) : (
+              <Link
+                href={`/studio/${studio[0]?.id}`}
+                className="lg:rt-r-weight-medium text-blue-600 hover:underline"
+              >
+                {studio[0]?.nome}
+              </Link>
+            )}
+          </div>
+        );
+      },
     },
     {
       id: 'ultimo-aggiornamento',
@@ -99,19 +107,10 @@ const UsersPage = () => {
 
   const rowActions: DataTableAction<Utente>[] = [
     {
-      id: 'view',
-      label: 'Visualizza',
-      onClick: row => console.log('Visualizza', row),
-      icon: <Eye className="h-4 w-4" />,
-      show: () => false,
-    },
-    {
       id: 'edit',
       label: 'Modifica',
       onClick: row => {
-        setTitle('Modifica Arto');
-        setSelectedRow(row);
-        setDialogOpen(true);
+        router.push(`/utente/${row.id}`);
       },
       icon: <Edit className="h-4 w-4" />,
     },
@@ -127,34 +126,8 @@ const UsersPage = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
-    setLoading(true);
-    updateArto(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
-  };
   const handelNewAction = () => {
-    setTitle('Nuovo Arto');
-    setSelectedRow(null);
-    setDialogOpen(true);
+    router.push('/utente/new');
   };
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
@@ -183,15 +156,6 @@ const UsersPage = () => {
           }}
         />
       </TableConatiner>
-      <CustomDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        onSave={handleSave}
-        descrizione={selectedRow?.nome}
-        title={title}
-        mode={selectedRow ? 'edit' : 'create'}
-      />
-      {loading && <Loader />}
       <UniversalAlert
         title={alert.title}
         description={alert.description}
@@ -202,7 +166,9 @@ const UsersPage = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteArto({ id: selectedRow?.id! })}
+        onConfirm={() =>
+          selectedRow?.id && DeleteUtente({ id: selectedRow.id })
+        }
         onClose={() => setOpenDeleteDialog(false)}
         open={openDeleteDialog}
       />

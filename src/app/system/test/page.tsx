@@ -4,7 +4,7 @@ import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import { Test, useTests, useDeleteTest, useUpdateTest } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom /TableContainer';
 import { useState } from 'react';
-import { Edit, Eye, Trash2 } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom /Loader';
 import UniversalAlert, {
   AlertState,

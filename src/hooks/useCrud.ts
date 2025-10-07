@@ -407,6 +407,7 @@ export interface Utente {
   email_verified_at?: string;
   ruolo?: string;
   attivo?: boolean;
+  studi?: Studio[];
   created_at?: string;
   updated_at?: string;
 }

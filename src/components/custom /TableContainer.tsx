@@ -1,13 +1,15 @@
 'use client';
 
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
 
 type TableContainerProps = {
   children: ReactNode;
   action?: () => void;
   title?: string;
   btnLabel?: string;
+  onBtnClick?: () => void;
 };
 
 const TableContainer: React.FC<TableContainerProps> = ({
@@ -15,6 +17,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
   action,
   title,
   btnLabel,
+  onBtnClick,
 }) => {
   return (
     <section aria-labelledby="approcci-title" style={style.section}>
@@ -25,9 +28,20 @@ const TableContainer: React.FC<TableContainerProps> = ({
           </h2>
         )}
         {btnLabel && (
-          <Button type="button" onClick={action}>
-            {btnLabel}
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={onBtnClick || action}
+              className="transition-all duration-200 hover:shadow-lg"
+            >
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                {btnLabel}
+              </motion.span>
+            </Button>
+          </motion.div>
         )}
       </header>
       {children}
