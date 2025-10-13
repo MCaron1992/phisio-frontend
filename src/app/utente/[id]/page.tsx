@@ -7,6 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import TableConatiner from '@/components/custom /TableContainer';
+import {
+  useUtente,
+  useCreateUtente,
+  useUpdateUtente,
+  useStudi,
+} from '@/hooks/useCrud';
+import UniversalAlert, {
+  AlertState,
+} from '@/components/custom /UniversalAlert';
 
 import {
   Select,
@@ -18,16 +27,33 @@ import {
 import { Eye, EyeOff, BadgeCheck, CircleX } from 'lucide-react';
 import { Loader } from '@/components/custom /Loader';
 
+const ROLE_MAPPING: Record<string, string> = {
+  super_admin: 'super',
+  admin_studio: 'admin',
+  assistente: 'assistente',
+  utente: 'utente',
+};
+
+const ROLE_REVERSE_MAPPING: Record<string, string> = {
+  super: 'super_admin',
+  admin: 'admin_studio',
+  assistente: 'assistente',
+  utente: 'utente',
+};
+
 const UserDetail = () => {
   const params = useParams();
   const router = useRouter();
   const isNew = params.id === 'new';
 
-  console.log('UserDetail component rendered:', {
-    paramsId: params.id,
-    isNew,
-    pathname: typeof window !== 'undefined' ? window.location.pathname : 'SSR',
-  });
+  const {
+    data: utente,
+    isLoading,
+    error,
+  } = useUtente(isNew ? '' : (params.id as string));
+
+  const createMutation = useCreateUtente();
+  const updateMutation = useUpdateUtente();
 
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -39,7 +65,6 @@ const UserDetail = () => {
   const [showPassword2, setShowPassword2] = useState(false);
   const [role, setRole] = useState('');
   const [studioQuery, setStudioQuery] = useState('');
-  const [studioResults, setStudioResults] = useState<any[]>([]);
   const [selectedStudio, setSelectedStudio] = useState<any | null>(null);
   const [studioMode, setStudioMode] = useState<'nuovo' | 'esistente' | null>(
     null
@@ -49,115 +74,49 @@ const UserDetail = () => {
   const [studioTelefono, setStudioTelefono] = useState('');
   const [studioEmail, setStudioEmail] = useState('');
 
-  const [loading, setLoading] = useState(!isNew);
-  const [saving, setSaving] = useState(false);
+  const { data: studiData, isLoading: isLoadingStudi } = useStudi(
+    studioQuery.length > 2 ? { search: studioQuery } : undefined
+  );
 
-  useEffect(() => {
-    console.log('useEffect triggered:', { isNew, paramsId: params.id });
-    if (!isNew && params.id) {
-      console.log('Calling fetchUserData with ID:', params.id);
-      fetchUserData(params.id as string);
-    } else {
-      console.log(
-        'Skipping fetchUserData - isNew:',
-        isNew,
-        'params.id:',
-        params.id
-      );
-    }
-  }, [params.id, isNew]);
+  const [alert, setAlert] = useState<AlertState>({
+    show: false,
+    type: 'success',
+    title: '',
+    description: '',
+  });
 
-  const fetchUserData = async (id: string) => {
-    try {
-      setLoading(true);
-      console.log('Fetching user data for ID:', id);
-
-      const mockUserData = {
-        name: 'Mario',
-        surname: 'Rossi',
-        email: 'mario.rossi@example.com',
-        role: 'admin',
-        studio: {
-          nome: 'Studio Test',
-          indirizzo: 'Via Roma 123',
-          telefono: '0123456789',
-          email: 'studio@test.com',
-          isNew: true,
-        },
-      };
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      setName(mockUserData.name || '');
-      setSurname(mockUserData.surname || '');
-      setEmail(mockUserData.email || '');
-      setEmailVerification(mockUserData.email || '');
-      setRole(mockUserData.role || '');
-
-      if (mockUserData.studio) {
-        if (mockUserData.studio.isNew) {
-          setStudioMode('nuovo');
-          setStudioNome(mockUserData.studio.nome || '');
-          setStudioIndirizzo(mockUserData.studio.indirizzo || '');
-          setStudioTelefono(mockUserData.studio.telefono || '');
-          setStudioEmail(mockUserData.studio.email || '');
-        } else {
-          setStudioMode('esistente');
-          setSelectedStudio(mockUserData.studio);
-        }
-      }
-
-      console.log('User data loaded successfully');
-
-      /* 
-      // Codice originale per quando l'API sarà pronta
-      const response = await fetch(`/api/utente/${id}`);
-      if (response.ok) {
-        const userData = await response.json();
-        
-        setName(userData.name || '');
-        setSurname(userData.surname || '');
-        setEmail(userData.email || '');
-        setEmailVerification(userData.email || '');
-        setRole(userData.role || '');
-        
-        if (userData.studio) {
-          if (userData.studio.isNew) {
-            setStudioMode('nuovo');
-            setStudioNome(userData.studio.nome || '');
-            setStudioIndirizzo(userData.studio.indirizzo || '');
-            setStudioTelefono(userData.studio.telefono || '');
-            setStudioEmail(userData.studio.email || '');
-          } else {
-            setStudioMode('esistente');
-            setSelectedStudio(userData.studio);
-          }
-        }
-      } else {
-        console.error('Error fetching user data:', response.status);
-        // Non fare redirect automatico, mostra errore
-        alert('Errore nel caricamento dei dati utente');
-      }
-      */
-    } catch (error) {
-      console.error('Error fetching user:', error);
-      // Non fare redirect automatico, mostra errore
-      alert('Errore nel caricamento dei dati utente');
-    } finally {
-      setLoading(false);
-    }
+  const showAlert = (
+    type: AlertState['type'],
+    title: string,
+    description: string
+  ) => {
+    setAlert({
+      show: true,
+      type,
+      title,
+      description,
+    });
   };
 
   useEffect(() => {
-    if (studioQuery.length > 2) {
-      fetch(`/api/studio?search=${studioQuery}`)
-        .then(res => res.json())
-        .then(setStudioResults)
-        .catch(() => setStudioResults([]));
-    } else {
-      setStudioResults([]);
+    if (utente && !isNew) {
+      setName(utente.nome || '');
+      setSurname(utente.cognome || '');
+      setEmail(utente.email || '');
+      setEmailVerification(utente.email || '');
+
+      const frontendRole = ROLE_MAPPING[utente.ruolo || ''] || '';
+      setRole(frontendRole);
+
+      if (utente.studi && utente.studi.length > 0) {
+        const firstStudio = utente.studi[0];
+        setStudioMode('esistente');
+        setSelectedStudio(firstStudio);
+      } else {
+        setStudioMode(null);
+      }
     }
-  }, [studioQuery]);
+  }, [utente, isNew]);
 
   const passwordsMatch = password === password2 && password.length > 0;
 
@@ -208,49 +167,149 @@ const UserDetail = () => {
   ];
 
   const handleSave = async () => {
+    if (!name.trim() || !surname.trim() || !email.trim()) {
+      showAlert(
+        'error',
+        'Campi obbligatori mancanti',
+        'Nome, Cognome ed Email sono obbligatori'
+      );
+      return;
+    }
+
+    if (!role) {
+      showAlert('error', 'Ruolo mancante', "Seleziona un ruolo per l'utente");
+      return;
+    }
+
+    if (isNew && email !== emailVerification) {
+      showAlert('error', 'Email non coincidono', 'Le email non coincidono');
+      return;
+    }
+
+    if (isNew) {
+      if (!password || password.length < 8) {
+        showAlert(
+          'error',
+          'Password non valida',
+          'La password deve essere di almeno 8 caratteri'
+        );
+        return;
+      }
+
+      if (!/[A-Z]/.test(password)) {
+        showAlert(
+          'error',
+          'Password non valida',
+          'La password deve contenere almeno una lettera maiuscola'
+        );
+        return;
+      }
+
+      if (!/[a-z]/.test(password)) {
+        showAlert(
+          'error',
+          'Password non valida',
+          'La password deve contenere almeno una lettera minuscola'
+        );
+        return;
+      }
+
+      if (!/\d/.test(password)) {
+        showAlert(
+          'error',
+          'Password non valida',
+          'La password deve contenere almeno una cifra'
+        );
+        return;
+      }
+
+      if (password !== password2) {
+        showAlert(
+          'error',
+          'Password non coincidono',
+          'Le password non coincidono'
+        );
+        return;
+      }
+    }
+
     try {
-      setSaving(true);
+      const backendRole = ROLE_REVERSE_MAPPING[role];
 
-      const studioData =
-        studioMode === 'nuovo'
-          ? {
-              nome: studioNome,
-              indirizzo: studioIndirizzo,
-              telefono: studioTelefono,
-              email: studioEmail,
-              isNew: true,
-            }
-          : selectedStudio;
-
-      const userData = {
-        name,
-        surname,
-        email,
-        password: isNew ? password : undefined, // Solo per nuovi utenti
-        role,
-        studio: studioData,
+      const userData: any = {
+        nome: name.trim(),
+        cognome: surname.trim(),
+        email: email.trim(),
+        ruolo: backendRole,
+        attivo: true,
       };
 
-      const url = isNew ? '/api/utente' : `/api/utente/${params.id}`;
-      const method = isNew ? 'POST' : 'PUT';
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      if (response.ok) {
-        router.push('/utente/elenco');
-      } else {
-        console.error('Error saving user');
+      if (isNew) {
+        userData.password = password;
       }
-    } catch (error) {
+
+      if (role === 'super') {
+        userData.studio_action = 'none';
+      } else if (studioMode === 'esistente' && selectedStudio) {
+        userData.studio_action = 'assign';
+        userData.studio_id = selectedStudio.id;
+      } else if (studioMode === 'nuovo') {
+        if (!studioNome.trim()) {
+          showAlert(
+            'error',
+            'Nome studio mancante',
+            'Il nome dello studio è obbligatorio'
+          );
+          return;
+        }
+
+        userData.studio_action = 'create';
+        userData.studio_data = {
+          nome: studioNome.trim(),
+          indirizzo: studioIndirizzo.trim() || null,
+          telefono: studioTelefono.trim() || null,
+          email_contatto: studioEmail.trim() || null,
+        };
+      } else if (role !== 'super') {
+        showAlert(
+          'error',
+          'Studio obbligatorio',
+          'Seleziona il tipo di studio per questo utente'
+        );
+        return;
+      }
+
+      if (!isNew) {
+        userData.id = parseInt(params.id as string);
+      }
+
+      if (isNew) {
+        await createMutation.mutateAsync(userData);
+        showAlert(
+          'success',
+          'Utente creato',
+          "L'utente è stato creato con successo!"
+        );
+      } else {
+        await updateMutation.mutateAsync(userData);
+        showAlert(
+          'success',
+          'Utente aggiornato',
+          'Le modifiche sono state salvate con successo!'
+        );
+      }
+
+      setTimeout(() => {
+        router.push('/utente/elenco');
+      }, 1000);
+    } catch (error: any) {
       console.error('Error saving user:', error);
-    } finally {
-      setSaving(false);
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Si è verificato un errore durante il salvataggio';
+
+      showAlert('error', 'Errore di salvataggio', errorMessage);
     }
   };
 
@@ -258,11 +317,30 @@ const UserDetail = () => {
     router.push('/utente/elenco');
   };
 
-  if (loading) {
+  if (isLoading && !isNew) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader />
       </div>
+    );
+  }
+
+  if (error && !isNew) {
+    return (
+      <TableConatiner
+        btnLabel={''}
+        title={'Errore Caricamento Utente'}
+        action={handleBack}
+      >
+        <div className="text-center py-8">
+          <p className="text-red-600 mb-4">
+            Errore nel caricamento dei dati utente.
+          </p>
+          <Button onClick={handleBack} variant="outline">
+            Torna all&apos;elenco
+          </Button>
+        </div>
+      </TableConatiner>
     );
   }
 
@@ -307,16 +385,18 @@ const UserDetail = () => {
               placeholder="Inserisci un indirizzo email valido"
             />
           </div>
-          <div className="grid w-full items-center gap-3">
-            <Label htmlFor="email-verification">Ripeti Email</Label>
-            <Input
-              type="email"
-              id="email-verification"
-              value={emailVerification}
-              onChange={e => setEmailVerification(e.target.value)}
-              placeholder="Ripeti la tua email"
-            />
-          </div>
+          {isNew && (
+            <div className="grid w-full items-center gap-3">
+              <Label htmlFor="email-verification">Ripeti Email</Label>
+              <Input
+                type="email"
+                id="email-verification"
+                value={emailVerification}
+                onChange={e => setEmailVerification(e.target.value)}
+                placeholder="Ripeti la tua email"
+              />
+            </div>
+          )}
         </div>
 
         {isNew && (
@@ -396,167 +476,234 @@ const UserDetail = () => {
             </div>
           </div>
         )}
-
-        <RadioGroup value={role} onValueChange={setRole} className="mt-3">
-          <Label className="text-sm sm:text-base">Ruolo nel sistema</Label>
-          <div className="space-y-2 sm:space-y-3">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <RadioGroupItem value="super" id="r1" />
-              <Label htmlFor="r1" className="text-sm sm:text-base">
-                Super Admin
-              </Label>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <RadioGroupItem value="admin" id="r2" />
-              <Label htmlFor="r2" className="text-sm sm:text-base">
-                Admin - Dottore - Gestore Studio
-              </Label>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <RadioGroupItem value="assistente" id="r3" />
-              <Label htmlFor="r3" className="text-sm sm:text-base">
-                Assistente - Personale Studio
-              </Label>
-            </div>
-          </div>
-        </RadioGroup>
-
-        <div className="mt-3">
-          <Label className="text-sm sm:text-base mb-2">Tipo di Studio</Label>
-          <Select
-            value={studioMode || ''}
-            onValueChange={(value: 'nuovo' | 'esistente') =>
-              setStudioMode(value)
-            }
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Scegli il tipo di studio" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="nuovo">Nuovo studio</SelectItem>
-              <SelectItem value="esistente">Studio esistente</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {studioMode === 'nuovo' && (
-            <div className="mt-4 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="grid w-full items-center gap-3">
-                  <Label htmlFor="studio-nome" className="text-sm sm:text-base">
-                    Nome Studio
-                  </Label>
-                  <Input
-                    id="studio-nome"
-                    value={studioNome}
-                    onChange={e => setStudioNome(e.target.value)}
-                    placeholder="Inserisci il nome dello studio"
-                  />
-                </div>
-                <div className="grid w-full items-center gap-3">
-                  <Label
-                    htmlFor="studio-indirizzo"
-                    className="text-sm sm:text-base"
-                  >
-                    Indirizzo
-                  </Label>
-                  <Input
-                    id="studio-indirizzo"
-                    value={studioIndirizzo}
-                    onChange={e => setStudioIndirizzo(e.target.value)}
-                    placeholder="Inserisci l'indirizzo"
-                  />
-                </div>
+        {isNew && (
+          <RadioGroup value={role} onValueChange={setRole} className="mt-3">
+            <Label className="text-sm sm:text-base">Ruolo nel sistema</Label>
+            <div className="space-y-2 sm:space-y-3">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <RadioGroupItem value="super" id="r1" />
+                <Label htmlFor="r1" className="text-sm sm:text-base">
+                  Super Admin
+                </Label>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="grid w-full items-center gap-3">
-                  <Label
-                    htmlFor="studio-telefono"
-                    className="text-sm sm:text-base"
-                  >
-                    Telefono
-                  </Label>
-                  <Input
-                    id="studio-telefono"
-                    value={studioTelefono}
-                    onChange={e => setStudioTelefono(e.target.value)}
-                    placeholder="Inserisci il numero di telefono"
-                  />
-                </div>
-                <div className="grid w-full items-center gap-3">
-                  <Label
-                    htmlFor="studio-email"
-                    className="text-sm sm:text-base"
-                  >
-                    Email di Contatto
-                  </Label>
-                  <Input
-                    id="studio-email"
-                    type="email"
-                    value={studioEmail}
-                    onChange={e => setStudioEmail(e.target.value)}
-                    placeholder="Inserisci l'email di contatto"
-                  />
-                </div>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <RadioGroupItem value="admin" id="r2" />
+                <Label htmlFor="r2" className="text-sm sm:text-base">
+                  Admin - Dottore - Gestore Studio
+                </Label>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <RadioGroupItem value="assistente" id="r3" />
+                <Label htmlFor="r3" className="text-sm sm:text-base">
+                  Assistente - Personale Studio
+                </Label>
               </div>
             </div>
-          )}
+          </RadioGroup>
+        )}
+        {role !== 'super' && (
+          <div className="mt-3">
+            <Label className="text-sm sm:text-base mb-2">Tipo di Studio</Label>
+            <Select
+              value={studioMode || ''}
+              onValueChange={(value: 'nuovo' | 'esistente') =>
+                setStudioMode(value)
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Scegli il tipo di studio" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="nuovo">Nuovo studio</SelectItem>
+                <SelectItem value="esistente">Studio esistente</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {studioMode === 'esistente' && (
-            <div className="mt-4 relative">
-              <Label htmlFor="studio-search" className="text-sm sm:text-base">
-                Cerca Studio Esistente
-              </Label>
-              <Input
-                id="studio-search"
-                value={selectedStudio ? selectedStudio.nome : studioQuery}
-                onChange={e => {
-                  setSelectedStudio(null);
-                  setStudioQuery(e.target.value);
-                }}
-                placeholder="Digita il nome dello studio per cercarlo"
-              />
-              {studioResults.length > 0 && (
-                <ul className="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-48 overflow-y-auto">
-                  {studioResults.map(s => (
-                    <li
-                      key={s.id}
-                      className="px-3 py-1 hover:bg-gray-100 cursor-pointer text-sm"
-                      onClick={() => {
-                        setSelectedStudio(s);
-                        setStudioQuery('');
-                        setStudioResults([]);
-                      }}
+            {studioMode === 'nuovo' && (
+              <div className="mt-4 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid w-full items-center gap-3">
+                    <Label
+                      htmlFor="studio-nome"
+                      className="text-sm sm:text-base"
                     >
-                      {s.nome}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          )}
-        </div>
+                      Nome Studio
+                    </Label>
+                    <Input
+                      id="studio-nome"
+                      value={studioNome}
+                      onChange={e => setStudioNome(e.target.value)}
+                      placeholder="Inserisci il nome dello studio"
+                    />
+                  </div>
+                  <div className="grid w-full items-center gap-3">
+                    <Label
+                      htmlFor="studio-indirizzo"
+                      className="text-sm sm:text-base"
+                    >
+                      Indirizzo
+                    </Label>
+                    <Input
+                      id="studio-indirizzo"
+                      value={studioIndirizzo}
+                      onChange={e => setStudioIndirizzo(e.target.value)}
+                      placeholder="Inserisci l'indirizzo"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid w-full items-center gap-3">
+                    <Label
+                      htmlFor="studio-telefono"
+                      className="text-sm sm:text-base"
+                    >
+                      Telefono
+                    </Label>
+                    <Input
+                      id="studio-telefono"
+                      value={studioTelefono}
+                      onChange={e => setStudioTelefono(e.target.value)}
+                      placeholder="Inserisci il numero di telefono"
+                    />
+                  </div>
+                  <div className="grid w-full items-center gap-3">
+                    <Label
+                      htmlFor="studio-email"
+                      className="text-sm sm:text-base"
+                    >
+                      Email di Contatto
+                    </Label>
+                    <Input
+                      id="studio-email"
+                      type="email"
+                      value={studioEmail}
+                      onChange={e => setStudioEmail(e.target.value)}
+                      placeholder="Inserisci l'email di contatto"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {studioMode === 'esistente' && (
+              <div className="mt-4 relative">
+                <Label htmlFor="studio-search" className="text-sm sm:text-base">
+                  Cerca Studio Esistente
+                </Label>
+                <Input
+                  id="studio-search"
+                  value={selectedStudio ? selectedStudio.nome : studioQuery}
+                  onChange={e => {
+                    setSelectedStudio(null);
+                    setStudioQuery(e.target.value);
+                  }}
+                  placeholder="Digita almeno 3 caratteri per cercare..."
+                />
+
+                {isLoadingStudi && studioQuery.length > 2 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow p-3 text-sm text-gray-500">
+                    Ricerca in corso...
+                  </div>
+                )}
+
+                {!isLoadingStudi &&
+                  studiData?.data &&
+                  studiData.data.length > 0 &&
+                  studioQuery.length > 2 && (
+                    <ul className="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-48 overflow-y-auto">
+                      {studiData.data.map((studio: any) => (
+                        <li
+                          key={studio.id}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
+                          onClick={() => {
+                            setSelectedStudio(studio);
+                            setStudioQuery('');
+                          }}
+                        >
+                          <div className="font-medium text-sm">
+                            {studio.nome}
+                          </div>
+                          {studio.stats && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              {studio.stats.total_utenti} utenti •{' '}
+                              {studio.stats.total_giocatori} giocatori
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                {!isLoadingStudi &&
+                  studioQuery.length > 2 &&
+                  (!studiData?.data || studiData.data.length === 0) && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border rounded shadow p-3 text-sm text-gray-500">
+                      Nessuno studio trovato
+                    </div>
+                  )}
+
+                {selectedStudio && (
+                  <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-sm text-blue-900">
+                          {selectedStudio.nome}
+                        </p>
+                        {selectedStudio.stats && (
+                          <p className="text-xs text-blue-700 mt-1">
+                            {selectedStudio.stats.total_utenti} utenti •{' '}
+                            {selectedStudio.stats.total_giocatori} giocatori
+                          </p>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => setSelectedStudio(null)}
+                        className="text-blue-600 hover:text-blue-800 text-xs underline"
+                      >
+                        Cambia
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="flex gap-4 pt-6">
           <Button
             variant="outline"
             onClick={handleBack}
             className="flex-1 sm:flex-none"
+            disabled={createMutation.isPending || updateMutation.isPending}
           >
             Annulla
           </Button>
           <Button
             onClick={handleSave}
-            disabled={saving}
+            disabled={createMutation.isPending || updateMutation.isPending}
             className="flex-1 sm:flex-none"
           >
-            {saving
+            {createMutation.isPending || updateMutation.isPending
               ? 'Salvataggio...'
               : isNew
-                ? 'Crea Utente'
+                ? studioMode === 'nuovo'
+                  ? 'Crea Utente e Studio'
+                  : 'Crea Utente'
                 : 'Aggiorna Utente'}
           </Button>
         </div>
       </div>
+
+      <UniversalAlert
+        isVisible={alert.show}
+        type={alert.type}
+        title={alert.title}
+        description={alert.description}
+        onClose={() => setAlert({ ...alert, show: false })}
+        position="top-right"
+        duration={3000}
+      />
     </TableConatiner>
   );
 };

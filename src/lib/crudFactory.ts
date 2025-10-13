@@ -40,7 +40,7 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: Partial<T>) => {
-        const res = await api.post(`${baseUrl}/update`, data);
+        const res = await api.put(`${baseUrl}/update`, data);
         return res.data;
       },
       onSuccess: () => {
