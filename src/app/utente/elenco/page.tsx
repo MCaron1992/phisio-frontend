@@ -156,15 +156,15 @@ const UsersPage = () => {
       setIsDeleting(true);
 
       try {
-        /*        const response = await deleteMutation.mutateAsync({
+        const response = await deleteMutation.mutateAsync({
           id: selectedRow.id,
         });
 
         const successMessage =
-          response?.message || 'Utente eliminato con successo';*/
+          response?.message || 'Utente eliminato con successo';
 
         setIsDeleting(false);
-        showAlert('success', 'Utente eliminato', 'successMessage');
+        showAlert('success', 'Utente eliminato', successMessage);
         setSelectedRow(null);
       } catch (error: any) {
         setIsDeleting(false);
@@ -222,16 +222,10 @@ const UsersPage = () => {
         description={`Sei sicuro di voler eliminare l'utente ${selectedRow?.nome} ${selectedRow?.cognome}? Questa azione non può essere annullata.`}
       />
 
-      {isDeleting && (
+      {!isDeleting && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="bg-white rounded-lg p-8 shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-200">
             <Loader />
-            <div className="text-center">
-              <p className="text-lg font-semibold text-gray-900">
-                Eliminazione in corso...
-              </p>
-              <p className="text-sm text-gray-500 mt-1">Attendere prego</p>
-            </div>
           </div>
         </div>
       )}

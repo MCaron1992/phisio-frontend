@@ -1,84 +1,312 @@
-#page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
 }
 
-#container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
+.loader-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-#h3 {
-    color: white;
+.pulse-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid;
+  opacity: 0;
 }
 
-#ring {
-    width: 190px;
-    height: 190px;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    position: absolute;
+.pulse-ring-1 {
+  width: 120px;
+  height: 120px;
+  border-color: #3b82f6;
+  animation: pulse-wave 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0s;
 }
 
-#ring:nth-child(1) {
-    border-bottom: 8px solid rgb(255, 141, 249);
-    animation: rotate1 2s linear infinite;
+.pulse-ring-2 {
+  width: 100px;
+  height: 100px;
+  border-color: #10b981;
+  animation: pulse-wave 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0.4s;
 }
 
-@keyframes rotate1 {
-    from {
-        transform: rotateX(50deg) rotateZ(110deg);
-    }
-
-    to {
-        transform: rotateX(50deg) rotateZ(470deg);
-    }
+.pulse-ring-3 {
+  width: 80px;
+  height: 80px;
+  border-color: #06b6d4;
+  animation: pulse-wave 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 0.8s;
 }
 
-#ring:nth-child(2) {
-    border-bottom: 8px solid rgb(255,65,106);
-    animation: rotate2 2s linear infinite;
+@keyframes pulse-wave {
+  0% {
+    transform: scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
 }
 
-@keyframes rotate2 {
-    from {
-        transform: rotateX(20deg) rotateY(50deg) rotateZ(20deg);
-    }
-
-    to {
-        transform: rotateX(20deg) rotateY(50deg) rotateZ(380deg);
-    }
+.loader-center {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%);
+  border-radius: 12px;
+  box-shadow: 
+    0 4px 20px rgba(59, 130, 246, 0.3),
+    0 0 40px rgba(16, 185, 129, 0.2);
+  animation: center-pulse 1.5s ease-in-out infinite;
 }
 
-#ring:nth-child(3) {
-    border-bottom: 8px solid rgb(0,255,255);
-    animation: rotate3 2s linear infinite;
+@keyframes center-pulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(180deg);
+  }
 }
 
-@keyframes rotate3 {
-    from {
-        transform: rotateX(40deg) rotateY(130deg) rotateZ(450deg);
-    }
-
-    to {
-        transform: rotateX(40deg) rotateY(130deg) rotateZ(90deg);
-    }
+.medical-cross {
+  position: relative;
+  width: 30px;
+  height: 30px;
 }
 
-#ring:nth-child(4) {
-    border-bottom: 8px solid rgb(252, 183, 55);
-    animation: rotate4 2s linear infinite;
+.cross-horizontal,
+.cross-vertical {
+  position: absolute;
+  background: white;
+  border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-@keyframes rotate4 {
-    from {
-        transform: rotateX(70deg) rotateZ(270deg);
-    }
+.cross-horizontal {
+  width: 24px;
+  height: 6px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: cross-h-pulse 1.5s ease-in-out infinite;
+}
 
-    to {
-        transform: rotateX(70deg) rotateZ(630deg);
-    }
+.cross-vertical {
+  width: 6px;
+  height: 24px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: cross-v-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cross-h-pulse {
+  0%, 100% {
+    width: 24px;
+    opacity: 1;
+  }
+  50% {
+    width: 20px;
+    opacity: 0.7;
+  }
+}
+
+@keyframes cross-v-pulse {
+  0%, 100% {
+    height: 24px;
+    opacity: 1;
+  }
+  50% {
+    height: 20px;
+    opacity: 0.7;
+  }
+}
+
+.loader-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+}
+
+.loading-label {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #5b709e !important;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.dot-1,
+.dot-2,
+.dot-3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #3b82f6;
+  animation: dot-pulse 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3));
+}
+
+.dot-1 {
+  animation-delay: 0s;
+}
+
+.dot-2 {
+  animation-delay: 0.2s;
+}
+
+.dot-3 {
+  animation-delay: 0.4s;
+}
+
+@keyframes dot-pulse {
+  0%, 80%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+
+.loader-wrapper.compact {
+  gap: 0.5rem;
+  padding: 0;
+}
+
+.loader-wrapper.compact .loader-container {
+  width: 40px;
+  height: 40px;
+}
+
+.loader-wrapper.compact .pulse-ring-1 {
+  width: 40px;
+  height: 40px;
+}
+
+.loader-wrapper.compact .pulse-ring-2 {
+  width: 32px;
+  height: 32px;
+}
+
+.loader-wrapper.compact .pulse-ring-3 {
+  width: 24px;
+  height: 24px;
+}
+
+.loader-wrapper.compact .loader-center {
+  width: 20px;
+  height: 20px;
+}
+
+.loader-wrapper.compact .medical-cross {
+  width: 12px;
+  height: 12px;
+}
+
+.loader-wrapper.compact .cross-horizontal {
+  width: 10px;
+  height: 2px;
+}
+
+.loader-wrapper.compact .cross-vertical {
+  width: 2px;
+  height: 10px;
+}
+
+.loader-wrapper.compact .loader-text {
+  font-size: 0.75rem;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .loading-label {
+    color: #f9fafb;
+  }
+  
+  .loader-center {
+    box-shadow: 
+      0 4px 20px rgba(59, 130, 246, 0.5),
+      0 0 40px rgba(16, 185, 129, 0.3);
+  }
+}
+
+@media (max-width: 640px) {
+  .loader-container {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .pulse-ring-1 {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .pulse-ring-2 {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .pulse-ring-3 {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loader-center {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .medical-cross {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .cross-horizontal {
+    width: 18px;
+  }
+  
+  .cross-vertical {
+    height: 18px;
+  }
+  
+  .loader-text {
+    font-size: 0.875rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring,
+  .loader-center,
+  .cross-horizontal,
+  .cross-vertical,
+  .dot-1,
+  .dot-2,
+  .dot-3 {
+    animation: none;
+  }
+  
+  .loader-center {
+    transform: none;
+  }
 }
