@@ -53,7 +53,7 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: async (data: { id: Id }) => {
-        const res = await api.post(`${baseUrl}/destroy`, data);
+        const res = await api.delete(`${baseUrl}/destroy`, { data });
         return res.data;
       },
       onSuccess: () => {

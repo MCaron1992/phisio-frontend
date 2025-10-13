@@ -9,16 +9,18 @@ import UniversalAlert, {
   AlertState,
 } from '@/components/custom /UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import { Loader } from '@/components/custom /Loader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 const UsersPage = () => {
   const { data, isLoading } = useUtenti();
   const userData = data?.data;
-  const { mutate: DeleteUtente } = useDeleteUtente();
+  const deleteMutation = useDeleteUtente();
   const router = useRouter();
   const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -26,6 +28,19 @@ const UsersPage = () => {
     title: '',
     description: '',
   });
+
+  const showAlert = (
+    type: AlertState['type'],
+    title: string,
+    description: string
+  ) => {
+    setAlert({
+      show: true,
+      type,
+      title,
+      description,
+    });
+  };
 
   const columns: DataTableColumn<Utente>[] = [
     {
@@ -129,7 +144,40 @@ const UsersPage = () => {
   const handelNewAction = () => {
     router.push('/utente/new');
   };
+
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedRow?.id) return;
+
+    setOpenDeleteDialog(false);
+
+    setTimeout(async () => {
+      setIsDeleting(true);
+
+      try {
+        /*        const response = await deleteMutation.mutateAsync({
+          id: selectedRow.id,
+        });
+
+        const successMessage =
+          response?.message || 'Utente eliminato con successo';*/
+
+        setIsDeleting(false);
+        showAlert('success', 'Utente eliminato', 'successMessage');
+        setSelectedRow(null);
+      } catch (error: any) {
+        setIsDeleting(false);
+
+        const errorMessage =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Si è verificato un errore durante l'eliminazione";
+
+        showAlert('error', 'Errore di eliminazione', errorMessage);
+      }
+    }, 600);
+  };
 
   return (
     <>
@@ -165,13 +213,28 @@ const UsersPage = () => {
         duration={3000}
         position="top-right"
       />
+
       <DeleteConfirmDialog
-        onConfirm={() =>
-          selectedRow?.id && DeleteUtente({ id: selectedRow.id })
-        }
+        onConfirm={handleDeleteConfirm}
         onClose={() => setOpenDeleteDialog(false)}
         open={openDeleteDialog}
+        title="Elimina Utente"
+        description={`Sei sicuro di voler eliminare l'utente ${selectedRow?.nome} ${selectedRow?.cognome}? Questa azione non può essere annullata.`}
       />
+
+      {isDeleting && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center">
+          <div className="bg-white rounded-lg p-8 shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-200">
+            <Loader />
+            <div className="text-center">
+              <p className="text-lg font-semibold text-gray-900">
+                Eliminazione in corso...
+              </p>
+              <p className="text-sm text-gray-500 mt-1">Attendere prego</p>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
