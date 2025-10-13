@@ -797,7 +797,6 @@ const UserDetail = () => {
         />
       </TableConatiner>
 
-      {/* Loader Overlay durante eliminazione - FUORI dal TableContainer */}
       {isDeleting && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center">
           <div className="bg-white rounded-lg p-8 shadow-2xl flex flex-col items-center gap-4 animate-in fade-in zoom-in duration-200">

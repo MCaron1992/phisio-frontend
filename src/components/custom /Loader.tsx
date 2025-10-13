@@ -1,6 +1,6 @@
 import './loader.css';
 
-export const Loader = () => {
+export const Loader = ({ text }: { text?: string }) => {
   return (
     <div className="loader-wrapper">
       <div className="loader-container">
@@ -19,7 +19,7 @@ export const Loader = () => {
       <div className="loader-text">
         <span className="dot-1">•</span>
         <span className="dot-1">•</span>
-        <span className="loading-label">Operazione in corso</span>
+        <span className="loading-label">{text}</span>
         <span className="dot-2">•</span>
         <span className="dot-3">•</span>
       </div>
