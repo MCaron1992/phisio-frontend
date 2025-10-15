@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -17,8 +16,14 @@ type Props = {
   open: boolean;
   mode: DialogMode;
   onClose: () => void;
-  onSave?: (data: { newDescrizione: string }) => void;
+  onSave?: (data: {
+    newDescrizione: string;
+    newNome?: string;
+    newSport?: string;
+  }) => void;
   descrizione?: string;
+  nome?: string;
+  sport?: string;
   title?: string;
 };
 
@@ -28,21 +33,27 @@ const CustomDialog = ({
   onClose,
   onSave,
   descrizione,
+  nome,
+  sport,
   title,
 }: Props) => {
   const [newDescrizione, setNewDescrizione] = useState(descrizione || '');
+  const [newNome, setNewNome] = useState(nome || '');
+  const [newSport, setNewSport] = useState(sport || '');
 
   useEffect(() => {
-    if (descrizione) {
-      setNewDescrizione(descrizione);
-    } else {
-      setNewDescrizione('');
-    }
-  }, [descrizione]);
+    setNewDescrizione(descrizione || '');
+    setNewNome(nome || '');
+    setNewSport(sport || '');
+  }, [descrizione, nome, sport]);
 
   const handleSubmit = () => {
     if (onSave) {
-      onSave({ newDescrizione });
+      onSave({
+        newDescrizione,
+        ...(nome !== undefined && { newNome }),
+        ...(sport !== undefined && { newSport }),
+      });
     }
     onClose();
   };
@@ -55,6 +66,22 @@ const CustomDialog = ({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          {nome !== undefined && (
+            <Input
+              placeholder="Nome"
+              value={newNome}
+              onChange={e => setNewNome(e.target.value)}
+            />
+          )}
+
+          {sport !== undefined && (
+            <Input
+              placeholder="Sport"
+              value={newSport}
+              onChange={e => setNewSport(e.target.value)}
+            />
+          )}
+
           <Input
             placeholder="Descrizione"
             value={newDescrizione}
