@@ -1,16 +1,19 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import { Strumenti, useStrumenti, useDeleteStrumento, useUpdateStrumento } from '@/hooks/useCrud';
-import TableConatiner from '@/components/custom /TableContainer';
+import {
+  Strumenti,
+  useStrumenti,
+  useDeleteStrumento,
+  useUpdateStrumento,
+} from '@/hooks/useCrud';
+import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom /CustomDialog';
+import CustomDialog from '@/components/custom/CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
-import { Loader } from '@/components/custom /Loader';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
-import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import { Loader } from '@/components/custom/Loader';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 const StrumentiTable = () => {
   const { data, isLoading } = useStrumenti();

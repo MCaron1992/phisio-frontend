@@ -7,15 +7,13 @@ import {
   useUpdateStudio,
   Studio,
 } from '@/hooks/useCrud';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom /CustomDialog';
+import CustomDialog from '@/components/custom/CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
-import { Loader } from '@/components/custom /Loader';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
-import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import { Loader } from '@/components/custom/Loader';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 const StudioPage = () => {
   const { data, isLoading } = useStudi();

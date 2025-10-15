@@ -5,18 +5,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
-import { Loader } from '@/components/custom /Loader';
+import { Loader } from '@/components/custom/Loader';
 import { DataTable } from '@/components/ui/data-table';
 import { useDeleteUtente, useUtenti, Utente } from '@/hooks/useCrud';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import Link from 'next/link';
 import { Edit, Trash2, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 
 const libraries: 'places'[] = ['places'];
 

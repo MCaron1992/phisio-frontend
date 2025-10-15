@@ -49,7 +49,7 @@ import SplitText from '@/components/bits/SplitText';
 
 import Link from 'next/link';
 import { useExpandedFolders } from '@/hooks/useExpandedFolders';
-import { CollapsibleFolder } from '@/components/custom /CollapsibleFolder';
+import { CollapsibleFolder } from '@/components/custom/CollapsibleFolder';
 import {
   itemsAnatomia,
   itemsGiocatori,

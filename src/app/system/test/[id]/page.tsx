@@ -1,10 +1,10 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { useTest, useUpdateTest } from '@/hooks/useCrud';
-import { Loader } from '@/components/custom /Loader';
-import UniversalAlert from '@/components/custom /UniversalAlert';
+import { Loader } from '@/components/custom/Loader';
+import UniversalAlert from '@/components/custom/UniversalAlert';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';

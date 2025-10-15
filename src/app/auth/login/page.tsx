@@ -7,9 +7,7 @@ import LightRays from '@/components/bits/LightBackground';
 import ElectricBorder from '@/components/bits/ElectricBorder';
 import SplitText from '@/components/bits/SplitText';
 import { useState } from 'react';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import { useAuth } from '@/hooks/useAuth';
 
 const LoginPage = () => {

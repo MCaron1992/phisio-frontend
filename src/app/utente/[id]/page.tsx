@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import {
   useUtente,
   useCreateUtente,
@@ -14,10 +14,8 @@ import {
   useDeleteUtente,
   useStudi,
 } from '@/hooks/useCrud';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
-import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 import {
   Select,
@@ -27,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Eye, EyeOff, BadgeCheck, CircleX } from 'lucide-react';
-import { Loader } from '@/components/custom /Loader';
+import { Loader } from '@/components/custom/Loader';
 import { AxiosError } from 'axios';
 
 const ROLE_MAPPING: Record<string, string> = {

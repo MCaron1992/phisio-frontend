@@ -7,22 +7,22 @@ import {
   useDeleteStrutturaSpecifica,
   useUpdateStrutturaSpecifica,
 } from '@/hooks/useCrud';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom /CustomDialog';
+import CustomDialog from '@/components/custom/CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
-import { Loader } from '@/components/custom /Loader';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
-import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
+import { Loader } from '@/components/custom/Loader';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 const StrutturaSpecificaTable = () => {
   const { data, isLoading } = useStruttureSpecifiche();
   const { mutate: deleteStrutturaSpecifica } = useDeleteStrutturaSpecifica();
   const { mutate: updateStrutturaSpecifica } = useUpdateStrutturaSpecifica();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<StruttureSpecifiche | null>(null);
+  const [selectedRow, setSelectedRow] = useState<StruttureSpecifiche | null>(
+    null
+  );
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

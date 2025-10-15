@@ -5,10 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { MultiSelect, OptionType } from '@/components/ui/multi-select';
-import { Loader } from '@/components/custom /Loader';
+import { Loader } from '@/components/custom/Loader';
 
 const libraries: 'places'[] = ['places'];
 

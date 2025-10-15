@@ -2,8 +2,8 @@
 
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { BreadcrumbNavigation } from '@/components/custom /BreadcrumbNavigation';
-import { UserMenu } from '../custom /UserMenu';
+import { BreadcrumbNavigation } from '@/components/custom/BreadcrumbNavigation';
+import { UserMenu } from '@/components/custom/UserMenu';
 
 interface BreadcrumbItem {
   label: string;

@@ -2,14 +2,12 @@
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import { Utente, useUtenti, useDeleteUtente } from '@/hooks/useCrud';
-import TableConatiner from '@/components/custom /TableContainer';
+import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
 import { Edit, Eye, Trash2 } from 'lucide-react';
-import UniversalAlert, {
-  AlertState,
-} from '@/components/custom /UniversalAlert';
-import DeleteConfirmDialog from '@/components/custom /DeleteConfirmDialog';
-import { Loader } from '@/components/custom /Loader';
+import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { Loader } from '@/components/custom/Loader';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
