@@ -109,8 +109,8 @@ const StrutturaPrincipaleTable = () => {
           setAlert({
             show: true,
             type: 'success',
-            title: 'Update successful',
-            description: 'The item was updated successfully.',
+            title: 'Aggiornamento Eseguito',
+            description: "L'elemento è stato aggiornato con successo",
           });
           setDialogOpen(false);
           setLoading(false);
@@ -119,8 +119,8 @@ const StrutturaPrincipaleTable = () => {
           setAlert({
             show: true,
             type: 'error',
-            title: 'Update failed',
-            description: (err as Error)?.message || 'An error occurred.',
+            title: 'Aggiornamento Fallito',
+            description: (err as Error)?.message || 'Si è verificato un errore',
           });
           setLoading(false);
         },
@@ -136,8 +136,8 @@ const StrutturaPrincipaleTable = () => {
           setAlert({
             show: true,
             type: 'success',
-            title: 'Create successful',
-            description: 'The item was created successfully.',
+            title: 'Creazione Eseguita',
+            description: "L'elemento è stato creato con successo",
           });
           setDialogOpen(false);
           setLoading(false);
@@ -146,8 +146,8 @@ const StrutturaPrincipaleTable = () => {
           setAlert({
             show: true,
             type: 'error',
-            title: 'Create failed',
-            description: (err as Error)?.message || 'An error occurred.',
+            title: 'Creazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore',
           });
           setLoading(false);
         },

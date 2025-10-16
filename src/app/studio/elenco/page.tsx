@@ -114,8 +114,8 @@ const StudioPage = () => {
         setAlert({
           show: true,
           type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
+          title: 'Aggiornamento Eseguito',
+          description: "L'elemento è stato aggiornato con successo",
         });
         setDialogOpen(false);
         setLoading(false);
@@ -124,8 +124,8 @@ const StudioPage = () => {
         setAlert({
           show: true,
           type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
+          title: 'Aggiornamento Fallito',
+          description: err?.message || 'Si è verificato un errore',
         });
         setLoading(false);
       },
