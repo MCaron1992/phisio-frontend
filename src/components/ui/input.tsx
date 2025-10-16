@@ -25,7 +25,7 @@ function Input({ className, title, ...props }: InputProps) {
   const id = React.useId();
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full pb-1">
       
       {title && (
         <label

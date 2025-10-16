@@ -27,8 +27,8 @@ const SelectField = ({
   if (!options) return null;
 
   return (
-    <div className="flex flex-col space-y-1">
-      <label className="text-sm font-medium leading-none text-foreground">
+    <div className="flex flex-col space-y-1 pb-1">
+      <label className="text-sm font-medium leading-none text-foreground pb-1">
         {label}
       </label>
       <Select
