@@ -9,14 +9,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Sport } from '@/hooks/useCrud';
+import SelectField from '@/components/custom/CustomSelectField'
+import { RegioniAnatomicha, Sport, StrutturePrincipali } from '@/hooks/useCrud';
 
 export type DialogMode = 'create' | 'edit' | 'view';
 
@@ -28,11 +22,17 @@ type Props = {
     newDescrizione?: string;
     newNome?: string;
     newSportId?: number;
+    newRegioneId?: number;
+    newStrutturaId?: number;
   }) => void;
   descrizione?: string;
   nome?: string;
   sportsOptions?: Sport[];
   sportId?: number;
+  regioniOptions?: RegioniAnatomicha[];
+  regioneId?: number;
+  struttureOptions?: StrutturePrincipali[];
+  strutturaId?: number;
   title?: string;
 };
 
@@ -45,6 +45,10 @@ const CustomDialog = ({
   nome,
   sportsOptions,
   sportId,
+  regioniOptions,
+  regioneId,
+  struttureOptions,
+  strutturaId,
   title,
 }: Props) => {
   const [newDescrizione, setNewDescrizione] = useState(descrizione || '');
@@ -52,21 +56,50 @@ const CustomDialog = ({
   const [selectedSportId, setSelectedSportId] = useState<string>(
     sportId ? String(sportId) : ''
   );
+  const [selectedRegioneId, setSelectedRegioneId] = useState<string>(
+    regioneId ? String(regioneId) : ''
+  );
+  const [selectedStrutturaId, setSelectedStrutturaId] = useState<string>(
+    strutturaId ? String(strutturaId) : ''
+  );
 
   useEffect(() => {
     setNewDescrizione(descrizione || '');
     setNewNome(nome || '');
     setSelectedSportId(sportId ? String(sportId) : '');
-  }, [descrizione, nome, sportId]);
+    setSelectedRegioneId(regioneId ? String(regioneId) : '');
+    setSelectedStrutturaId(strutturaId ? String(strutturaId) : '');
+  }, [descrizione, nome, sportId, regioneId, strutturaId]);
+
+  const isFormValid = () => {
+    if (nome !== undefined && newNome.trim() === '') {
+      return false;
+    }
+    if (sportsOptions && selectedSportId === '') {
+      return false;
+    }
+    if (regioniOptions && selectedRegioneId === '') {
+      return false;
+    }
+    if (struttureOptions && selectedStrutturaId === '') {
+      return false;
+    }
+
+    return true;
+  };
 
   const handleSubmit = () => {
     if (onSave) {
       const sportIdAsNumber = selectedSportId ? Number(selectedSportId) : undefined;
+      const regioneIdAsNumber = selectedRegioneId ? Number(selectedRegioneId) : undefined;
+      const strutturaIdAsNumber = selectedStrutturaId ? Number(selectedStrutturaId) : undefined;
 
       onSave({
         newDescrizione,
         ...(nome !== undefined && { newNome }),
         ...(sportsOptions && selectedSportId !== '' && { newSportId: sportIdAsNumber }),
+        ...(regioniOptions && selectedRegioneId !== '' && { newRegioneId: regioneIdAsNumber }),
+        ...(struttureOptions && selectedStrutturaId !== '' && { newStrutturaId: strutturaIdAsNumber }),
       });
     }
     onClose();
@@ -89,28 +122,29 @@ const CustomDialog = ({
             />
           )}
 
-          {sportsOptions && (
-            <>
-              <label
-                className="text-sm font-medium leading-none mb-1 text-foreground pb-1"
-              > {"Sport:"}</label>
-              <Select
-                value={selectedSportId}
-                onValueChange={setSelectedSportId}
-              >
-                <SelectTrigger className='w-full'>
-                  <SelectValue placeholder="Seleziona uno Sport..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {sportsOptions.map(sport => (
-                    <SelectItem key={sport.id} value={String(sport.id)}>
-                      {sport.nome}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </>
-          )}
+          <SelectField
+            options={sportsOptions}
+            selectedId={selectedSportId}
+            onSelectChange={setSelectedSportId}
+            label="Sport:"
+            placeholder="Seleziona uno Sport..."
+          />
+
+          <SelectField
+            options={regioniOptions}
+            selectedId={selectedRegioneId}
+            onSelectChange={setSelectedRegioneId}
+            label="Regione Anatomica:"
+            placeholder="Seleziona una Regione anatomica..."
+          />
+
+          <SelectField
+            options={struttureOptions}
+            selectedId={selectedStrutturaId}
+            onSelectChange={setSelectedStrutturaId}
+            label="Struttura Principale:"
+            placeholder="Seleziona una Struttura principale..."
+          />
 
           {descrizione !== undefined && (
             <Input
@@ -122,7 +156,7 @@ const CustomDialog = ({
           )}
         </div>
 
-        <Button onClick={handleSubmit}>
+        <Button onClick={handleSubmit} disabled={!isFormValid()}>
           {mode === 'create' ? 'Crea' : 'Aggiorna'}
         </Button>
       </DialogContent>

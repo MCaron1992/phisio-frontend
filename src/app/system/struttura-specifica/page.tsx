@@ -4,6 +4,8 @@ import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
   StruttureSpecifiche,
   useStruttureSpecifiche,
+  useRegioniAnatomiche,
+  useStrutturePrincipali,
   useDeleteStrutturaSpecifica,
   useUpdateStrutturaSpecifica,
   useCreateStrutturaSpecifica,
@@ -18,6 +20,8 @@ import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 const StrutturaSpecificaTable = () => {
   const { data, isLoading } = useStruttureSpecifiche();
+  const { data: regioniData } = useRegioniAnatomiche();
+  const { data: struttureData } = useStrutturePrincipali();
   const { mutate: deleteStrutturaSpecifica } = useDeleteStrutturaSpecifica();
   const { mutate: updateStrutturaSpecifica } = useUpdateStrutturaSpecifica();
   const { mutate: createStrutturaSpecifica } = useCreateStrutturaSpecifica();
@@ -52,6 +56,24 @@ const StrutturaSpecificaTable = () => {
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
+    },
+    {
+      id: 'regione',
+      header: 'Regione Anatomica',
+      accessorKey: 'regione',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[100px]',
+      cell: ({ row }) => row.regione_anatomica?.nome ?? '-',
+    },
+    {
+      id: 'struttura',
+      header: 'Struttura Principale',
+      accessorKey: 'struttura',
+      sortable: true,
+      filterable: true,
+      width: 'w-64 md:w-96 lg:w-[100px]',
+      cell: ({ row }) => row.struttura_principale?.nome ?? '-',
     },
     {
       id: 'ultimo-aggiornamento',
@@ -94,14 +116,16 @@ const StrutturaSpecificaTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string, newRegioneId?: number, newStrutturaId?: number }) => {
     setLoading(true);
 
     if (selectedRow) {
       const payload: Partial<StruttureSpecifiche> = {
         id: selectedRow.id,
         descrizione: data.newDescrizione,
-        nome: data.newNome 
+        nome: data.newNome,
+        id_regione_anatomica: data.newRegioneId || selectedRow.regione_anatomica?.id,
+        id_struttura_principale: data.newStrutturaId || selectedRow.struttura_principale?.id
       };
 
       updateStrutturaSpecifica(payload, {
@@ -128,7 +152,9 @@ const StrutturaSpecificaTable = () => {
     } else {
       const payload: Partial<StruttureSpecifiche> = {
         descrizione: data.newDescrizione,
-        nome: data.newNome 
+        nome: data.newNome,
+        id_regione_anatomica: data.newRegioneId,
+        id_struttura_principale: data.newStrutturaId
       };
 
       createStrutturaSpecifica(payload, {
@@ -156,7 +182,7 @@ const StrutturaSpecificaTable = () => {
   };
 
   const handleDeleteConfirm = () => {
-    if (!selectedRow?.id) return; 
+    if (!selectedRow?.id) return;
 
     deleteStrutturaSpecifica(
       { id: selectedRow.id },
@@ -169,7 +195,7 @@ const StrutturaSpecificaTable = () => {
             description: 'L\'elemento è stato eliminato con successo.',
           });
           setOpenDeleteDialog(false);
-          setSelectedRow(null); 
+          setSelectedRow(null);
         },
         onError: err => {
           setAlert({
@@ -222,6 +248,10 @@ const StrutturaSpecificaTable = () => {
         onSave={handleSave}
         descrizione={selectedRow?.descrizione || ''}
         nome={selectedRow?.nome || ''}
+        regioniOptions={regioniData}
+        regioneId={selectedRow?.regione_anatomica?.id}
+        struttureOptions={struttureData}
+        strutturaId={selectedRow?.struttura_principale?.id}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />

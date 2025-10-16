@@ -271,6 +271,10 @@ export interface StruttureSpecifiche {
   id: number;
   nome: string;
   descrizione?: string;
+  regione_anatomica?: RegioniAnatomicha;
+  struttura_principale?: StrutturePrincipali;
+  id_regione_anatomica?: number;
+  id_struttura_principale?: number;
   created_at?: string;
   updated_at?: string;
 }

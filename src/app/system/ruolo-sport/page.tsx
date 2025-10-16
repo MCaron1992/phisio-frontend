@@ -214,7 +214,7 @@ const RuoloSportTable = () => {
           data={data ?? []}
           columns={columns}
           rowActions={rowActions}
-          loading={isLoading && sportLoading}
+          loading={isLoading}
           searchKey="nome"
           searchPlaceholder="Cerca ruolo sportivo..."
           emptyMessage="Nessun ruolo sportivo trovato"
