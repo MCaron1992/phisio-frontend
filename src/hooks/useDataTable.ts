@@ -32,16 +32,15 @@ export function useDataTable<T extends Record<string, any>>({
 
   const filteredData = useMemo(() => {
     if (!enableGlobalFilter || !state.search) return data ?? [];
+    const searchValue = state.search.toLowerCase();
+    
     return (data ?? []).filter(item => {
-      return data.filter(item => {
-        const searchValue = state.search.toLowerCase();
-        return columns.some(column => {
-          if (column.accessorKey) {
-            const value = item[column.accessorKey];
-            return value?.toString().toLowerCase().includes(searchValue);
-          }
-          return false;
-        });
+      return columns.some(column => {
+        if (column.accessorKey) {
+          const value = item[column.accessorKey];
+          return value?.toString().toLowerCase().includes(searchValue);
+        }
+        return false;
       });
     });
   }, [data, state.search, columns, enableGlobalFilter]);
