@@ -6,6 +6,7 @@ import {
   useRuoli,
   useDeleteRuolo,
   useUpdateRuolo,
+  useCreateRuolo,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const RuoloSportTable = () => {
   const { data, isLoading } = useRuoli();
   const { mutate: deleteRuolo } = useDeleteRuolo();
   const { mutate: updateRuolo } = useUpdateRuolo();
+  const { mutate: createRuolo } = useCreateRuolo();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Ruoli_Sport | null>(null);
   const [title, setTitle] = useState('');
@@ -99,30 +101,96 @@ const RuoloSportTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
-    updateRuolo(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<Ruoli_Sport> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+        nome: data.newNome,
+      };
+
+      updateRuolo(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<Ruoli_Sport> = {
+        descrizione: data.newDescrizione,
+        nome: data.newNome,
+      };
+
+      createRuolo(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    }
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return;
+
+    deleteRuolo(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: "L'elemento è stato eliminato con successo.",
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuovo Ruolo Sportivo');
     setSelectedRow(null);
@@ -159,7 +227,8 @@ const RuoloSportTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
+        nome={selectedRow?.nome || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -174,8 +243,11 @@ const RuoloSportTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteRuolo({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>

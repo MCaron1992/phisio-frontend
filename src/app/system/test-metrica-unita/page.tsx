@@ -6,6 +6,7 @@ import {
   useApprocci,
   useDeleteApproccio,
   useUpdateApproccio,
+  useCreateApproccio
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const TestMetricaUnitaTable = () => {
   const { data, isLoading } = useApprocci();
   const { mutate: deleteApproccio } = useDeleteApproccio();
   const { mutate: updateApproccio } = useUpdateApproccio();
+  const { mutate: createApproccio } = useCreateApproccio();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Approccio | null>(null);
   const [title, setTitle] = useState('');
@@ -90,30 +92,96 @@ const TestMetricaUnitaTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
-    updateApproccio(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<Approccio> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+        nome: data.newNome 
+      };
+
+      updateApproccio(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<Approccio> = {
+        descrizione: data.newDescrizione,
+        nome: data.newNome 
+      };
+
+      createApproccio(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    };
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return; 
+
+    deleteApproccio(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: 'L\'elemento è stato eliminato con successo.',
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuovo Test Metrica Unità');
     setSelectedRow(null);
@@ -150,7 +218,8 @@ const TestMetricaUnitaTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
+        nome={selectedRow?.nome || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -165,8 +234,11 @@ const TestMetricaUnitaTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteApproccio({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm} 
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        }}
         open={openDeleteDialog}
       />
     </>

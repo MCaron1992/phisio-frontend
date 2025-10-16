@@ -1,7 +1,7 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import { Arto, useArti, useDeleteArto, useUpdateArto } from '@/hooks/useCrud';
+import { Arto, useArti, useDeleteArto, useUpdateArto, useCreateArto } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
 import CustomDialog from '@/components/custom/CustomDialog';
@@ -14,6 +14,7 @@ const ArtoTable = () => {
   const { data, isLoading } = useArti();
   const { mutate: deleteArto } = useDeleteArto();
   const { mutate: updateArto } = useUpdateArto();
+  const { mutate: createArto } = useCreateArto();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Arto | null>(null);
   const [title, setTitle] = useState('');
@@ -85,30 +86,96 @@ const ArtoTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
-    updateArto(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<Arto> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+        nome: data.newNome 
+      };
+
+      updateArto(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<Arto> = {
+        descrizione: data.newDescrizione,
+        nome: data.newNome 
+      };
+
+      createArto(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: (err as Error)?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    };
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return; 
+
+    deleteArto(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: 'L\'elemento è stato eliminato con successo.',
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuovo Arto');
     setSelectedRow(null);
@@ -145,7 +212,8 @@ const ArtoTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
+        nome={selectedRow?.nome || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -160,8 +228,11 @@ const ArtoTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteArto({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm} 
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        }}
         open={openDeleteDialog}
       />
     </>

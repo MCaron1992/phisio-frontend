@@ -6,6 +6,7 @@ import {
   useFasceEta,
   useDeleteFasciaEta,
   useUpdateFasciaEta,
+  useCreateFasciaEta,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const FasciaEtaTable = () => {
   const { data, isLoading } = useFasceEta();
   const { mutate: deleteFasciaEta } = useDeleteFasciaEta();
   const { mutate: updateFasciaEta } = useUpdateFasciaEta();
+  const { mutate: createFasciaEta } = useCreateFasciaEta();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<FasceEta | null>(null);
   const [title, setTitle] = useState('');
@@ -73,36 +75,104 @@ const FasciaEtaTable = () => {
     {
       id: 'delete',
       label: 'Elimina',
-      onClick: row => deleteFasciaEta({ id: row.id }),
+      onClick: row => {
+        setSelectedRow(row);
+        setOpenDeleteDialog(true);
+      },
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione: string}) => {
     setLoading(true);
-    updateFasciaEta(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<FasceEta> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+      };
+
+      updateFasciaEta(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<FasceEta> = {
+        descrizione: data.newDescrizione,
+      };
+      
+      createFasciaEta(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          console.log(err)
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    }
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return; 
+
+    deleteFasciaEta(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: 'L\'elemento è stato eliminato con successo.',
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuova Fascia eta');
     setSelectedRow(null);
@@ -139,7 +209,7 @@ const FasciaEtaTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -154,8 +224,11 @@ const FasciaEtaTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteFasciaEta({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        }}
         open={openDeleteDialog}
       />
     </>

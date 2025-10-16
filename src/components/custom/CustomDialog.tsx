@@ -17,7 +17,7 @@ type Props = {
   mode: DialogMode;
   onClose: () => void;
   onSave?: (data: {
-    newDescrizione: string;
+    newDescrizione?: string;
     newNome?: string;
     newSport?: string;
   }) => void;
@@ -82,11 +82,13 @@ const CustomDialog = ({
             />
           )}
 
-          <Input
-            placeholder="Descrizione"
-            value={newDescrizione}
-            onChange={e => setNewDescrizione(e.target.value)}
-          />
+          {descrizione !== undefined && (
+            <Input
+              placeholder="Descrizione"
+              value={newDescrizione}
+              onChange={e => setNewDescrizione(e.target.value)}
+            />
+          )}
         </div>
 
         <Button onClick={handleSubmit}>

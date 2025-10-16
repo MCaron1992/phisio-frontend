@@ -6,6 +6,7 @@ import {
   useStatiSalute,
   useDeleteStatoSalute,
   useUpdateStatoSalute,
+  useCreateStatoSalute
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const StatoSaluteTable = () => {
   const { data, isLoading } = useStatiSalute();
   const { mutate: deleteStatoSalute } = useDeleteStatoSalute();
   const { mutate: updateStatoSalute } = useUpdateStatoSalute();
+  const { mutate: createStatoSalute } = useCreateStatoSalute();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<StatiSalute | null>(null);
   const [title, setTitle] = useState('');
@@ -90,30 +92,97 @@ const StatoSaluteTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
-    updateStatoSalute(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<StatiSalute> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+        nome: data.newNome
+      };
+      
+      updateStatoSalute(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<StatiSalute> = {
+        descrizione: data.newDescrizione,
+        nome: data.newNome
+      };
+
+      createStatoSalute(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          console.log(err)
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    };
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return; 
+
+    deleteStatoSalute(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: 'L\'elemento è stato eliminato con successo.',
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuovo Stato di Salute');
     setSelectedRow(null);
@@ -150,7 +219,8 @@ const StatoSaluteTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
+        nome={selectedRow?.nome || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -165,8 +235,11 @@ const StatoSaluteTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteStatoSalute({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>

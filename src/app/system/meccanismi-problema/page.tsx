@@ -6,6 +6,7 @@ import {
   useMeccanismiProblema,
   useDeleteMeccanismoProblema,
   useUpdateMeccanismoProblema,
+  useCreateMeccanismoProblema
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,6 +20,7 @@ const MeccanismiProblemaTable = () => {
   const { data, isLoading } = useMeccanismiProblema();
   const { mutate: deleteMeccanismoProblema } = useDeleteMeccanismoProblema();
   const { mutate: updateMeccanismoProblema } = useUpdateMeccanismoProblema();
+  const { mutate: createMeccanismoProblema } = useCreateMeccanismoProblema();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<MeccanismoProblema | null>(
     null
@@ -92,30 +94,97 @@ const MeccanismiProblemaTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
-    updateMeccanismoProblema(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Update successful',
-          description: 'The item was updated successfully.',
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Update failed',
-          description: err?.message || 'An error occurred.',
-        });
-        setLoading(false);
-      },
-    });
+
+    if (selectedRow) {
+      const payload: Partial<MeccanismoProblema> = {
+        id: selectedRow.id,
+        descrizione: data.newDescrizione,
+        nome: data.newNome
+      };
+
+      updateMeccanismoProblema(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Update successful',
+            description: 'The item was updated successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Update failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    } else {
+      const payload: Partial<MeccanismoProblema> = {
+        descrizione: data.newDescrizione,
+        nome: data.newNome
+      };
+
+      createMeccanismoProblema(payload, {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Create successful',
+            description: 'The item was created successfully.',
+          });
+          setDialogOpen(false);
+          setLoading(false);
+        },
+        onError: err => {
+          console.log(err)
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Create failed',
+            description: err?.message || 'An error occurred.',
+          });
+          setLoading(false);
+        },
+      });
+    };
   };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return; 
+
+    deleteMeccanismoProblema(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: 'L\'elemento è stato eliminato con successo.',
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null); 
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
+
   const handelNewAction = () => {
     setTitle('Nuovo Meccanismo Problema');
     setSelectedRow(null);
@@ -152,7 +221,8 @@ const MeccanismiProblemaTable = () => {
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione}
+        descrizione={selectedRow?.descrizione || ''}
+        nome={selectedRow?.nome || ''}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
@@ -167,8 +237,11 @@ const MeccanismiProblemaTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteMeccanismoProblema({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>
