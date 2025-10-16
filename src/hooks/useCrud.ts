@@ -166,6 +166,7 @@ export interface Ruoli_Sport {
   created_at?: string;
   updated_at?: string;
   sport?: Sport;
+  sport_id?: number;
 }
 export const {
   useIndex: useRuoli,

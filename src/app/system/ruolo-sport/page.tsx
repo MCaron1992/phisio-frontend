@@ -3,7 +3,9 @@ import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
   Ruoli_Sport,
+  Sport,
   useRuoli,
+  useSport,
   useDeleteRuolo,
   useUpdateRuolo,
   useCreateRuolo,
@@ -18,6 +20,7 @@ import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 
 const RuoloSportTable = () => {
   const { data, isLoading } = useRuoli();
+  const {data: sportData, isLoading: sportLoading} = useSport();
   const { mutate: deleteRuolo } = useDeleteRuolo();
   const { mutate: updateRuolo } = useUpdateRuolo();
   const { mutate: createRuolo } = useCreateRuolo();
@@ -101,7 +104,7 @@ const RuoloSportTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
+  const handleSave = (data: { newDescrizione?: string, newNome?: string, newSportId?: number }) => {
     setLoading(true);
 
     if (selectedRow) {
@@ -109,6 +112,7 @@ const RuoloSportTable = () => {
         id: selectedRow.id,
         descrizione: data.newDescrizione,
         nome: data.newNome,
+        sport_id: data.newSportId || selectedRow.sport?.id,
       };
 
       updateRuolo(payload, {
@@ -136,6 +140,7 @@ const RuoloSportTable = () => {
       const payload: Partial<Ruoli_Sport> = {
         descrizione: data.newDescrizione,
         nome: data.newNome,
+        sport_id: data.newSportId
       };
 
       createRuolo(payload, {
@@ -209,7 +214,7 @@ const RuoloSportTable = () => {
           data={data ?? []}
           columns={columns}
           rowActions={rowActions}
-          loading={isLoading}
+          loading={isLoading && sportLoading}
           searchKey="nome"
           searchPlaceholder="Cerca ruolo sportivo..."
           emptyMessage="Nessun ruolo sportivo trovato"
@@ -229,6 +234,8 @@ const RuoloSportTable = () => {
         onSave={handleSave}
         descrizione={selectedRow?.descrizione || ''}
         nome={selectedRow?.nome || ''}
+        sportsOptions={sportData}
+        sportId={selectedRow?.sport?.id}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
       />
