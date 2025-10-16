@@ -9,6 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Sport } from '@/hooks/useCrud';
 
 export type DialogMode = 'create' | 'edit' | 'view';
 
@@ -19,11 +27,12 @@ type Props = {
   onSave?: (data: {
     newDescrizione?: string;
     newNome?: string;
-    newSport?: string;
+    newSportId?: number;
   }) => void;
   descrizione?: string;
   nome?: string;
-  sport?: string;
+  sportsOptions?: Sport[];
+  sportId?: number;
   title?: string;
 };
 
@@ -34,25 +43,30 @@ const CustomDialog = ({
   onSave,
   descrizione,
   nome,
-  sport,
+  sportsOptions,
+  sportId,
   title,
 }: Props) => {
   const [newDescrizione, setNewDescrizione] = useState(descrizione || '');
   const [newNome, setNewNome] = useState(nome || '');
-  const [newSport, setNewSport] = useState(sport || '');
+  const [selectedSportId, setSelectedSportId] = useState<string>(
+    sportId ? String(sportId) : ''
+  );
 
   useEffect(() => {
     setNewDescrizione(descrizione || '');
     setNewNome(nome || '');
-    setNewSport(sport || '');
-  }, [descrizione, nome, sport]);
+    setSelectedSportId(sportId ? String(sportId) : '');
+  }, [descrizione, nome, sportId]);
 
   const handleSubmit = () => {
     if (onSave) {
+      const sportIdAsNumber = selectedSportId ? Number(selectedSportId) : undefined;
+
       onSave({
         newDescrizione,
         ...(nome !== undefined && { newNome }),
-        ...(sport !== undefined && { newSport }),
+        ...(sportsOptions && selectedSportId !== '' && { newSportId: sportIdAsNumber }),
       });
     }
     onClose();
@@ -68,23 +82,40 @@ const CustomDialog = ({
         <div className="space-y-4 py-4">
           {nome !== undefined && (
             <Input
-              placeholder="Nome"
+              title='Nome:'
+              placeholder="Inserisci un nome"
               value={newNome}
               onChange={e => setNewNome(e.target.value)}
             />
           )}
 
-          {sport !== undefined && (
-            <Input
-              placeholder="Sport"
-              value={newSport}
-              onChange={e => setNewSport(e.target.value)}
-            />
+          {sportsOptions && (
+            <>
+              <label
+                className="text-sm font-medium leading-none mb-1 text-foreground pb-1"
+              > {"Sport:"}</label>
+              <Select
+                value={selectedSportId}
+                onValueChange={setSelectedSportId}
+              >
+                <SelectTrigger className='w-full'>
+                  <SelectValue placeholder="Seleziona uno Sport..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {sportsOptions.map(sport => (
+                    <SelectItem key={sport.id} value={String(sport.id)}>
+                      {sport.nome}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </>
           )}
 
           {descrizione !== undefined && (
             <Input
-              placeholder="Descrizione"
+              title='Descrizione:'
+              placeholder="Inserisci una descrizione"
               value={newDescrizione}
               onChange={e => setNewDescrizione(e.target.value)}
             />
