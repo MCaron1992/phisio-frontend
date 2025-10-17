@@ -14,6 +14,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useRouter } from 'next/navigation';
 
 const StudioPage = () => {
   const { data, isLoading } = useStudi();
@@ -25,6 +26,7 @@ const StudioPage = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const router = useRouter();
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -132,10 +134,10 @@ const StudioPage = () => {
     });
   };
   const handelNewAction = () => {
-    setTitle('Nuovo Arto');
     setSelectedRow(null);
-    setDialogOpen(true);
+    router.push('/studio/new');
   };
+
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
   return (

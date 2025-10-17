@@ -458,6 +458,7 @@ export interface Players {
   data_nascita: string;
   sesso?: string;
   etnia?: string;
+  id_studio?: number;
   attivo?: boolean;
   created_at?: string;
   updated_at?: string;

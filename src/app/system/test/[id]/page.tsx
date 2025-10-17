@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import SelectField from '@/components/custom/CustomSelectField';
 import {
   Select,
@@ -32,6 +32,21 @@ const TestDetail = () => {
   const { mutate: updateTest } = useUpdateTest();
   const { mutate: createTest } = useCreateTest();
 
+  const [formData, setFormData] = useState(
+    {
+      nome_abbreviato: '',
+      nome_esteso: '',
+      descrizione: '',
+      lateralita: test?.lateralita,
+      tempo_di_recupero: '',
+      istruzioni_verbali: '',
+      id_categoria_funzionale: '',
+    }
+  )
+  useEffect(() => {
+    setFormData({...test});
+  },[test])
+
   const [alert, setAlert] = useState({
     show: false,
     type: 'success' as 'success' | 'error',
@@ -50,7 +65,11 @@ const TestDetail = () => {
       istruzioni_verbali: '',
       id_categoria_funzionale: '',
     },
-    values: test,
+    values: {
+      ...test,
+      id_categoria_funzionale: test?.id_categoria_funzionale,
+      lateralita: test?.lateralita
+    }
   });
 
   if (isLoading && !test) return <Loader />;
