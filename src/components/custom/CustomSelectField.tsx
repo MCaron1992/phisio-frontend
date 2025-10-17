@@ -1,4 +1,4 @@
-import { RegioniAnatomicha, Sport, StrutturePrincipali } from '@/hooks/useCrud';
+import { CategoriaFunzionale, RegioniAnatomicha, Sport, StrutturePrincipali } from '@/hooks/useCrud';
 import {
   Select,
   SelectContent,
@@ -7,7 +7,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
-type FKOption = Sport | RegioniAnatomicha | StrutturePrincipali;
+type FKOption = Sport | RegioniAnatomicha | StrutturePrincipali | CategoriaFunzionale;
 
 interface SelectFieldProps {
   options: FKOption[] | undefined;
@@ -25,10 +25,10 @@ const SelectField = ({
   placeholder,
 }: SelectFieldProps) => {
   if (!options) return null;
-
+  console.log(selectedId)
   return (
     <div className="flex flex-col space-y-1 pb-1">
-      <label className="text-sm font-medium leading-none text-foreground pb-1">
+      <label className="text-sm font-medium leading-none text-foreground pb-3">
         {label}
       </label>
       <Select

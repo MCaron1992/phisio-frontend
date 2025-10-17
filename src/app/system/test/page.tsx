@@ -1,7 +1,7 @@
 'use client';
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import { Test, useTests, useDeleteTest, useUpdateTest } from '@/hooks/useCrud';
+import { Test, useTests, useDeleteTest } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
 import { Eye, Trash2 } from 'lucide-react';
@@ -14,7 +14,6 @@ const TestTable = () => {
   const { data, isLoading } = useTests();
   const router = useRouter();
   const { mutate: deleteTest } = useDeleteTest();
-  const { mutate: updateTest } = useUpdateTest();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Test | null>(null);
   const [title, setTitle] = useState('');
@@ -82,7 +81,7 @@ const TestTable = () => {
         const categoria = row.categoria_funzionale;
         return categoria ? (
           <Link
-            href={`/categorie-funzionali/${categoria.id}`}
+            href={`/system/categoria-funzionale`}
             className="lg:rt-r-weight-medium text-blue-600 hover:underline "
           >
             {categoria.nome}
@@ -126,34 +125,39 @@ const TestTable = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
-    setLoading(true);
-    updateTest(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Aggiornamento Eseguito',
-          description: "L'elemento è stato aggiornato con successo",
-        });
-        setDialogOpen(false);
-        setLoading(false);
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return;
+
+    deleteTest(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: "L'elemento è stato eliminato con successo.",
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
       },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Aggiornamento Fallito',
-          description: err?.message || 'Si è verificato un errore',
-        });
-        setLoading(false);
-      },
-    });
+    );
   };
+
   const handelNewAction = () => {
     setTitle('Nuovo Test');
     setSelectedRow(null);
-    setDialogOpen(true);
+    router.push('/system/test/new');
   };
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
@@ -193,8 +197,11 @@ const TestTable = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => selectedRow?.id && deleteTest({ id: selectedRow.id })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>

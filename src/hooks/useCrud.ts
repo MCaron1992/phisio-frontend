@@ -324,7 +324,7 @@ export interface Test {
   lateralita?: string;
   istruzioni_verbali?: string;
   categoria_funzionale?: CategoriaFunzionale;
-  tempo_di_recupero?: string;
+  tempo_di_recupero?: number;
   foto?: string;
   video?: string;
   created_at?: string;
@@ -334,7 +334,7 @@ export interface Test {
 export const {
   useIndex: useTests,
   useShow: useTest,
-  useStore: useCreateuseTest,
+  useStore: useCreateTest,
   useUpdate: useUpdateTest,
   useDestroy: useDeleteTest,
 } = createCrudHooks<Test>('/system/tests', 'test');

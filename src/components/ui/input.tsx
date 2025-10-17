@@ -30,7 +30,7 @@ function Input({ className, title, ...props }: InputProps) {
       {title && (
         <label
           htmlFor={id}
-          className="text-sm font-medium leading-none mb-1 text-foreground pb-1"
+          className="text-sm font-medium leading-none mb-1 text-foreground pb-3"
         >
           {title}
         </label>
