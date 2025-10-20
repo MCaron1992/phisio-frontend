@@ -15,6 +15,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const TeamsTable = () => {
   const { data, isLoading } = useTeams();
@@ -26,6 +27,8 @@ const TeamsTable = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user, isLoadingUser } = useAuth();
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -54,7 +57,7 @@ const TeamsTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Teams>[] = [
+  const rowActions: DataTableAction<Teams>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -82,7 +85,7 @@ const TeamsTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newNome?: string }) => {
     setLoading(true);
@@ -185,6 +188,7 @@ const TeamsTable = () => {
         btnLabel={'Nuova Squadra'}
         title={'Squadre'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

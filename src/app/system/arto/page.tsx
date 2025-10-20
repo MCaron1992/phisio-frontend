@@ -9,17 +9,20 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const ArtoTable = () => {
   const { data, isLoading } = useArti();
   const { mutate: deleteArto } = useDeleteArto();
   const { mutate: updateArto } = useUpdateArto();
   const { mutate: createArto } = useCreateArto();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Arto | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -56,7 +59,7 @@ const ArtoTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Arto>[] = [
+  const rowActions: DataTableAction<Arto>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -84,7 +87,7 @@ const ArtoTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
@@ -189,6 +192,7 @@ const ArtoTable = () => {
         btnLabel={'Nuovo Arto'}
         title={'Arto'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

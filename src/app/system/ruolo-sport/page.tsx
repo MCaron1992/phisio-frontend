@@ -17,6 +17,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const RuoloSportTable = () => {
   const { data, isLoading } = useRuoli();
@@ -24,11 +25,13 @@ const RuoloSportTable = () => {
   const { mutate: deleteRuolo } = useDeleteRuolo();
   const { mutate: updateRuolo } = useUpdateRuolo();
   const { mutate: createRuolo } = useCreateRuolo();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Ruoli_Sport | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -74,7 +77,7 @@ const RuoloSportTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Ruoli_Sport>[] = [
+  const rowActions: DataTableAction<Ruoli_Sport>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -102,7 +105,7 @@ const RuoloSportTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string, newSportId?: number }) => {
     setLoading(true);
@@ -209,6 +212,7 @@ const RuoloSportTable = () => {
         btnLabel={'Nuovo Ruolo Sportivo'}
         title={'Ruoli Sportivi'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

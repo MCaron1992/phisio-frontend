@@ -10,6 +10,7 @@ import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 const TestTable = () => {
   const { data, isLoading } = useTests();
   const router = useRouter();
@@ -19,6 +20,8 @@ const TestTable = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user, isLoadingUser } = useAuth();
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -103,7 +106,7 @@ const TestTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Test>[] = [
+  const rowActions: DataTableAction<Test>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Dettaglio',
@@ -123,7 +126,7 @@ const TestTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleDeleteConfirm = () => {
     if (!selectedRow?.id) return;
@@ -167,6 +170,7 @@ const TestTable = () => {
         btnLabel={'Nuovo Test'}
         title={'Test'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

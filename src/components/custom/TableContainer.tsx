@@ -10,6 +10,7 @@ type TableContainerProps = {
   title?: string;
   btnLabel?: string;
   onBtnClick?: () => void;
+  enabled?: boolean;
 };
 
 const TableContainer: React.FC<TableContainerProps> = ({
@@ -18,6 +19,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
   title,
   btnLabel,
   onBtnClick,
+  enabled = true,
 }) => {
   return (
     <section aria-labelledby="approcci-title" style={style.section}>
@@ -32,6 +34,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
             <Button
               onClick={onBtnClick || action}
               className="transition-all duration-200 hover:shadow-lg"
+              disabled={!enabled}
             >
               <motion.span
                 initial={{ opacity: 0 }}

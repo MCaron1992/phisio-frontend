@@ -15,6 +15,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const LivelloSportivoTable = () => {
   const { data, isLoading } = useLivelliSportivi();
@@ -26,6 +27,8 @@ const LivelloSportivoTable = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { user, isLoadingUser } = useAuth();
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -62,7 +65,7 @@ const LivelloSportivoTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<LivelloSportivi>[] = [
+  const rowActions: DataTableAction<LivelloSportivi>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -90,7 +93,7 @@ const LivelloSportivoTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
@@ -195,6 +198,7 @@ const LivelloSportivoTable = () => {
         btnLabel={'Nuovo Livello Sportivo'}
         title={'Livello Sportivo'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

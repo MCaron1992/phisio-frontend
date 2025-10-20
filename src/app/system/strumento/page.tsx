@@ -15,17 +15,20 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const StrumentiTable = () => {
   const { data, isLoading } = useStrumenti();
   const { mutate: deleteStrumento } = useDeleteStrumento();
   const { mutate: updateStrumento } = useUpdateStrumento();
   const { mutate: createStrumento } = useCreateStrumento();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Strumenti | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -62,7 +65,7 @@ const StrumentiTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Strumenti>[] = [
+  const rowActions: DataTableAction<Strumenti>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -90,7 +93,7 @@ const StrumentiTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
@@ -195,6 +198,7 @@ const StrumentiTable = () => {
         btnLabel={'Nuovo Strumento'}
         title={'Strumenti'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

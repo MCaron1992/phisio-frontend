@@ -17,6 +17,7 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const StrutturaSpecificaTable = () => {
   const { data, isLoading } = useStruttureSpecifiche();
@@ -25,6 +26,7 @@ const StrutturaSpecificaTable = () => {
   const { mutate: deleteStrutturaSpecifica } = useDeleteStrutturaSpecifica();
   const { mutate: updateStrutturaSpecifica } = useUpdateStrutturaSpecifica();
   const { mutate: createStrutturaSpecifica } = useCreateStrutturaSpecifica();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<StruttureSpecifiche | null>(
     null
@@ -32,6 +34,7 @@ const StrutturaSpecificaTable = () => {
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -86,7 +89,7 @@ const StrutturaSpecificaTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<StruttureSpecifiche>[] = [
+  const rowActions: DataTableAction<StruttureSpecifiche>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -114,7 +117,7 @@ const StrutturaSpecificaTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string, newRegioneId?: number, newStrutturaId?: number }) => {
     setLoading(true);
@@ -223,6 +226,7 @@ const StrutturaSpecificaTable = () => {
         btnLabel={'Nuova Struttura Specifica'}
         title={'Strutture Specifiche'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

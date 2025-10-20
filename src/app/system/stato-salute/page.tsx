@@ -15,17 +15,20 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const StatoSaluteTable = () => {
   const { data, isLoading } = useStatiSalute();
   const { mutate: deleteStatoSalute } = useDeleteStatoSalute();
   const { mutate: updateStatoSalute } = useUpdateStatoSalute();
   const { mutate: createStatoSalute } = useCreateStatoSalute();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<StatiSalute | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -62,7 +65,7 @@ const StatoSaluteTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<StatiSalute>[] = [
+  const rowActions: DataTableAction<StatiSalute>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -90,7 +93,7 @@ const StatoSaluteTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
@@ -196,6 +199,7 @@ const StatoSaluteTable = () => {
         btnLabel={'Nuovo Stato di Salute'}
         title={'Stati di Salute'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}

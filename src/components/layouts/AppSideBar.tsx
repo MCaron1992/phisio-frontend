@@ -67,7 +67,7 @@ export function AppSidebar() {
   const [activeTestTab, setActiveTestTab] = useState<string>('strength');
   const { user, isLoadingUser } = useAuth();
 
-  console.log('user : ', user);
+  //console.log('user : ', user);
   const { isExpanded, toggle, hydrated } = useExpandedFolders([], {
     storageKey: 'ea:sidebar:expanded',
   });

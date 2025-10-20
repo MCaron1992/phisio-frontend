@@ -15,17 +15,20 @@ import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
+import { useAuth } from '@/hooks/useAuth';
 
 const UnitaMisuraTable = () => {
   const { data, isLoading } = useUnitaMisura();
   const { mutate: deleteUnitaMisura } = useDeleteUnitaMisura();
   const { mutate: updateUnitaMisura } = useUpdateUnitaMisura();
   const { mutate: createUnitaMisura } = useCreateUnitaMisura();
+  const { user } = useAuth();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<UnitaMisura | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const isSuperAdmin = user?.data.ruolo === 'super_admin';
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -62,7 +65,7 @@ const UnitaMisuraTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<UnitaMisura>[] = [
+  const rowActions: DataTableAction<UnitaMisura>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -90,7 +93,7 @@ const UnitaMisuraTable = () => {
       icon: <Trash2 className="h-4 w-4" />,
       variant: 'destructive',
     },
-  ];
+  ] : [];
 
   const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
     setLoading(true);
@@ -195,6 +198,7 @@ const UnitaMisuraTable = () => {
         btnLabel={'Nuova Unità di Misura'}
         title={'Unità di Misura'}
         action={() => handelNewAction()}
+        enabled={isSuperAdmin}
       >
         <DataTable
           data={data ?? []}
