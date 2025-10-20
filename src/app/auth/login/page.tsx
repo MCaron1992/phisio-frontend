@@ -70,7 +70,7 @@ const LoginPage = () => {
             "Hai effettuato l'accesso con successo!"
           );
           setTimeout(() => {
-            window.location.href = '/dashboard';
+            window.location.href = '/';
           }, 1500);
         },
         onError: () => {

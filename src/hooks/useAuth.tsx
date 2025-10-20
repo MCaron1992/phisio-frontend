@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import api from '@/lib/axios';
-import { getToken } from '@/lib/auth-storage';
 
 type LoginPayload = { email: string; password: string };
 
@@ -13,7 +12,7 @@ export function useAuth() {
       const res = await api.get('/auth/me');
       return res.data;
     },
-    enabled: !!getToken(),
+    retry: false,
   });
 
   const loginMutation = useMutation({
@@ -22,9 +21,8 @@ export function useAuth() {
       return res.data;
     },
     onSuccess: data => {
-      const { token, user } = data.data;
-      localStorage.setItem('token', token);
-
+      const { user, token } = data.data;
+      document.cookie = `token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax; Secure`;
       queryClient.setQueryData(['user'], user);
     },
   });
@@ -32,10 +30,11 @@ export function useAuth() {
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await api.post('/auth/logout');
-      localStorage.removeItem('token');
     },
     onSuccess: () => {
+      document.cookie = 'token=; path=/; max-age=0';
       queryClient.removeQueries({ queryKey: ['user'] });
+      window.location.href = '/auth/login';
     },
   });
 

@@ -4,7 +4,6 @@ import './globals.css';
 import ReactQueryProvider from '@/providers/react-query-provider';
 import ConditionalLayout from '@/components/layouts/ConditionalLayout';
 import '@/components/custom/loader.css';
-import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,11 +31,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-slate-900 min-h-screen w-full `}
       >
         <ReactQueryProvider>
-          <ConditionalLayout>
-            <ProtectedRoute>
-              {children}
-            </ProtectedRoute>
-          </ConditionalLayout>
+          <ConditionalLayout>{children}</ConditionalLayout>
         </ReactQueryProvider>
       </body>
     </html>
