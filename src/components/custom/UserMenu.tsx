@@ -12,9 +12,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export function UserMenu() {
   const { user, isLoadingUser, logout, isLoggingOut } = useAuth();
+  const router = useRouter();
 
   if (isLoadingUser) {
     return (
@@ -80,7 +82,10 @@ export function UserMenu() {
 
           <DropdownMenuItem
             className="text-red-400 hover:bg-slate-700 hover:text-red-300"
-            onClick={() => logout()}
+            onClick={() => {
+              logout();
+              router.push(`/auth/login`);
+            }}
             disabled={isLoggingOut}
           >
             <LogOut className="h-4 w-4 mr-2" />
