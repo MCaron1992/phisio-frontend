@@ -109,9 +109,9 @@ const LoginPage = () => {
           speed={0.5}
           chaos={4}
           thickness={2}
-          style={{ borderRadius: 16 }}
+          className='w-full max-w-md'
         >
-          <Card style={{ width: '30rem', height: '25rem' }}>
+          <Card className="w-full h-auto">
             <SplitText
               text="Energy Analytics"
               className="text-3xl font-bold text-center"
