@@ -9,7 +9,6 @@ import SplitText from '@/components/bits/SplitText';
 import { useState } from 'react';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import { useAuth } from '@/hooks/useAuth';
-import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 
 const LoginPage = () => {
@@ -109,9 +108,9 @@ const LoginPage = () => {
           speed={0.5}
           chaos={4}
           thickness={2}
-          className='w-full max-w-md'
+          style={{ borderRadius: 16 }}
         >
-          <Card className="w-full h-auto">
+          <Card style={{ width: '30rem', height: '25rem' }}>
             <SplitText
               text="Energy Analytics"
               className="text-3xl font-bold text-center"
@@ -139,6 +138,7 @@ const LoginPage = () => {
                     id="email"
                     name="email"
                     type="email"
+                    placeholder="test@test.com"
                     required
                   />
                 </div>
@@ -154,26 +154,25 @@ const LoginPage = () => {
                     </a>
                   </div>
                   <div className="relative">
-                    <input
+                    <Input
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
                       required
-                      className={cn(
-                        'file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex w-full min-w-0 rounded-md border bg-transparent px-3 py-2 min-h-9 text-base shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none overflow-hidden pr-10', // Added pr-10 for icon space
-                        'focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]',
-                        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
-                      )}
                     />
                     <button
-                      type="button" 
+                      type="button"
                       onClick={() => setShowPassword(prev => !prev)}
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-200 transition-colors z-10"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      aria-label={
+                        showPassword ? 'Hide password' : 'Show password'
+                      }
                     >
-                      {showPassword 
-                        ? <EyeOff className="h-4 w-4"/> 
-                        : <Eye className="h-4 w-4"/>}
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
                     </button>
                   </div>
                 </div>

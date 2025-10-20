@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import SelectField from '@/components/custom/CustomSelectField'
+import SelectField from '@/components/custom/CustomSelectField';
 import { RegioniAnatomicha, Sport, StrutturePrincipali } from '@/hooks/useCrud';
+import { CustomTextArea } from '@/components/custom/CustomTextArea';
 
 export type DialogMode = 'create' | 'edit' | 'view';
 
@@ -90,16 +91,27 @@ const CustomDialog = ({
 
   const handleSubmit = () => {
     if (onSave) {
-      const sportIdAsNumber = selectedSportId ? Number(selectedSportId) : undefined;
-      const regioneIdAsNumber = selectedRegioneId ? Number(selectedRegioneId) : undefined;
-      const strutturaIdAsNumber = selectedStrutturaId ? Number(selectedStrutturaId) : undefined;
+      const sportIdAsNumber = selectedSportId
+        ? Number(selectedSportId)
+        : undefined;
+      const regioneIdAsNumber = selectedRegioneId
+        ? Number(selectedRegioneId)
+        : undefined;
+      const strutturaIdAsNumber = selectedStrutturaId
+        ? Number(selectedStrutturaId)
+        : undefined;
 
       onSave({
         newDescrizione,
         ...(nome !== undefined && { newNome }),
-        ...(sportsOptions && selectedSportId !== '' && { newSportId: sportIdAsNumber }),
-        ...(regioniOptions && selectedRegioneId !== '' && { newRegioneId: regioneIdAsNumber }),
-        ...(struttureOptions && selectedStrutturaId !== '' && { newStrutturaId: strutturaIdAsNumber }),
+        ...(sportsOptions &&
+          selectedSportId !== '' && { newSportId: sportIdAsNumber }),
+        ...(regioniOptions &&
+          selectedRegioneId !== '' && { newRegioneId: regioneIdAsNumber }),
+        ...(struttureOptions &&
+          selectedStrutturaId !== '' && {
+            newStrutturaId: strutturaIdAsNumber,
+          }),
       });
     }
     onClose();
@@ -114,8 +126,8 @@ const CustomDialog = ({
 
         <div className="space-y-4 py-4">
           {nome !== undefined && (
-            <Input
-              title='Nome:'
+            <CustomTextArea
+              title="Nome:"
               placeholder="Inserisci un nome"
               value={newNome}
               onChange={e => setNewNome(e.target.value)}
@@ -145,10 +157,9 @@ const CustomDialog = ({
             label="Struttura Principale:"
             placeholder="Seleziona una Struttura principale..."
           />
-
           {descrizione !== undefined && (
-            <Input
-              title='Descrizione:'
+            <CustomTextArea
+              title="Descrizione:"
               placeholder="Inserisci una descrizione"
               value={newDescrizione}
               onChange={e => setNewDescrizione(e.target.value)}

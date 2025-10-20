@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.BASE_URL,
+  baseURL: 'https://energy-analytics-api.cloudbits.it/api/v1',
   withCredentials: true,
 });
 
