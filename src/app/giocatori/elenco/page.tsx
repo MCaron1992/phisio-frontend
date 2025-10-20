@@ -110,9 +110,7 @@ const GicatoriPage = () => {
       id: 'edit',
       label: 'Modifica',
       onClick: row => {
-        setTitle('Modifica Arto');
-        setSelectedRow(row);
-        setDialogOpen(true);
+        router.push(`/giocatori/${row.id}`);
       },
       icon: <Edit className="h-4 w-4" />,
     },
@@ -128,30 +126,6 @@ const GicatoriPage = () => {
     },
   ];
 
-  const handleSave = (data: { newDescrizione: string }) => {
-    setLoading(true);
-    updateArto(data, {
-      onSuccess: () => {
-        setAlert({
-          show: true,
-          type: 'success',
-          title: 'Aggiornamento Eseguito',
-          description: "L'elemento è stato aggiornato con successo",
-        });
-        setDialogOpen(false);
-        setLoading(false);
-      },
-      onError: err => {
-        setAlert({
-          show: true,
-          type: 'error',
-          title: 'Aggiornamento Fallito',
-          description: err?.message || 'Si è verificato un errore',
-        });
-        setLoading(false);
-      },
-    });
-  };
   const handelNewAction = () => {
     setTitle('Nuovo Giocatore');
     setSelectedRow(null);
@@ -185,14 +159,6 @@ const GicatoriPage = () => {
           }}
         />
       </TableConatiner>
-      <CustomDialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        onSave={handleSave}
-        descrizione={selectedRow?.nome}
-        title={title}
-        mode={selectedRow ? 'edit' : 'create'}
-      />
       {loading && <Loader />}
       <UniversalAlert
         title={alert.title}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,7 @@ import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { Loader } from '@/components/custom/Loader';
 import { DataTable } from '@/components/ui/data-table';
-import { useDeleteUtente, useUtenti, Utente } from '@/hooks/useCrud';
+import { Utente, useStudio } from '@/hooks/useCrud';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import Link from 'next/link';
 import { Edit, Trash2, Save, X } from 'lucide-react';
@@ -19,26 +19,35 @@ import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 const libraries: 'places'[] = ['places'];
 
 const StudioDetail = () => {
-  const { data, isLoading } = useUtenti();
-  const userData = data?.data;
-  const { mutate: DeleteUtente } = useDeleteUtente();
+  const [userData, setUserData] = useState<Utente[]>([]);
   const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
-
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
   const params = useParams();
   const router = useRouter();
-  const isNew = params.id === 'new';
 
   const [isEditMode, setIsEditMode] = useState(false);
-
+  const { data: studio, isLoading, isError } = useStudio(params.id as string)
   const [studioData, setStudioData] = useState({
     id: params.id,
-    name: 'Studio FisioEnergy Milano',
-    phone: '+39 02 1234567',
-    email: 'milano@fisioenergy.it',
-    address: 'Via Roma 123, 20100 Milano, MI, Italia',
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
   });
+
+  useEffect(() => {
+    setStudioData({
+      ...studioData,
+      name: studio?.nome,
+      phone: studio?.telefono,
+      email: studio?.email_contatto,
+      address: studio?.indirizzo
+    });
+    setUserData([
+      ...(studio?.admins ?? []), 
+      ...(studio?.operators ?? []) 
+  ]);
+  }, [studio])
 
   const [name, setName] = useState(studioData.name);
   const [phone, setPhone] = useState(studioData.phone);
@@ -561,7 +570,7 @@ const StudioDetail = () => {
             transition={{ duration: 0.4, delay: 0.4 }}
           >
             <DataTable
-              data={userData ?? []}
+              data={ userData ?? []}
               columns={columns}
               rowActions={rowActions}
               loading={isLoading}
@@ -574,7 +583,7 @@ const StudioDetail = () => {
               pagination={{
                 page: 1,
                 pageSize: 10,
-                total: data?.length ?? 0,
+                total: userData?.length ?? 0,
               }}
             />
           </motion.div>

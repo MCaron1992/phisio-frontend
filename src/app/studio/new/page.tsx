@@ -9,6 +9,7 @@ import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { MultiSelect, OptionType } from '@/components/ui/multi-select';
 import { Loader } from '@/components/custom/Loader';
+import { useStudio, useCreateStudio, useUpdateStudio, useUtenti } from '@/hooks/useCrud';
 
 const libraries: 'places'[] = ['places'];
 
@@ -30,8 +31,13 @@ const mockAssistants: OptionType[] = [
 ];
 
 const NewStudio = () => {
-  const params = useParams();
+  const { id } = useParams();
   const router = useRouter();
+  const isEditMode = (id && id !== 'new');
+  const testQuery = isEditMode
+      ? useStudio(id as string)
+      : { data: null, isLoading: false, isError: false, error: null };
+  const { data: studio, isLoading, isError, error } = testQuery
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
