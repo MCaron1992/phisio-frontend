@@ -3,9 +3,11 @@ import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
   Players,
+  Studio,
   useDeletePlayer,
   usePlayers,
   useUpdatePlayer,
+  useStudi
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -15,20 +17,21 @@ import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const GicatoriPage = () => {
   const { data, isLoading } = usePlayers();
-  console.log(data);
   const userData = data?.data;
   const { mutate: deleteArto } = useDeletePlayer();
   const { mutate: updateArto } = useUpdatePlayer();
+  const { data: studiData } = useStudi();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Players | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-   const router = useRouter();
-
+  const router = useRouter();
+  console.log(studiData)
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     type: 'success',
@@ -85,6 +88,19 @@ const GicatoriPage = () => {
       sortable: true,
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
+      cell: ({ row }) => {
+        const studio = studiData.data.find((s: Studio) => s.id === row.id_studio);
+        return studio ? (
+          <Link
+            href={`/studio/elenco`}
+            className="lg:rt-r-weight-medium text-blue-600 hover:underline "
+          >
+            {studio.nome}
+          </Link>
+        ) : (
+          '-'
+        );
+      },
     },
 
     {

@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import SelectField from "@/components/custom/CustomSelectField";
 import { DateInput } from "@/components/ui/date-input";
+import { useForm } from "react-hook-form";
 
 
 const PlayerDetail = () => {
@@ -45,6 +46,20 @@ const PlayerDetail = () => {
     title: '',
     description: '',
     shouldNavigate: false,
+  });
+
+  const form = useForm({
+    defaultValues: {
+      nome: '',
+      cognome: '',
+      sesso: '',
+      data_nascita: '',
+      etnia: '',
+      id_studio: '',
+    },
+    values: {
+      ...player,
+    }
   });
 
   if (isLoading && !player) return <Loader />;
@@ -70,7 +85,6 @@ const PlayerDetail = () => {
   const onSubmit = (values: any) => {
     const payload = {
       ...values,
-      
     };
 
     const onSuccess = () => {
@@ -107,22 +121,25 @@ const PlayerDetail = () => {
       title={isEditMode ? 'Modifica Giocatore' : 'Nuovo giocatore'}
       action={() => router.back()}
     >
-      <>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="bg-white p-6 rounded shadow space-y-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label className={'mb-3'}>Nome</Label>
-            <Input />
+            <Input {...form.register('nome')}/>
           </div>
           <div>
             <Label className={'mb-3'}>Cognome</Label>
-            <Input />
+            <Input {...form.register('cognome')}/>
           </div>
           <div>
             <Label className={'mb-3'}>Sesso</Label>
             <Select
-              value={''}
+              value={form.watch('sesso')}
               onValueChange={(value: string) => {
-
+                form.setValue('sesso', value, { shouldValidate: true });
               }}
             >
               <SelectTrigger className="w-full">
@@ -136,14 +153,17 @@ const PlayerDetail = () => {
           </div>
           <div>
             <Label className={'mb-3'}>Data di Nascita</Label>
-            <DateInput />
+            <DateInput 
+              defaultValue={form.watch('data_nascita')}
+              onInput={(e) => form.setValue('data_nascita', e.currentTarget.value, { shouldValidate: true })}
+            />
           </div>
           <div>
             <Label className={'mb-3'}>Etnia</Label>
             <Select
-              value={''}
+              value={form.watch('etnia')}
               onValueChange={(value: string) => {
-
+                form.setValue('etnia', value, { shouldValidate: true });
               }}
             >
               <SelectTrigger className="w-full">
@@ -160,9 +180,9 @@ const PlayerDetail = () => {
             <div>
               <SelectField
                 options={studiData?.data}
-                selectedId={''}
+                selectedId={form.watch('id_studio')}
                 onSelectChange={(newId: string) => {
-
+                  form.setValue('id_studio', newId, { shouldValidate: true });
                 }}
                 label="Studio"
                 placeholder="Seleziona uno Studio..." />
@@ -198,7 +218,7 @@ const PlayerDetail = () => {
           isVisible={alert.show}
           onClose={() => {
             if (alert.shouldNavigate) {
-              router.push('/system/test');
+              router.push('/giocatori/elenco');
             } else {
               setAlert((prev) => ({ ...prev, show: false }));
             }
@@ -207,7 +227,7 @@ const PlayerDetail = () => {
           duration={3000}
           position="top-right"
         />
-      </>
+      </form>
     </TableConatiner >
   );
 };

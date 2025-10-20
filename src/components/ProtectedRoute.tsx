@@ -18,7 +18,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoadingUser, router, pathname]);
 
-  if (isLoadingUser || (!user && pathname !== '/auth/login')) {
+  if (isLoadingUser && !user && pathname !== '/auth/login') {
     return (
       <Loader />
     );
