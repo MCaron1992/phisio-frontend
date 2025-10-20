@@ -31,7 +31,7 @@ export function useAuth() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await api.post('/logout');
+      await api.post('/auth/logout');
       localStorage.removeItem('token');
     },
     onSuccess: () => {
