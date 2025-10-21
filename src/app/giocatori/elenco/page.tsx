@@ -21,8 +21,7 @@ import Link from 'next/link';
 const GicatoriPage = () => {
   const { data, isLoading } = usePlayers();
   const userData = data?.data;
-  const { mutate: deleteArto } = useDeletePlayer();
-  const { mutate: updateArto } = useUpdatePlayer();
+  const { mutate: deletePlayer } = useDeletePlayer();
   const { data: studiData, isLoading: studiLoading } = useStudi();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Players | null>(null);
@@ -91,7 +90,7 @@ const GicatoriPage = () => {
         const studio = studiData?.data.find((s: Studio) => s.id === row.id_studio);
         return studio ? (
           <Link
-            href={`/studio/elenco`}
+            href={`/studio/${studio.id}`}
             className="lg:rt-r-weight-medium text-blue-600 hover:underline "
           >
             {studio.nome}
@@ -146,8 +145,37 @@ const GicatoriPage = () => {
     setSelectedRow(null);
     router.push('/giocatori/new')
   };
-  
+
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return;
+
+    deletePlayer(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: "L'elemento è stato eliminato con successo.",
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
+  };
 
   return (
     <>
@@ -185,8 +213,11 @@ const GicatoriPage = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteArto({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>

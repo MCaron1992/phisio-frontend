@@ -76,13 +76,6 @@ const StudioPage = () => {
 
   const rowActions: DataTableAction<Studio>[] = [
     {
-      id: 'view',
-      label: 'Visualizza',
-      onClick: row => console.log('Visualizza', row),
-      icon: <Eye className="h-4 w-4" />,
-      show: () => false,
-    },
-    {
       id: 'edit',
       label: 'Modifica',
       onClick: row => {
@@ -105,6 +98,35 @@ const StudioPage = () => {
   const handelNewAction = () => {
     setSelectedRow(null);
     router.push('/studio/new');
+  };
+
+  const handleDeleteConfirm = () => {
+    if (!selectedRow?.id) return;
+
+    deleteStudio(
+      { id: selectedRow.id },
+      {
+        onSuccess: () => {
+          setAlert({
+            show: true,
+            type: 'success',
+            title: 'Eliminazione Riuscita',
+            description: "L'elemento è stato eliminato con successo.",
+          });
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        },
+        onError: err => {
+          setAlert({
+            show: true,
+            type: 'error',
+            title: 'Eliminazione Fallita',
+            description: (err as Error)?.message || 'Si è verificato un errore.',
+          });
+          setOpenDeleteDialog(false);
+        },
+      },
+    );
   };
 
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
@@ -145,8 +167,11 @@ const StudioPage = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteStudio({ id: selectedRow?.id! })}
-        onClose={() => setOpenDeleteDialog(false)}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
       />
     </>

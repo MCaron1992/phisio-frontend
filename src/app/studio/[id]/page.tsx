@@ -30,31 +30,44 @@ const StudioDetail = () => {
   const { data: studio, isLoading, isError } = useStudio(params.id as string)
   const [studioData, setStudioData] = useState({
     id: params.id,
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
+    name: studio?.nome || '',
+    phone: studio?.telefono || '',
+    email: studio?.email_contatto || '',
+    address: studio?.indirizzo || '',
   });
 
-  useEffect(() => {
-    setStudioData({
-      ...studioData,
-      name: studio?.nome,
-      phone: studio?.telefono,
-      email: studio?.email_contatto,
-      address: studio?.indirizzo
-    });
-    setUserData([
-      ...(studio?.admins ?? []),
-      ...(studio?.operators ?? [])
-    ]);
-  }, [studio])
 
-  const [name, setName] = useState(studioData.name);
-  const [phone, setPhone] = useState(studioData.phone);
-  const [email, setEmail] = useState(studioData.email);
-  const [emailVerification, setEmailVerification] = useState(studioData.email);
-  const [address, setAddress] = useState(studioData.address);
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [emailVerification, setEmailVerification] = useState('');
+  const [address, setAddress] = useState('');
+
+  useEffect(() => {
+    if (studio) {
+
+      setStudioData({
+        id: params.id as string,
+        name: studio.nome,
+        phone: studio.telefono,
+        email: studio.email_contatto,
+        address: studio.indirizzo
+      });
+
+
+      setName(studio.nome);
+      setPhone(studio.telefono);
+      setEmail(studio.email_contatto);
+      setEmailVerification(studio.email_contatto);
+      setAddress(studio.indirizzo);
+
+
+      setUserData([
+        ...(studio.admins ?? []),
+        ...(studio.operators ?? [])
+      ]);
+    }
+  }, [studio, params.id])
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -305,7 +318,6 @@ const StudioDetail = () => {
                       id="name"
                       value={name}
                       onChange={e => setName(e.target.value)}
-                      placeholder={studioData.name}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </motion.div>
@@ -318,7 +330,7 @@ const StudioDetail = () => {
                     transition={{ duration: 0.2 }}
                     className="px-3 py-2 text-sm bg-muted rounded-md transition-colors duration-200 hover:bg-muted/80"
                   >
-                    {studioData.name}
+                    {studioData.name || <span className="text-gray-400 italic">Nessun nome</span>}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -344,7 +356,6 @@ const StudioDetail = () => {
                       id="telefono"
                       value={phone}
                       onChange={e => setPhone(e.target.value)}
-                      placeholder={studioData.phone}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </motion.div>
@@ -357,7 +368,7 @@ const StudioDetail = () => {
                     transition={{ duration: 0.2 }}
                     className="px-3 py-2 text-sm bg-muted rounded-md transition-colors duration-200 hover:bg-muted/80"
                   >
-                    {studioData.phone}
+                    {studioData.phone || <span className="text-gray-400 italic">Nessun telefono</span>}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -385,7 +396,6 @@ const StudioDetail = () => {
                       id="email"
                       value={email}
                       onChange={e => setEmail(e.target.value)}
-                      placeholder={studioData.email}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </motion.div>
@@ -398,7 +408,7 @@ const StudioDetail = () => {
                     transition={{ duration: 0.2 }}
                     className="px-3 py-2 text-sm bg-muted rounded-md transition-colors duration-200 hover:bg-muted/80"
                   >
-                    {studioData.email}
+                    {studioData.email || <span className="text-gray-400 italic">Nessuna email</span>}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -424,7 +434,6 @@ const StudioDetail = () => {
                       id="email-verification"
                       value={emailVerification}
                       onChange={e => setEmailVerification(e.target.value)}
-                      placeholder={studioData.email}
                       className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
                     />
                   </motion.div>
@@ -437,7 +446,7 @@ const StudioDetail = () => {
                     transition={{ duration: 0.2 }}
                     className="px-3 py-2 text-sm bg-muted rounded-md transition-colors duration-200 hover:bg-muted/80"
                   >
-                    {studioData.email}
+                    {studioData.email || <span className="text-gray-400 italic">Nessuna email</span>}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -486,7 +495,7 @@ const StudioDetail = () => {
                   transition={{ duration: 0.2 }}
                   className="px-3 py-2 text-sm bg-muted rounded-md transition-colors duration-200 hover:bg-muted/80"
                 >
-                  {studioData.address}
+                  {studioData.address || <span className="text-gray-400 italic">Nessun indirizzo</span>}
                 </motion.div>
               )}
             </AnimatePresence>

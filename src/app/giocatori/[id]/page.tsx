@@ -79,8 +79,10 @@ const PlayerDetail = () => {
   if (!player && isEditMode) return <p>Nessun test trovato</p>;
 
   const isFormValid = () => {
-    return true
-  }
+    const { nome, cognome, sesso, data_nascita, etnia, id_studio } = form.watch();
+
+    return !!nome && !!cognome && !!sesso && !!data_nascita && !!etnia && !!id_studio;
+  };
 
   const onSubmit = (values: any) => {
     const payload = {
