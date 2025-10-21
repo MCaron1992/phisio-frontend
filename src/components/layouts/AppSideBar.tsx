@@ -59,6 +59,7 @@ import {
   itemsTestMetriche,
   itemsUtente,
   itemsUtenteRuoli,
+  itemsFattiGiocatore
 } from '@/constant/itemsSideBar';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -132,6 +133,13 @@ export function AppSidebar() {
             Gestione Utente
           </SidebarGroupLabel>
           <SidebarGroupContent>
+          <CollapsibleFolder
+              id="fattiGiocatore"
+              label="Fatti Giocatore"
+              isExpanded={isExpanded}
+              onToggle={toggle}
+              items={itemsFattiGiocatore}
+            />
             <CollapsibleFolder
               id="utente"
               label="Utente"

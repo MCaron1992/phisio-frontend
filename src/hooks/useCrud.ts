@@ -469,3 +469,19 @@ export const {
   useUpdate: useUpdatePlayer,
   useDestroy: useDeletePlayer,
 } = createCrudHooks<Players>('/giocatore', 'giocatore');
+
+/**
+ * Fatti Giocatore
+ *
+ * */
+export interface FattiGiocatore {
+  id: number;
+  
+}
+export const {
+  useIndex: useFattiGiocatori,
+  useShow: useFattiGiocatore,
+  useStore: useCreateFattiGiocatore,
+  useUpdate: useUpdateFattiGiocatore,
+  useDestroy: useDeleteFattiGiocatore,
+} = createCrudHooks<FattiGiocatore>('/fatti-giocatore', 'fatti-giocatore');

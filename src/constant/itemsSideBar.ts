@@ -15,6 +15,23 @@ import {
   Trophy,
   Microscope,
 } from 'lucide-react';
+
+export const itemsFattiGiocatore = [
+  {
+    key: 'fattiGiocatore-elenco',
+    label: 'Elenco',
+    icon: Activity,
+    href: '/fatti_giocatore/elenco',
+  },
+  {
+    key: 'fattiGiocatore-nuovo',
+    label: 'Nuovo',
+    icon: Zap,
+    href: '/fatti_giocatore/new',
+    onClick: () => console.log('Nuovo clicked!'),
+  },
+];
+
 export const itemsUtente = [
   {
     key: 'utente-elenco',
