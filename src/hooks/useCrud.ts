@@ -431,7 +431,6 @@ export const {
 export interface Studio {
   id: number;
   nome: string;
-  cognome?: string;
   email: string;
   email_verified_at?: string;
   ruolo?: string;

@@ -4,12 +4,10 @@ import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
   useStudi,
   useDeleteStudio,
-  useUpdateStudio,
   Studio,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom/CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
@@ -19,11 +17,8 @@ import { useRouter } from 'next/navigation';
 const StudioPage = () => {
   const { data, isLoading } = useStudi();
   const studioData = data?.data;
-  const { mutate: deleteArto } = useDeleteStudio();
-  const { mutate: updateArto } = useUpdateStudio();
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const { mutate: deleteStudio } = useDeleteStudio();
   const [selectedRow, setSelectedRow] = useState<Studio | null>(null);
-  const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const router = useRouter();
@@ -150,7 +145,7 @@ const StudioPage = () => {
         position="top-right"
       />
       <DeleteConfirmDialog
-        onConfirm={() => deleteArto({ id: selectedRow?.id! })}
+        onConfirm={() => deleteStudio({ id: selectedRow?.id! })}
         onClose={() => setOpenDeleteDialog(false)}
         open={openDeleteDialog}
       />

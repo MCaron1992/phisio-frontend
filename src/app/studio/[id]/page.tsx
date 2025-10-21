@@ -9,7 +9,7 @@ import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { Loader } from '@/components/custom/Loader';
 import { DataTable } from '@/components/ui/data-table';
-import { Utente, useStudio } from '@/hooks/useCrud';
+import { Utente, useStudio, useUpdateStudio } from '@/hooks/useCrud';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import Link from 'next/link';
 import { Edit, Trash2, Save, X } from 'lucide-react';
@@ -24,6 +24,7 @@ const StudioDetail = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const params = useParams();
   const router = useRouter();
+  const { mutate: updateStudio } = useUpdateStudio();
 
   const [isEditMode, setIsEditMode] = useState(false);
   const { data: studio, isLoading, isError } = useStudio(params.id as string)
@@ -44,9 +45,9 @@ const StudioDetail = () => {
       address: studio?.indirizzo
     });
     setUserData([
-      ...(studio?.admins ?? []), 
-      ...(studio?.operators ?? []) 
-  ]);
+      ...(studio?.admins ?? []),
+      ...(studio?.operators ?? [])
+    ]);
   }, [studio])
 
   const [name, setName] = useState(studioData.name);
@@ -108,23 +109,41 @@ const StudioDetail = () => {
 
   const handleEditToggle = () => {
     if (isEditMode) {
-      setSaving(true);
-      setTimeout(() => {
-        setSaving(false);
-        setIsEditMode(false);
+      const payload = {
+        id: Number(studioData.id),
+        nome: name.trim(),
+        telefono: phone.trim(),
+        email_contatto: email.trim(),
+        indirizzo: address.trim(),
+      };
+
+      const onSuccess = () => {
         setStudioData({
           ...studioData,
-          name,
-          phone,
-          email,
-          address,
+          name: payload.nome,
+          phone: payload.telefono,
+          email: payload.email_contatto,
+          address: payload.indirizzo,
         });
+
+        setIsEditMode(false);
         showAlert(
           'success',
           'Studio aggiornato',
           'Le modifiche sono state salvate con successo!'
         );
-      }, 1500);
+      };
+
+      const onError = (err: any) => {
+        setIsEditMode(true);
+        showAlert(
+          'error',
+          'Errore di Salvataggio',
+          err?.message || 'Errore durante il salvataggio delle modifiche.'
+        );
+      };
+
+      updateStudio(payload, { onSuccess, onError });
     } else {
       setIsEditMode(true);
     }
@@ -570,7 +589,7 @@ const StudioDetail = () => {
             transition={{ duration: 0.4, delay: 0.4 }}
           >
             <DataTable
-              data={ userData ?? []}
+              data={userData ?? []}
               columns={columns}
               rowActions={rowActions}
               loading={isLoading}
