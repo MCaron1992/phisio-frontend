@@ -11,7 +11,6 @@ import {
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom/CustomDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
@@ -24,14 +23,14 @@ const GicatoriPage = () => {
   const userData = data?.data;
   const { mutate: deleteArto } = useDeletePlayer();
   const { mutate: updateArto } = useUpdatePlayer();
-  const { data: studiData } = useStudi();
+  const { data: studiData, isLoading: studiLoading } = useStudi();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Players | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const router = useRouter();
-  console.log(studiData)
+
   const [alert, setAlert] = useState<AlertState>({
     show: false,
     type: 'success',
@@ -89,7 +88,7 @@ const GicatoriPage = () => {
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
       cell: ({ row }) => {
-        const studio = studiData.data.find((s: Studio) => s.id === row.id_studio);
+        const studio = studiData?.data.find((s: Studio) => s.id === row.id_studio);
         return studio ? (
           <Link
             href={`/studio/elenco`}
