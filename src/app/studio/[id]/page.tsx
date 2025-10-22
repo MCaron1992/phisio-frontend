@@ -9,22 +9,28 @@ import TableConatiner from '@/components/custom/TableContainer';
 import { LoadScript, Autocomplete } from '@react-google-maps/api';
 import { Loader } from '@/components/custom/Loader';
 import { DataTable } from '@/components/ui/data-table';
-import { Utente, useStudio, useUpdateStudio } from '@/hooks/useCrud';
+import { Utente, useStudio, useUpdateStudio, useUtenti } from '@/hooks/useCrud';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
-import Link from 'next/link';
 import { Edit, Trash2, Save, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
+import { MultiSelect, OptionType } from '@/components/ui/multi-select';
 
 const libraries: 'places'[] = ['places'];
 
 const StudioDetail = () => {
-  const [userData, setUserData] = useState<Utente[]>([]);
   const [selectedRow, setSelectedRow] = useState<Utente | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const params = useParams();
   const router = useRouter();
   const { mutate: updateStudio } = useUpdateStudio();
+
+  const { data: usersData, isLoading: userLoading } = useUtenti();
+  const users = usersData?.data;
+  const [selectedAdmins, setSelectedAdmins] = useState<number[]>([]);
+  const [selectedAssistants, setSelectedAssistants] = useState<number[]>([]);
+  const [adminOptions, setAdminOptions] = useState<OptionType[]>([]);
+  const [assistantOptions, setAssistantOptions] = useState<OptionType[]>([]);
 
   const [isEditMode, setIsEditMode] = useState(false);
   const { data: studio, isLoading, isError } = useStudio(params.id as string)
@@ -42,10 +48,10 @@ const StudioDetail = () => {
   const [email, setEmail] = useState('');
   const [emailVerification, setEmailVerification] = useState('');
   const [address, setAddress] = useState('');
+  const [currentStudioUser, setcurrentStudioUser] = useState<Utente[]>([]);
 
   useEffect(() => {
     if (studio) {
-
       setStudioData({
         id: params.id as string,
         name: studio.nome,
@@ -54,20 +60,37 @@ const StudioDetail = () => {
         address: studio.indirizzo
       });
 
-
       setName(studio.nome);
       setPhone(studio.telefono);
       setEmail(studio.email_contatto);
       setEmailVerification(studio.email_contatto);
       setAddress(studio.indirizzo);
-
-
-      setUserData([
+      setcurrentStudioUser([
         ...(studio.admins ?? []),
         ...(studio.operators ?? [])
       ]);
     }
-  }, [studio, params.id])
+  }, [studio, params.id]);
+
+  useEffect(() => {
+    if (users && currentStudioUser.length >= 0) {
+      const mapUtenteToOption = (utente: Utente): OptionType => ({
+        id: utente.id,
+        label: `${utente.nome} ${utente.cognome} - ${utente.email}`,
+        value: utente.email,
+      });
+  
+      const currentUserIds = new Set(currentStudioUser.map(u => u.id));
+      const availableUsers = users.filter((u: Utente) => !currentUserIds.has(u.id));
+  
+      setAdminOptions(
+        availableUsers.filter((u: Utente) => u.ruolo === 'admin_studio').map(mapUtenteToOption)
+      );
+      setAssistantOptions(
+        availableUsers.filter((u: Utente) => u.ruolo === 'assistente').map(mapUtenteToOption)
+      );
+    }
+  }, [users, currentStudioUser])
 
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -128,6 +151,7 @@ const StudioDetail = () => {
         telefono: phone.trim(),
         email_contatto: email.trim(),
         indirizzo: address.trim(),
+        admin_ids: [...selectedAdmins, ...selectedAssistants],
       };
 
       const onSuccess = () => {
@@ -218,31 +242,6 @@ const StudioDetail = () => {
       cell: ({ value }) => (value == true ? 'true' : 'false'),
     },
     {
-      id: 'studio',
-      header: 'Studio',
-      accessorKey: 'studio',
-      sortable: true,
-      filterable: true,
-      width: 'w-64 md:w-96 lg:w-[300px]',
-      cell: ({ row }) => {
-        const studio = row.studi ?? [];
-        return (
-          <div>
-            {studio.length === 0 ? (
-              <span>-- --</span>
-            ) : (
-              <Link
-                href={`/studio/${studio[0]?.id}`}
-                className="lg:rt-r-weight-medium text-blue-600 hover:underline"
-              >
-                {studio[0]?.nome}
-              </Link>
-            )}
-          </div>
-        );
-      },
-    },
-    {
       id: 'ultimo-aggiornamento',
       header: 'ultimo aggiornamento',
       accessorKey: 'updated_at',
@@ -264,7 +263,7 @@ const StudioDetail = () => {
     },
     {
       id: 'delete',
-      label: 'Elimina',
+      label: 'Rimuovi',
       onClick: row => {
         setSelectedRow(row);
         setOpenDeleteDialog(true);
@@ -499,6 +498,50 @@ const StudioDetail = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {isEditMode &&
+              <div className="space-y-3 mt-3">
+                <div className="grid w-full items-center gap-3">
+                  <Label htmlFor="admins" className="text-sm sm:text-base">
+                    Aggiungi Admin/Doctor
+                  </Label>
+                  <MultiSelect
+                    options={adminOptions}
+                    selected={selectedAdmins}
+                    onChange={setSelectedAdmins}
+                    placeholder="Scegli uno o più admin"
+                    searchPlaceholder="Cerca admin per nome..."
+                    emptyText="Nessun admin disponibile"
+                  />
+                  {selectedAdmins.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      {selectedAdmins.length} admin selezionat
+                      {selectedAdmins.length === 1 ? 'o' : 'i'}
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid w-full items-center gap-3">
+                  <Label htmlFor="assistants" className="text-sm sm:text-base">
+                    Aggiungi Assistente
+                  </Label>
+                  <MultiSelect
+                    options={assistantOptions}
+                    selected={selectedAssistants}
+                    onChange={setSelectedAssistants}
+                    placeholder="Scegli uno o più assistenti"
+                    searchPlaceholder="Cerca assistente per nome..."
+                    emptyText="Nessun assistente disponibile"
+                  />
+                  {selectedAssistants.length > 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      {selectedAssistants.length} assistent
+                      {selectedAssistants.length === 1 ? 'e' : 'i'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            }
           </motion.div>
 
           <AnimatePresence>
@@ -575,21 +618,6 @@ const StudioDetail = () => {
             >
               Utenti dello Studio
             </motion.h3>
-
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button
-                onClick={handleNewUser}
-                className="transition-all duration-200 hover:shadow-lg"
-              >
-                <motion.span
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  + Nuovo Utente
-                </motion.span>
-              </Button>
-            </motion.div>
           </div>
 
           <motion.div
@@ -598,7 +626,7 @@ const StudioDetail = () => {
             transition={{ duration: 0.4, delay: 0.4 }}
           >
             <DataTable
-              data={userData ?? []}
+              data={currentStudioUser ?? []}
               columns={columns}
               rowActions={rowActions}
               loading={isLoading}
@@ -611,7 +639,7 @@ const StudioDetail = () => {
               pagination={{
                 page: 1,
                 pageSize: 10,
-                total: userData?.length ?? 0,
+                total: currentStudioUser?.length ?? 0,
               }}
             />
           </motion.div>

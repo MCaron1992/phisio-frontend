@@ -83,31 +83,6 @@ const UsersPage = () => {
       cell: ({ value }) => (value == true ? 'true' : 'false'),
     },
     {
-      id: 'studio',
-      header: 'Studio',
-      accessorKey: 'studio',
-      sortable: true,
-      filterable: true,
-      width: 'w-64 md:w-96 lg:w-[300px]',
-      cell: ({ row }) => {
-        const studio = row.studi ?? [];
-        return (
-          <div>
-            {studio.length === 0 ? (
-              <span>-- --</span>
-            ) : (
-              <Link
-                href={`/studio/${studio[0]?.id}`}
-                className="lg:rt-r-weight-medium text-blue-600 hover:underline"
-              >
-                {studio[0]?.nome}
-              </Link>
-            )}
-          </div>
-        );
-      },
-    },
-    {
       id: 'ultimo-aggiornamento',
       header: 'ultimo aggiornamento',
       accessorKey: 'updated_at',
@@ -214,7 +189,10 @@ const UsersPage = () => {
 
       <DeleteConfirmDialog
         onConfirm={handleDeleteConfirm}
-        onClose={() => setOpenDeleteDialog(false)}
+        onClose={() => {
+          setOpenDeleteDialog(false);
+          setSelectedRow(null);
+        }}
         open={openDeleteDialog}
         title="Elimina Utente"
         description={`Sei sicuro di voler eliminare l'utente ${selectedRow?.nome} ${selectedRow?.cognome}? Questa azione non può essere annullata.`}

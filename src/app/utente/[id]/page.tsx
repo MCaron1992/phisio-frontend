@@ -13,6 +13,7 @@ import {
   useUpdateUtente,
   useDeleteUtente,
   useStudi,
+  Studio,
 } from '@/hooks/useCrud';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
@@ -67,8 +68,7 @@ const UserDetail = () => {
   const [showPassword2, setShowPassword2] = useState(false);
   const [role, setRole] = useState('');
   const [studioQuery, setStudioQuery] = useState('');
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const [selectedStudio, setSelectedStudio] = useState<any | null>(null);
+  const [selectedStudi, setSelectedStudi] = useState<Studio[]>([]);
   const [studioMode, setStudioMode] = useState<'nuovo' | 'esistente' | null>(
     null
   );
@@ -113,13 +113,10 @@ const UserDetail = () => {
 
       const frontendRole = ROLE_MAPPING[utente.ruolo || ''] || '';
       setRole(frontendRole);
+      setStudioMode('esistente');
 
       if (utente.studi && utente.studi.length > 0) {
-        const firstStudio = utente.studi[0];
-        setStudioMode('esistente');
-        setSelectedStudio(firstStudio);
-      } else {
-        setStudioMode(null);
+        setSelectedStudi(utente.studi);
       }
     }
   }, [utente, isNew]);
@@ -256,9 +253,9 @@ const UserDetail = () => {
 
       if (role === 'super') {
         userData.studio_action = 'none';
-      } else if (studioMode === 'esistente' && selectedStudio) {
+      } else if (studioMode === 'esistente') {
         userData.studio_action = 'assign';
-        userData.studio_id = selectedStudio.id;
+        userData.studio_ids = selectedStudi.map(s => s.id);
       } else if (studioMode === 'nuovo') {
         if (!studioNome.trim()) {
           showAlert(
@@ -288,7 +285,7 @@ const UserDetail = () => {
       if (!isNew) {
         userData.id = parseInt(params.id as string);
       }
-
+      console.log(userData)
       if (isNew) {
         await createMutation.mutateAsync(userData);
         showAlert(
@@ -361,6 +358,13 @@ const UserDetail = () => {
         showAlert('error', 'Errore di eliminazione', errorMessage);
       }
     }, 300);
+  };
+
+  const handleAddStudio = (studio: Studio) => {
+    if (!selectedStudi.find(s => s.id === studio.id)) {
+      setSelectedStudi(prev => [...prev, studio]);
+    }
+    setStudioQuery('');
   };
 
   if (isLoading && !isNew) {
@@ -470,9 +474,8 @@ const UserDetail = () => {
                   {passwordValidations.map(rule => (
                     <li
                       key={rule.text}
-                      className={`flex items-center gap-2 ${
-                        rule.valid ? 'text-green-600' : 'text-red-600'
-                      }`}
+                      className={`flex items-center gap-2 ${rule.valid ? 'text-green-600' : 'text-red-600'
+                        }`}
                     >
                       {rule.valid ? (
                         <BadgeCheck className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -507,9 +510,8 @@ const UserDetail = () => {
                   {password2Validations.map(rule => (
                     <li
                       key={rule.text}
-                      className={`flex items-center gap-2 ${
-                        rule.valid ? 'text-green-600' : 'text-red-600'
-                      }`}
+                      className={`flex items-center gap-2 ${rule.valid ? 'text-green-600' : 'text-red-600'
+                        }`}
                     >
                       {rule.valid ? (
                         <BadgeCheck className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -550,24 +552,27 @@ const UserDetail = () => {
           )}
           {role !== 'super' && (
             <div className="mt-3">
-              <Label className="text-sm sm:text-base mb-2">
-                Tipo di Studio
-              </Label>
-              <Select
-                value={studioMode || ''}
-                onValueChange={(value: 'nuovo' | 'esistente') =>
-                  setStudioMode(value)
-                }
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Scegli il tipo di studio" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="nuovo">Nuovo studio</SelectItem>
-                  <SelectItem value="esistente">Studio esistente</SelectItem>
-                </SelectContent>
-              </Select>
-
+              {isNew && (
+                <>
+                  <Label className="text-sm sm:text-base mb-2">
+                    Tipo di Studio
+                  </Label>
+                  <Select
+                    value={studioMode || ''}
+                    onValueChange={(value: 'nuovo' | 'esistente') =>
+                      setStudioMode(value)
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Scegli il tipo di studio" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nuovo">Nuovo studio</SelectItem>
+                      <SelectItem value="esistente">Studio esistente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
+              )}
               {studioMode === 'nuovo' && (
                 <div className="mt-4 space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -638,15 +643,14 @@ const UserDetail = () => {
                 <div className="mt-4 relative">
                   <Label
                     htmlFor="studio-search"
-                    className="text-sm sm:text-base"
+                    className="text-sm sm:text-base pb-2"
                   >
                     Cerca Studio Esistente
                   </Label>
                   <Input
                     id="studio-search"
-                    value={selectedStudio ? selectedStudio.nome : studioQuery}
+                    value={studioQuery}
                     onChange={e => {
-                      setSelectedStudio(null);
                       setStudioQuery(e.target.value);
                     }}
                     placeholder="Digita almeno 3 caratteri per cercare..."
@@ -668,7 +672,7 @@ const UserDetail = () => {
                             key={studio.id}
                             className="px-3 py-2 hover:bg-gray-100 cursor-pointer border-b last:border-b-0"
                             onClick={() => {
-                              setSelectedStudio(studio);
+                              handleAddStudio(studio);
                               setStudioQuery('');
                             }}
                           >
@@ -694,52 +698,35 @@ const UserDetail = () => {
                       </div>
                     )}
 
-                  {selectedStudio && (
-                    <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-sm text-blue-900">
-                            {selectedStudio.nome}
-                          </p>
-                          {selectedStudio.stats && (
-                            <p className="text-xs text-blue-700 mt-1">
-                              {selectedStudio.stats.total_utenti} utenti •{' '}
-                              {selectedStudio.stats.total_giocatori} giocatori
-                            </p>
-                          )}
-                        </div>
-                        <button
-                          onClick={() => setSelectedStudio(null)}
-                          className="text-blue-600 hover:text-blue-800 text-xs underline"
+                  {selectedStudi && selectedStudi.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {selectedStudi.map((studio: Studio) => (
+                        <div
+                          key={studio.id}
+                          className="p-3 bg-blue-50 border border-blue-200 rounded-md"
                         >
-                          Cambia
-                        </button>
-                      </div>
+                          <div className="flex justify-between items-center">
+                            <p className="font-medium text-sm text-blue-900">{studio.nome}</p>
+                            <button
+                              onClick={() =>
+                                setSelectedStudi(selectedStudi.filter(s => s.id !== studio.id))
+                              }
+                              className="text-blue-600 hover:text-blue-800 text-xs underline"
+                            >
+                              Rimuovi
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
+
                 </div>
               )}
             </div>
           )}
 
           <div className="flex flex-col sm:flex-row gap-4 pt-6">
-            {/* Left side: Delete button (only for existing users) */}
-            {!isNew && (
-              <Button
-                variant="destructive"
-                onClick={handleDeleteClick}
-                className="flex-1 sm:flex-none sm:mr-auto"
-                disabled={
-                  createMutation.isPending ||
-                  updateMutation.isPending ||
-                  deleteMutation.isPending
-                }
-              >
-                {deleteMutation.isPending
-                  ? 'Eliminazione...'
-                  : 'Elimina Utente'}
-              </Button>
-            )}
 
             {/* Right side: Cancel and Save buttons */}
             <div className="flex gap-4 sm:ml-auto">
