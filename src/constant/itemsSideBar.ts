@@ -135,12 +135,14 @@ export const itemsTestMetriche = [
     icon: Ruler,
     href: '/system/unita-misura',
   },
+  /*
   {
     key: 'test-metrica-unita',
     label: 'Test - Metrica - Unità',
     icon: TestTube,
     href: '/system/test-metrica-unita',
   },
+  */
 ];
 
 // 🦵 Anatomia
