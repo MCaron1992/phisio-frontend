@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import SelectField from '@/components/custom/CustomSelectField';
 import {
   Select,
@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import MediaUpload from '@/components/custom/media-upload';
 
 const TestDetail = () => {
   const { id } = useParams();
@@ -31,21 +32,6 @@ const TestDetail = () => {
   const { data: categorieData } = useCategorieFunzionali();
   const { mutate: updateTest } = useUpdateTest();
   const { mutate: createTest } = useCreateTest();
-
-  const [formData, setFormData] = useState(
-    {
-      nome_abbreviato: '',
-      nome_esteso: '',
-      descrizione: '',
-      lateralita: test?.lateralita,
-      tempo_di_recupero: '',
-      istruzioni_verbali: '',
-      id_categoria_funzionale: '',
-    }
-  )
-  useEffect(() => {
-    setFormData({...test});
-  },[test])
 
   const [alert, setAlert] = useState({
     show: false,
@@ -132,11 +118,11 @@ const TestDetail = () => {
       !!id_categoria_funzionale;
   };
 
-  const fakeImage = 'https://picsum.photos/400/300';
-  const fakeVideo = 'https://www.w3schools.com/html/mov_bbb.mp4';
+  //const fakeImage = 'https://picsum.photos/400/300';
+  //const fakeVideo = 'https://www.w3schools.com/html/mov_bbb.mp4';
 
-  const fotoUrl = test?.foto || fakeImage;
-  const videoUrl = test?.video || fakeVideo;
+  const fotoUrl = test?.foto || '';
+  const videoUrl = test?.video || '';
 
   return (
     <TableConatiner
@@ -148,51 +134,23 @@ const TestDetail = () => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="bg-white p-6 rounded shadow space-y-6"
       >
-        <div className=" flex justify-between">
-          <div>
-            {!test?.foto ? (
-              <div className="flex items-center gap-4">
-                <Label>Foto</Label>
-                <img
-                  src={fotoUrl}
-                  alt="Foto Test"
-                  className="w-32 h-32 object-cover rounded"
-                />
-                <Button type="button" variant="outline">
-                  Cambia
-                </Button>
-                <Button type="button" variant="destructive">
-                  Rimuovi
-                </Button>
-              </div>
-            ) : (
-              <div className="grid w-full max-w-sm items-center gap-3">
-                <Label htmlFor="picture">Picture</Label>
-                <Input id="picture" />
-              </div>
-            )}
+        <div className="flex flex-col md:flex-row md:justify-evenly gap-4">
+          <div className="flex-1">
+            <MediaUpload
+              type="image"
+              currentUrl={fotoUrl}
+              label="Foto"
+              onChange={(file) => {}} //form.setValue('foto', file)}
+            />
           </div>
 
-          <div>
-            {!test?.video ? (
-              <div className="flex flex-col gap-2">
-                <Label>Video</Label>
-                <video src={videoUrl} controls className="w-64 rounded" />
-                <div className="flex gap-3">
-                  <Button type="button" variant="outline">
-                    Cambia
-                  </Button>
-                  <Button type="button" variant="destructive">
-                    Rimuovi
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="grid w-full max-w-sm items-center gap-3">
-                <Label htmlFor="video">Video</Label>
-                <Input id="video" />
-              </div>
-            )}
+          <div className="flex-1">
+            <MediaUpload
+              type="video"
+              currentUrl={videoUrl}
+              label="Video"
+              onChange={(file) => {}} //form.setValue('video', file)}
+            />
           </div>
         </div>
 

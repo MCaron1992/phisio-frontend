@@ -4,18 +4,20 @@ import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import { Test, useTests, useDeleteTest } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import { Eye, Trash2 } from 'lucide-react';
+import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
+import MediaPreviewDialog from '@/components/custom/MediaPreviewDialog';
 const TestTable = () => {
   const { data, isLoading } = useTests();
   const router = useRouter();
   const { mutate: deleteTest } = useDeleteTest();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState<Test | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
@@ -108,14 +110,22 @@ const TestTable = () => {
 
   const rowActions: DataTableAction<Test>[] = isSuperAdmin ? [
     {
+      id: 'preview',
+      label: 'Anteprima',
+      onClick: row => {
+        setSelectedRow(row);
+        setPreviewOpen(true)
+      },
+      icon: <Eye className="h-4 w-4" />,
+    },
+    {
       id: 'view',
       label: 'Dettaglio',
       onClick: row => {
         router.push(`/system/test/${row.id}`);
       },
-      icon: <Eye className="h-4 w-4" />,
+      icon: <Edit className="h-4 w-4" />,
     },
-
     {
       id: 'delete',
       label: 'Elimina',
@@ -208,6 +218,15 @@ const TestTable = () => {
         }}
         open={openDeleteDialog}
       />
+      <MediaPreviewDialog 
+        open={previewOpen} 
+        title='Anteprima'
+        foto={selectedRow?.foto}
+        video={selectedRow?.video}
+        onClose={() => {
+          setPreviewOpen(false);
+          setSelectedRow(null);
+        }}/>
     </>
   );
 };
