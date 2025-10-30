@@ -13,7 +13,7 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
       },
     });
 
-  const useShow = (id: Id) =>
+  const useShow = (id: string | undefined) =>
     useQuery({
       queryKey: [queryKey, id],
       queryFn: async () => {
@@ -22,6 +22,15 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
       },
       enabled: !!id,
     });
+  /*
+  *
+  * useShow: (id: string, options?: { enabled?: boolean }) => {
+  return useQuery({
+    queryKey: [resourceName, id],
+    queryFn: () => api.get(`${endpoint}/${id}`).then(res => res.data),
+    enabled: options?.enabled ?? true,
+  });
+},*/
 
   const useStore = () => {
     const queryClient = useQueryClient();

@@ -105,8 +105,8 @@ const LoginPage = () => {
       <div className="flex h-full w-full items-center justify-center px-4">
         <ElectricBorder
           color="#7df9ff"
-          speed={0.5}
-          chaos={4}
+          speed={1}
+          chaos={0}
           thickness={2}
           style={{ borderRadius: 16 }}
         >

@@ -2,12 +2,12 @@
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
-  Players,
+  Paziente,
   Studio,
-  useDeletePlayer,
-  usePlayers,
-  useUpdatePlayer,
-  useStudi
+  useDeletePaziente,
+  usePaziente,
+  usePazienti,
+  useStudi,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
@@ -19,12 +19,12 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 const GicatoriPage = () => {
-  const { data, isLoading } = usePlayers();
+  const { data, isLoading } = usePazienti();
   const userData = data?.data;
-  const { mutate: deletePlayer } = useDeletePlayer();
+  const { mutate: deletePlayer } = useDeletePaziente();
   const { data: studiData, isLoading: studiLoading } = useStudi();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Players | null>(null);
+  const [selectedRow, setSelectedRow] = useState<Paziente | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -37,7 +37,7 @@ const GicatoriPage = () => {
     description: '',
   });
 
-  const columns: DataTableColumn<Players>[] = [
+  const columns: DataTableColumn<Paziente>[] = [
     {
       id: 'nome',
       header: 'Nome',
@@ -87,7 +87,9 @@ const GicatoriPage = () => {
       filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
       cell: ({ row }) => {
-        const studio = studiData?.data.find((s: Studio) => s.id === row.id_studio);
+        const studio = studiData?.data.find(
+          (s: Studio) => s.id === row.id_studio
+        );
         return studio ? (
           <Link
             href={`/studio/${studio.id}`}
@@ -112,7 +114,7 @@ const GicatoriPage = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Players>[] = [
+  const rowActions: DataTableAction<Paziente>[] = [
     {
       id: 'view',
       label: 'Visualizza',
@@ -143,7 +145,7 @@ const GicatoriPage = () => {
   const handelNewAction = () => {
     setTitle('Nuovo Giocatore');
     setSelectedRow(null);
-    router.push('/giocatori/new')
+    router.push('/giocatori/new');
   };
 
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
@@ -169,19 +171,20 @@ const GicatoriPage = () => {
             show: true,
             type: 'error',
             title: 'Eliminazione Fallita',
-            description: (err as Error)?.message || 'Si è verificato un errore.',
+            description:
+              (err as Error)?.message || 'Si è verificato un errore.',
           });
           setOpenDeleteDialog(false);
         },
-      },
+      }
     );
   };
 
   return (
     <>
       <TableConatiner
-        btnLabel={'Nuovo Giocatori'}
-        title={'Giocatori'}
+        btnLabel={'Nuovo Paziente'}
+        title={'Paziente'}
         action={() => handelNewAction()}
       >
         <DataTable

@@ -78,7 +78,7 @@ const NewStudio = () => {
         show: true,
         type: 'error',
         title: 'Errore Email',
-        description: "Le email non corrispondono.",
+        description: 'Le email non corrispondono.',
         shouldNavigate: false,
       });
       setSaving(false);
@@ -89,7 +89,7 @@ const NewStudio = () => {
       ...values,
       admin_ids: [...selectedAdmins, ...selectedAssistants],
     };
-    
+
     const onSuccess = () => {
       setSaving(false);
       setAlert({
@@ -127,7 +127,9 @@ const NewStudio = () => {
     if (autocompleteRef.current) {
       const place = autocompleteRef.current.getPlace();
       if (place.formatted_address) {
-        form.setValue('indirizzo', place.formatted_address, { shouldValidate: true });
+        form.setValue('indirizzo', place.formatted_address, {
+          shouldValidate: true,
+        });
       }
     }
   };
@@ -148,11 +150,11 @@ const NewStudio = () => {
     const { nome } = form.watch();
 
     return !!nome;
-  }
+  };
 
   return (
     <LoadScript
-      googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ''}
+      googleMapsApiKey={'AIzaSyBefnNz4m3q6HJ08oBfL91dTZrUSk1a1O0'}
       libraries={libraries}
     >
       <TableConatiner btnLabel={''} title={'Nuovo Studio'} action={handleBack}>
@@ -287,7 +289,7 @@ const NewStudio = () => {
               if (alert.shouldNavigate) {
                 router.push('/studio/elenco');
               } else {
-                setAlert((prev) => ({ ...prev, show: false }));
+                setAlert(prev => ({ ...prev, show: false }));
               }
             }}
             type={alert.type}

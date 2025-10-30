@@ -450,7 +450,7 @@ export const {
  * Giocatore
  *
  * */
-export interface Players {
+export interface Paziente {
   id: number;
   nome?: string;
   cognome?: string;
@@ -458,17 +458,19 @@ export interface Players {
   sesso?: string;
   etnia?: string;
   id_studio?: number;
+  codice_fiscale?: string;
   attivo?: boolean;
   created_at?: string;
   updated_at?: string;
 }
+
 export const {
-  useIndex: usePlayers,
-  useShow: usePlayer,
-  useStore: useCreatePlayer,
-  useUpdate: useUpdatePlayer,
-  useDestroy: useDeletePlayer,
-} = createCrudHooks<Players>('/giocatore', 'giocatore');
+  useIndex: usePazienti,
+  useShow: usePaziente,
+  useStore: useCreatePaziente,
+  useUpdate: useUpdatePaziente,
+  useDestroy: useDeletePaziente,
+} = createCrudHooks<Paziente>('/paziente', 'paziente');
 
 /**
  * Fatti Giocatore
@@ -476,7 +478,6 @@ export const {
  * */
 export interface FattiGiocatore {
   id: number;
-  
 }
 export const {
   useIndex: useFattiGiocatori,

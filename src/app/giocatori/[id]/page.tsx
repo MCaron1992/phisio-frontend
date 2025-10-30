@@ -1,14 +1,7 @@
 'use client';
 
-import { useParams, useRouter } from "next/navigation";
-import {
-  Players,
-  useDeletePlayer,
-  usePlayer,
-  useUpdatePlayer,
-  useCreatePlayer,
-  useStudi
-} from '@/hooks/useCrud';
+import { useParams, useRouter } from 'next/navigation';
+import { usePaziente, useStudi } from '@/hooks/useCrud';
 import {
   Select,
   SelectContent,
@@ -16,30 +9,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useState } from "react";
-import { Loader } from "@/components/custom/Loader";
-import UniversalAlert from "@/components/custom/UniversalAlert";
+import { useState } from 'react';
+import { Loader } from '@/components/custom/Loader';
+import UniversalAlert from '@/components/custom/UniversalAlert';
 import TableConatiner from '@/components/custom/TableContainer';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import SelectField from "@/components/custom/CustomSelectField";
-import { DateInput } from "@/components/ui/date-input";
-import { useForm } from "react-hook-form";
+import SelectField from '@/components/custom/CustomSelectField';
+import { DateInput } from '@/components/ui/date-input';
+import { useForm, FormProvider } from 'react-hook-form';
+import { StepIndicator } from '@/components/custom/step-indicator';
+import Anagrafica from '@/components/test_paziente/Anagrafica';
+import EpisidioClinico from '@/components/test_paziente/EpisidioClinico';
+import Sport from '@/components/test_paziente/Sport';
+import Test from '@/components/test_paziente/Test';
 
+const STEPS = [
+  { id: 1, label: 'Dati Anagrafici', description: 'Informazioni base' },
+  { id: 2, label: 'Sport', description: 'Sport' },
+  { id: 3, label: 'Episodio Clinico', description: 'Stato di salute' },
+  { id: 4, label: 'Test', description: 'Test' },
+];
 
 const PlayerDetail = () => {
   const { id } = useParams();
   const router = useRouter();
-  const isEditMode = (id && id !== 'new');
+
+  const isEditMode = id && id !== 'new';
   const playerQuery = isEditMode
-    ? usePlayer(id as string)
+    ? usePaziente(id as string)
     : { data: null, isLoading: false, isError: false, error: null };
   const { data: player, isLoading, isError, error } = playerQuery;
-  const { data: studiData } = useStudi();
-  const { mutate: updatePlayer } = useUpdatePlayer();
-  const { mutate: createPlayer } = useCreatePlayer();
 
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [alert, setAlert] = useState({
     show: false,
     type: 'success' as 'success' | 'error',
@@ -56,10 +60,15 @@ const PlayerDetail = () => {
       data_nascita: '',
       etnia: '',
       id_studio: '',
+      sport_id: '',
+      ruolo_sport_id: '',
+      team_id: '',
+      livello_sportivo_id: '',
+      tests: [],
     },
     values: {
       ...player,
-    }
+    },
   });
 
   if (isLoading && !player) return <Loader />;
@@ -76,143 +85,39 @@ const PlayerDetail = () => {
       />
     );
 
-  if (!player && isEditMode) return <p>Nessun test trovato</p>;
-
-  const isFormValid = () => {
-    const { nome, cognome, sesso, data_nascita, etnia, id_studio } = form.watch();
-
-    return !!nome && !!cognome && !!sesso && !!data_nascita && !!etnia && !!id_studio;
+  const handleStepClick = (step: number) => {
+    setCurrentStep(step);
   };
 
-  const onSubmit = (values: any) => {
-    const payload = {
-      ...values,
-    };
-
-    const onSuccess = () => {
-      setAlert({
-        show: true,
-        type: 'success',
-        title: isEditMode ? 'Aggiornato!' : 'Creato!',
-        description: isEditMode
-          ? 'Il giocatore è stato modificato correttamente.'
-          : 'Il nuovo giocatore è stato creato correttamente.',
-        shouldNavigate: true,
-      });
-    };
-
-    const onError = (err: any) => {
-      setAlert({
-        show: true,
-        type: 'error',
-        title: 'Errore',
-        description: err?.message || 'Errore durante il salvataggio.',
-        shouldNavigate: false,
-      });
-    };
-    if (isEditMode) {
-      updatePlayer({ id: player.id, ...payload }, { onSuccess, onError });
-    } else {
-      createPlayer(payload, { onSuccess, onError });
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return <Anagrafica />;
+      case 1:
+        return <Sport />;
+      case 2:
+        return <EpisidioClinico />;
+      case 3:
+        return <Test />;
+      default:
+        return null;
     }
   };
 
   return (
-    <TableConatiner
-      btnLabel={'Torna indietro'}
-      title={isEditMode ? 'Modifica Giocatore' : 'Nuovo giocatore'}
-      action={() => router.back()}
-    >
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="bg-white p-6 rounded shadow space-y-6"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <Label className={'mb-3'}>Nome</Label>
-            <Input {...form.register('nome')}/>
-          </div>
-          <div>
-            <Label className={'mb-3'}>Cognome</Label>
-            <Input {...form.register('cognome')}/>
-          </div>
-          <div>
-            <Label className={'mb-3'}>Sesso</Label>
-            <Select
-              value={form.watch('sesso')}
-              onValueChange={(value: string) => {
-                form.setValue('sesso', value, { shouldValidate: true });
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Scegli il sesso" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="M">Uomo</SelectItem>
-                <SelectItem value="F">Donna</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label className={'mb-3'}>Data di Nascita</Label>
-            <DateInput 
-              defaultValue={form.watch('data_nascita')}
-              onInput={(e) => form.setValue('data_nascita', e.currentTarget.value, { shouldValidate: true })}
-            />
-          </div>
-          <div>
-            <Label className={'mb-3'}>Etnia</Label>
-            <Select
-              value={form.watch('etnia')}
-              onValueChange={(value: string) => {
-                form.setValue('etnia', value, { shouldValidate: true });
-              }}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Scegli l'etnia" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Occidentale">Occidentale</SelectItem>
-                <SelectItem value="Orientale">Orientale</SelectItem>
-                <SelectItem value="Africana">Africana</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          {true && //if super_admin else default with user studio
-            <div>
-              <SelectField
-                options={studiData?.data}
-                selectedId={form.watch('id_studio')}
-                onSelectChange={(newId: string) => {
-                  form.setValue('id_studio', newId, { shouldValidate: true });
-                }}
-                label="Studio"
-                placeholder="Seleziona uno Studio..." />
-            </div>
-          }
+    <TableConatiner>
+      <main className="bg-white p-6 rounded shadow space-y-6">
+        <StepIndicator
+          steps={STEPS}
+          currentStep={currentStep}
+          onStepClick={handleStepClick}
+        />
 
-        </div>
-
-        {isEditMode &&
-          <div className="text-xs text-gray-500 space-y-1 mt-3">
-            <p>
-              <strong>Creato il:</strong>{' '}
-              {new Date(player.created_at).toLocaleDateString('it-IT')}
-            </p>
-            <p>
-              <strong>Aggiornato il:</strong>{' '}
-              {new Date(player.updated_at).toLocaleDateString('it-IT')}
-            </p>
-          </div>
-        }
-
-        <div className="flex justify-end gap-3 mt-3">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
-            Annulla
-          </Button>
-          <Button type="submit" disabled={!isFormValid()}>Salva</Button>
-        </div>
-
+        <FormProvider {...form}>
+          <section className="min-h-[400px] mb-6">
+            {renderStepContent()}
+          </section>
+        </FormProvider>
 
         <UniversalAlert
           title={alert.title}
@@ -222,15 +127,16 @@ const PlayerDetail = () => {
             if (alert.shouldNavigate) {
               router.push('/giocatori/elenco');
             } else {
-              setAlert((prev) => ({ ...prev, show: false }));
+              setAlert(prev => ({ ...prev, show: false }));
             }
           }}
           type={alert.type}
           duration={3000}
           position="top-right"
         />
-      </form>
-    </TableConatiner >
+      </main>
+    </TableConatiner>
   );
 };
+
 export default PlayerDetail;

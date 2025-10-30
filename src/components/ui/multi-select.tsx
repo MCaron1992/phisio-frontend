@@ -37,7 +37,10 @@ export function MultiSelect({
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     };
@@ -63,10 +66,11 @@ export function MultiSelect({
     onChange(selected.filter(id => id !== optionId));
   };
 
-  const selectedOptions = options.filter(option => selected.includes(option.id));
-
+  const selectedOptions = options.filter(option =>
+    selected.includes(option.id)
+  );
   const filteredOptions = options.filter(option =>
-    option.label.toLowerCase().includes(searchQuery.toLowerCase())
+    option.label?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -81,11 +85,7 @@ export function MultiSelect({
         <div className="flex gap-1 flex-wrap flex-1">
           {selectedOptions.length > 0 ? (
             selectedOptions.map(option => (
-              <Badge
-                key={option.id}
-                variant="secondary"
-                className="mr-1 mb-1"
-              >
+              <Badge key={option.id} variant="secondary" className="mr-1 mb-1">
                 {option.label}
                 <button
                   className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
@@ -108,7 +108,12 @@ export function MultiSelect({
             <span className="text-muted-foreground">{placeholder}</span>
           )}
         </div>
-        <ChevronDown className={cn("h-4 w-4 shrink-0 opacity-50 transition-transform", open && "transform rotate-180")} />
+        <ChevronDown
+          className={cn(
+            'h-4 w-4 shrink-0 opacity-50 transition-transform',
+            open && 'transform rotate-180'
+          )}
+        />
       </div>
 
       {open && (
@@ -174,6 +179,10 @@ export function MultiSelect({
     </div>
   );
 }
+
+
+
+
 
 
 

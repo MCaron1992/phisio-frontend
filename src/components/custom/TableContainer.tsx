@@ -22,7 +22,7 @@ const TableContainer: React.FC<TableContainerProps> = ({
   enabled = true,
 }) => {
   return (
-    <section aria-labelledby="approcci-title" style={style.section}>
+    <main aria-labelledby="approcci-title" style={style.section}>
       <header className="flex items-center justify-between mb-4">
         {title && (
           <h2 id="approcci-title" className="text-2xl font-bold">
@@ -47,8 +47,8 @@ const TableContainer: React.FC<TableContainerProps> = ({
           </motion.div>
         )}
       </header>
-      {children}
-    </section>
+      <section>{children}</section>
+    </main>
   );
 };
 

@@ -16,16 +16,23 @@ import {
   Microscope,
 } from 'lucide-react';
 
-export const itemsFattiGiocatore = [
+export const itemsPresteazioniTest = [
   {
-    key: 'fattiGiocatore-elenco',
-    label: 'Elenco',
-    icon: Activity,
-    href: '/fatti_giocatore/elenco',
+    key: 'PresteazioniTest-nuovo1',
+    label: 'Elenco test fatti giocatori ',
+    icon: Zap,
+    href: '/fatti_giocatore/new',
+    onClick: () => console.log('Nuovo clicked!'),
   },
   {
-    key: 'fattiGiocatore-nuovo',
-    label: 'Nuovo',
+    key: 'PresteazioniTest-elenco2',
+    label: 'Nuovo test fatti giocatori ',
+    icon: Activity,
+    href: '/fatti_giocatore/new',
+  },
+  {
+    key: 'PresteazioniTest-nuovo3',
+    label: 'Analisi test fatti giocatori ',
     icon: Zap,
     href: '/fatti_giocatore/new',
     onClick: () => console.log('Nuovo clicked!'),
@@ -76,6 +83,12 @@ export const itemsGiocatori = [
     icon: Zap,
     href: '/giocatori/new',
     onClick: () => console.log('Nuovo clicked!'),
+  },
+  {
+    key: 'squadra-elenco',
+    label: 'Squadre',
+    icon: Trophy,
+    href: '/system/teams',
   },
 ];
 export const itemsUtenteRuoli = [
@@ -135,17 +148,20 @@ export const itemsTestMetriche = [
     icon: Ruler,
     href: '/system/unita-misura',
   },
-  /*
-  {
+  /*  {
     key: 'test-metrica-unita',
     label: 'Test - Metrica - Unità',
     icon: TestTube,
     href: '/system/test-metrica-unita',
+  },*/
+  {
+    key: 'strumento-elenco',
+    label: 'Strumento',
+    icon: Zap,
+    href: '/system/strumento',
   },
-  */
 ];
 
-// 🦵 Anatomia
 export const itemsAnatomia = [
   {
     key: 'arto',
@@ -181,12 +197,6 @@ export const itemsSportStrumenti = [
     href: '/system/sport',
   },
   {
-    key: 'squadra-elenco',
-    label: 'Squadre',
-    icon: Trophy,
-    href: '/system/teams',
-  },
-  {
     key: 'ruolo-elenco',
     label: 'Ruolo',
     icon: Shield,
@@ -197,11 +207,5 @@ export const itemsSportStrumenti = [
     label: 'Livello sportivo',
     icon: Trophy,
     href: '/system/livello-sportivo',
-  },
-  {
-    key: 'strumento-elenco',
-    label: 'Strumento',
-    icon: Zap,
-    href: '/system/strumento',
   },
 ];

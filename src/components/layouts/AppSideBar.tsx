@@ -59,7 +59,7 @@ import {
   itemsTestMetriche,
   itemsUtente,
   itemsUtenteRuoli,
-  itemsFattiGiocatore
+  itemsPresteazioniTest,
 } from '@/constant/itemsSideBar';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -133,12 +133,12 @@ export function AppSidebar() {
             Gestione Utente
           </SidebarGroupLabel>
           <SidebarGroupContent>
-          <CollapsibleFolder
-              id="fattiGiocatore"
-              label="Fatti Giocatore"
+            <CollapsibleFolder
+              id="PresteazioniTest"
+              label="PRESTAZIONI & TEST"
               isExpanded={isExpanded}
               onToggle={toggle}
-              items={itemsFattiGiocatore}
+              items={itemsPresteazioniTest}
             />
             <CollapsibleFolder
               id="utente"
@@ -206,7 +206,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="border-t border-slate-800/50 p-4 group-data-[collapsible=icon]:hidden">
+      {/*      <SidebarFooter className="border-t border-slate-800/50 p-4 group-data-[collapsible=icon]:hidden">
         <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-slate-800/50 to-slate-700/30 p-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700">
             <User className="h-4 w-4 text-slate-300" />
@@ -232,7 +232,7 @@ export function AppSidebar() {
             )}
           </div>
         </div>
-      </SidebarFooter>
+      </SidebarFooter>*/}
     </Sidebar>
   );
 }
