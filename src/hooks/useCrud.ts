@@ -347,7 +347,7 @@ export const {
 export interface Teams {
   id: number;
   nome: string;
-  descrizione?: string;
+  _optimistic?: boolean;
   created_at?: string;
   updated_at?: string;
 }

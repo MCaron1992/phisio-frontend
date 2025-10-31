@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseMutationOptions,
+} from '@tanstack/react-query';
 import api from '@/lib/axios';
 
 type Id = string | number;
@@ -32,16 +37,31 @@ export function createCrudHooks<T>(baseUrl: string, queryKey: string) {
   });
 },*/
 
-  const useStore = () => {
+  const useStore = <TData = unknown, TContext = unknown>(
+    options?: Omit<
+      UseMutationOptions<TData, Error, Partial<T>, TContext>,
+      'mutationFn'
+    >
+  ) => {
     const queryClient = useQueryClient();
+    const defaultOnSuccess = () => {
+      queryClient.invalidateQueries({ queryKey: [queryKey] });
+    };
+
+    const { onSuccess: customOnSuccess, ...restOptions } = options || {};
+
     return useMutation({
       mutationFn: async (data: Partial<T>) => {
         const res = await api.post(`${baseUrl}/store`, data);
         return res.data;
       },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [queryKey] });
-      },
+      onSuccess: customOnSuccess
+        ? (data, variables, context) => {
+            defaultOnSuccess();
+            customOnSuccess(data, variables, context);
+          }
+        : defaultOnSuccess,
+      ...restOptions,
     });
   };
 

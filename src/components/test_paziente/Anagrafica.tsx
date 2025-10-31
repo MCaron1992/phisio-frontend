@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import {
   Paziente,
@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { DateInput } from '@/components/ui/date-input';
 import { AxiosError } from 'axios';
+import SelectFieldWithSearch from '@/components/custom/SelectFieldWithSearch';
 
 type FormValues = Omit<
   Paziente,
@@ -42,7 +43,7 @@ const Anagrafica: React.FC = () => {
   const pazienteQuery = usePaziente(isEditMode ? (id as string) : undefined);
   const { data: paziente, isLoading, isError, error } = pazienteQuery;
 
-  const { data: studiData } = useStudi();
+  const { data: studiData, isLoading: isLoadingStudio } = useStudi();
   const { mutate: updatePaziente } = useUpdatePaziente();
   const { mutate: createPaziente } = useCreatePaziente();
 
@@ -55,19 +56,15 @@ const Anagrafica: React.FC = () => {
   });
 
   const form = useForm<FormValues>({
-    defaultValues: useMemo(
-      () => ({
-        nome: '',
-        cognome: '',
-        codice_fiscale: '',
-        sesso: '',
-        data_nascita: '',
-        etnia: '',
-        id_studio: '',
-      }),
-      []
-    ),
-    values: paziente ?? undefined,
+    defaultValues: {
+      nome: '',
+      cognome: '',
+      codice_fiscale: '',
+      sesso: '',
+      data_nascita: '',
+      etnia: '',
+      id_studio: '',
+    },
   });
 
   const onSubmit = useCallback(
@@ -205,14 +202,16 @@ const Anagrafica: React.FC = () => {
       </fieldset>
 
       <fieldset className="mt-3">
-        <legend className="sr-only">Studio</legend>
-        <SelectField
+        <SelectFieldWithSearch
+          id="studio"
           options={studiData?.data}
           selectedId={form.watch('id_studio')}
           onSelectChange={(newId: string) => form.setValue('id_studio', newId)}
           label="Studio"
           placeholder="Seleziona uno Studio..."
-          id={'1'}
+          searchPlaceholder="Cerca Studio…"
+          isLoading={isLoadingStudio}
+          loadingText="Caricamento livelli…"
         />
       </fieldset>
 
@@ -256,4 +255,4 @@ const Anagrafica: React.FC = () => {
   );
 };
 
-export default React.memo(Anagrafica);
+export default Anagrafica;

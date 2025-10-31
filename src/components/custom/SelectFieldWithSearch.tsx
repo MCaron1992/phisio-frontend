@@ -35,6 +35,9 @@ interface SelectFieldWithSearchProps {
   searchPlaceholder?: string;
   emptyText?: string;
   error?: string;
+  disabled?: boolean;
+  isLoading?: boolean;
+  loadingText?: string;
 }
 
 const SelectFieldWithSearch = ({
@@ -47,6 +50,9 @@ const SelectFieldWithSearch = ({
   searchPlaceholder = 'Cerca...',
   emptyText = 'Nessuna opzione disponibile',
   error,
+  disabled = false,
+  isLoading = false,
+  loadingText = 'Caricamento...',
 }: SelectFieldWithSearchProps) => {
   const [search, setSearch] = React.useState('');
 
@@ -63,8 +69,16 @@ const SelectFieldWithSearch = ({
         {label}
       </Label>
 
-      <Select value={selectedId} onValueChange={onSelectChange}>
-        <SelectTrigger id={id} className="w-full">
+      <Select
+        value={selectedId}
+        onValueChange={onSelectChange}
+        disabled={disabled || isLoading}
+      >
+        <SelectTrigger
+          id={id}
+          className="w-full"
+          disabled={disabled || isLoading}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
 
@@ -76,10 +90,15 @@ const SelectFieldWithSearch = ({
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="h-8 text-sm"
+              disabled={disabled || isLoading}
             />
           </div>
 
-          {filteredOptions.length > 0 ? (
+          {isLoading ? (
+            <div className="px-3 py-2 text-sm text-muted-foreground">
+              {loadingText}
+            </div>
+          ) : filteredOptions.length > 0 ? (
             filteredOptions.map(item => (
               <SelectItem key={item.id} value={String(item.id)}>
                 {item.nome}
