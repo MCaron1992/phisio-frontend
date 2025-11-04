@@ -32,14 +32,16 @@ import {
   filterTestsByCategory,
   getEntityNameById,
   createEmptyTestItem,
-  generateTestId,
 } from '@/lib/helpers/test.helpers';
-import { MOCK_TESTS, KEYBOARD_SHORTCUTS, VALUE_BADGE_COLORS } from '@/lib/constants/test.constants';
+import {
+  MOCK_TESTS,
+  KEYBOARD_SHORTCUTS,
+  VALUE_BADGE_COLORS,
+} from '@/lib/constants/test.constants';
 
 const Test = () => {
   const form = useFormContext();
 
-  // Fetch dati
   const { data: categorieData } = useCategorieFunzionali();
   const { data: testsData } = useTests();
   const { data: metricheData } = useMetriche();
@@ -47,7 +49,6 @@ const Test = () => {
   const { data: strumentiData } = useStrumenti();
   const { data: fasiTemporaliData } = useFasiTemporali();
 
-  // State per gestire i test
   const formTests = form.watch('tests') || [];
   const [tests, setTests] = useState<TestItem[]>(
     formTests.length > 0 ? formTests : MOCK_TESTS
@@ -57,7 +58,6 @@ const Test = () => {
   );
   const [selectedTestId, setSelectedTestId] = useState<string | null>(null);
 
-  // Inizializza tests dal form se esistono (per edit mode)
   useEffect(() => {
     if (formTests.length > 0 && tests.length === MOCK_TESTS.length) {
       setTests(formTests);
@@ -65,32 +65,31 @@ const Test = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Gestione cambio categoria (reset test)
   const handleCategoriaChange = useCallback((categoriaId: string) => {
-    setCurrentTest((prev) => ({
+    setCurrentTest(prev => ({
       ...prev,
       categoria_funzionale_id: categoriaId,
-      test_id: '', // Reset test quando cambia categoria
+      test_id: '',
     }));
   }, []);
 
-  // Funzione per selezionare un test dal riepilogo
-  const handleSelectTest = useCallback((testId: string) => {
-    setSelectedTestId(testId);
-    const test = tests.find((t) => t.id === testId);
-    if (test) {
-      setCurrentTest(test);
-      // Scroll al test selezionato nella lista
-      setTimeout(() => {
-        const element = document.getElementById(`test-${testId}`);
-        element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 100);
-    }
-  }, [tests]);
+  const handleSelectTest = useCallback(
+    (testId: string) => {
+      setSelectedTestId(testId);
+      const test = tests.find(t => t.id === testId);
+      if (test) {
+        setCurrentTest(test);
+        setTimeout(() => {
+          const element = document.getElementById(`test-${testId}`);
+          element?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+      }
+    },
+    [tests]
+  );
 
-  // Navigazione tra test
   const currentIndex = selectedTestId
-    ? tests.findIndex((t) => t.id === selectedTestId)
+    ? tests.findIndex(t => t.id === selectedTestId)
     : -1;
 
   const handlePreviousTest = useCallback(() => {
@@ -107,7 +106,6 @@ const Test = () => {
     }
   }, [currentIndex, tests, handleSelectTest]);
 
-  // Navigazione con keyboard
   useEffect(() => {
     if (tests.length === 0) return;
 
@@ -128,23 +126,19 @@ const Test = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [tests.length, handlePreviousTest, handleNextTest]);
 
-  // Reset form per nuovo test
   const handleNewTest = useCallback(() => {
     setCurrentTest(createEmptyTestItem());
     setSelectedTestId(null);
   }, []);
 
-  // Filtra test per categoria funzionale
   const filteredTests = filterTestsByCategory(
-    testsData?.data,
+    testsData,
     currentTest.categoria_funzionale_id || ''
   );
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-      {/* Form a Sinistra */}
       <div className="lg:col-span-2 space-y-4 lg:space-y-6">
-        {/* Header con Navigazione */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl font-bold text-foreground">
@@ -157,10 +151,8 @@ const Test = () => {
             </p>
           </div>
 
-          {/* Navigazione tra test (solo se ci sono test salvati) */}
           {tests.length > 0 && (
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-              {/* Indicatore posizione */}
               {selectedTestId && currentIndex !== -1 && (
                 <div className="flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-md text-sm">
                   <span className="text-blue-700 dark:text-blue-300 font-medium">
@@ -169,7 +161,6 @@ const Test = () => {
                 </div>
               )}
 
-              {/* Pulsanti navigazione */}
               {selectedTestId && (
                 <div className="flex items-center gap-1 border border-primary/20 bg-primary/5 rounded-md">
                   <Button
@@ -201,7 +192,6 @@ const Test = () => {
           )}
         </div>
 
-        {/* Indicatori test (mini dots) */}
         {tests.length > 1 && (
           <div className="flex items-center justify-center gap-2 sm:gap-2 py-2 overflow-x-auto pb-3">
             {tests.map((test, index) => (
@@ -229,10 +219,9 @@ const Test = () => {
         )}
 
         <div className="space-y-6">
-          {/* Categoria Funzionale */}
           <SelectFieldWithDescription
             id="categoria-funzionale"
-            options={categorieData?.data}
+            options={categorieData}
             selectedId={currentTest.categoria_funzionale_id || ''}
             onSelectChange={handleCategoriaChange}
             label="Categoria Funzionale *"
@@ -240,7 +229,6 @@ const Test = () => {
             searchPlaceholder="Cerca categoria..."
           />
 
-          {/* Test */}
           {currentTest.categoria_funzionale_id ? (
             filteredTests.length > 0 ? (
               <SelectFieldWithDescription
@@ -282,10 +270,9 @@ const Test = () => {
             </div>
           )}
 
-          {/* Metrica */}
           <SelectFieldWithDescription
             id="metrica"
-            options={metricheData?.data}
+            options={metricheData}
             selectedId={currentTest.metrica_id || ''}
             onSelectChange={(value: string) => {
               setCurrentTest(prev => ({
@@ -298,10 +285,9 @@ const Test = () => {
             searchPlaceholder="Cerca metrica..."
           />
 
-          {/* Unità di Misura */}
           <SelectFieldWithDescription
             id="unita-misura"
-            options={unitaData?.data}
+            options={unitaData}
             selectedId={currentTest.unita_misura_id || ''}
             onSelectChange={(value: string) => {
               setCurrentTest(prev => ({
@@ -314,10 +300,9 @@ const Test = () => {
             searchPlaceholder="Cerca unità..."
           />
 
-          {/* Strumento */}
           <SelectFieldWithSearch
             id="strumento"
-            options={strumentiData?.data}
+            options={strumentiData}
             selectedId={currentTest.strumento_id || ''}
             onSelectChange={(value: string) => {
               setCurrentTest(prev => ({
@@ -330,10 +315,9 @@ const Test = () => {
             searchPlaceholder="Cerca strumento..."
           />
 
-          {/* Fase Temporale */}
           <SelectFieldWithSearch
             id="fase-temporale"
-            options={fasiTemporaliData?.data}
+            options={fasiTemporaliData}
             selectedId={currentTest.fase_temporale_id || ''}
             onSelectChange={(value: string) => {
               setCurrentTest(prev => ({
@@ -346,7 +330,6 @@ const Test = () => {
             searchPlaceholder="Cerca fase temporale..."
           />
 
-          {/* Valori Test */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-4 border-t">
             <div className="flex flex-col space-y-2">
               <Label htmlFor="valore-test-1" className="text-sm font-medium">
@@ -407,7 +390,6 @@ const Test = () => {
             </div>
           </div>
 
-          {/* Pulsanti Azione */}
           <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t">
             <Button
               type="button"
@@ -429,7 +411,6 @@ const Test = () => {
         </div>
       </div>
 
-      {/* Riepilogo a Destra */}
       <div className="lg:col-span-1 order-first lg:order-last">
         <div className="lg:sticky lg:top-6 bg-gradient-to-br from-muted/40 to-muted/20 rounded-lg p-4 border border-border/60 shadow-sm max-h-[calc(100vh-8rem)] lg:max-h-none flex flex-col backdrop-blur-sm">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center">
@@ -437,7 +418,6 @@ const Test = () => {
             Riepilogo
           </h3>
 
-          {/* Lista Test Salvati - scrollabile su mobile */}
           <div className="space-y-3 mb-4 overflow-y-auto flex-1 min-h-0 lg:overflow-visible lg:flex-none">
             {tests.map((test, index) => {
               const testInfo = testsData?.data?.find(
@@ -459,7 +439,6 @@ const Test = () => {
                       : 'border-border bg-background hover:border-blue-300 dark:hover:border-blue-600 active:border-blue-400 hover:bg-blue-50/30 dark:hover:bg-blue-950/20'
                   )}
                 >
-                  {/* Indicatore numero test */}
                   <div
                     className={cn(
                       'absolute top-2 right-2 flex items-center justify-center w-7 h-7 sm:w-6 sm:h-6 rounded-full text-xs font-medium transition-all',
@@ -526,7 +505,6 @@ const Test = () => {
             )}
           </div>
 
-          {/* Pulsante Nuovo Test */}
           <Button
             type="button"
             variant="outline"
@@ -537,7 +515,6 @@ const Test = () => {
             Nuovo Test
           </Button>
 
-          {/* Riepilogo Dati Form Attuale - nascosto su mobile per risparmiare spazio */}
           <div className="hidden lg:block mt-6 pt-6 border-t space-y-3 text-xs">
             <div className="pb-2 border-b border-border">
               <span className="text-muted-foreground block mb-1">
@@ -577,7 +554,9 @@ const Test = () => {
               </span>
             </div>
             <div className="pb-2 border-b border-border">
-              <span className="text-muted-foreground block mb-1">Strumento</span>
+              <span className="text-muted-foreground block mb-1">
+                Strumento
+              </span>
               <span className="text-foreground font-medium">
                 {getEntityNameById(
                   currentTest.strumento_id || '',
