@@ -18,10 +18,26 @@ export const useEpisodioStruttura = ({
   regioniData,
   struttureSpecificheData,
 }: UseEpisodioStrutturaProps) => {
-  const [currentEpisodio, setCurrentEpisodio] =
+  const [currentEpisodio, setCurrentEpisodioState] =
     useState<EpisodioStrutturaFormData>(createEmptyEpisodioStruttura());
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [isFormVisible, setIsFormVisible] = useState(false);
+  const [selectedId, setSelectedIdState] = useState<string | null>(null);
+  const [isFormVisible, setIsFormVisibleState] = useState(false);
+
+  // Wrap setters in useCallback for stability
+  const setCurrentEpisodio = useCallback(
+    (value: EpisodioStrutturaFormData | ((prev: EpisodioStrutturaFormData) => EpisodioStrutturaFormData)) => {
+      setCurrentEpisodioState(value);
+    },
+    []
+  );
+
+  const setSelectedId = useCallback((value: string | null) => {
+    setSelectedIdState(value);
+  }, []);
+
+  const setIsFormVisible = useCallback((value: boolean) => {
+    setIsFormVisibleState(value);
+  }, []);
 
   const regioneSelezionata = useMemo(
     () =>

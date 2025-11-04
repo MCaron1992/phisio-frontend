@@ -1,6 +1,5 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
 import { useState, useEffect, useCallback } from 'react';
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,9 +23,6 @@ import EpisodioStrutturaForm from './components/EpisodioStrutturaForm';
 import RiepilogoSidebar from './components/RiepilogoSidebar';
 
 const EpisidioClinico = () => {
-  const form = useFormContext();
-
-  // Data fetching hooks
   const { data: statiSaluteData } = useStatiSalute();
   const { data: regioniData } = useRegioniAnatomiche();
   const { data: strutturePrincipaliData } = useStrutturePrincipali();
@@ -34,7 +30,6 @@ const EpisidioClinico = () => {
   const { data: meccanismiData } = useMeccanismiProblema();
   const { data: approcciData } = useApprocci();
 
-  // Stato di salute
   const [statoSaluteId, setStatoSaluteId] = useState<number | null>(null);
 
   const statoSaluteSelezionato = statiSaluteData?.find(
@@ -44,23 +39,19 @@ const EpisidioClinico = () => {
     ? statoSaluteSelezionato.nome.toLowerCase().includes('full')
     : false;
 
-  // Custom hooks per gestione episodi
   const episodioClinicoState = useEpisodioClinico();
   const episodioStrutturaState = useEpisodioStruttura({
     regioniData,
     struttureSpecificheData,
   });
 
-  // Reset quando diventa full health
   useEffect(() => {
     if (isFullHealth) {
       episodioClinicoState.handleReset();
       episodioStrutturaState.reset();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullHealth]);
+  }, [episodioClinicoState, episodioStrutturaState, isFullHealth]);
 
-  // Reset lato se la regione non lo richiede
   useEffect(() => {
     if (!episodioStrutturaState.richiedeLato) {
       episodioStrutturaState.setCurrentEpisodio(prev => ({
@@ -68,10 +59,8 @@ const EpisidioClinico = () => {
         latoCoinvolto: null,
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [episodioStrutturaState.richiedeLato]);
+  }, [episodioStrutturaState, episodioStrutturaState.richiedeLato]);
 
-  // Handler cambio data episodio clinico
   const handleDataEpisodioChange = useCallback(
     (data: string) => {
       episodioClinicoState.setCurrentEpisodioClinico(prev => ({
@@ -79,10 +68,9 @@ const EpisidioClinico = () => {
         dataEpisodio: data,
       }));
     },
-    [episodioClinicoState.setCurrentEpisodioClinico]
+    [episodioClinicoState]
   );
 
-  // Handler cambio nota episodio clinico
   const handleNotaEpisodioChange = useCallback(
     (nota: string) => {
       episodioClinicoState.setCurrentEpisodioClinico(prev => ({
@@ -90,15 +78,13 @@ const EpisidioClinico = () => {
         notaEpisodio: nota,
       }));
     },
-    [episodioClinicoState.setCurrentEpisodioClinico]
+    [episodioClinicoState]
   );
 
-  // Handler nuovo episodio struttura
   const handleNewEpisodioStruttura = useCallback(() => {
     episodioStrutturaState.handleNew();
-  }, [episodioStrutturaState.handleNew]);
+  }, [episodioStrutturaState]);
 
-  // Handler select episodio struttura
   const handleSelectEpisodioStruttura = useCallback(
     (episodioId: string) => {
       const episodio =
@@ -122,16 +108,17 @@ const EpisidioClinico = () => {
         }, 100);
       }
     },
-    [episodioClinicoState.currentEpisodioClinico.episodiStruttura, episodioStrutturaState]
+    [
+      episodioClinicoState.currentEpisodioClinico.episodiStruttura,
+      episodioStrutturaState,
+    ]
   );
 
-  // Handler save episodio struttura
   const handleSaveEpisodioStruttura = useCallback(() => {
     if (!episodioStrutturaState.currentEpisodio.regioneId) return;
 
     const episodioToSave: EpisodioStruttura = {
-      id:
-        episodioStrutturaState.selectedId || generateEpisodioStrutturaId(),
+      id: episodioStrutturaState.selectedId || generateEpisodioStrutturaId(),
       regioneId: episodioStrutturaState.currentEpisodio.regioneId,
       latoCoinvolto: episodioStrutturaState.currentEpisodio.latoCoinvolto,
       strutturaPrincipaleId:
@@ -157,9 +144,8 @@ const EpisidioClinico = () => {
     }
 
     episodioStrutturaState.handleCancel();
-  }, [episodioClinicoState, episodioStrutturaState]);
+  }, [episodioStrutturaState, episodioClinicoState]);
 
-  // Handler delete episodio struttura
   const handleDeleteEpisodioStruttura = useCallback(
     (episodioId: string) => {
       episodioClinicoState.setCurrentEpisodioClinico(prev => ({
@@ -175,13 +161,11 @@ const EpisidioClinico = () => {
     [episodioClinicoState, episodioStrutturaState]
   );
 
-  // Handler field change episodio struttura
   const handleEpisodioStrutturaFieldChange = useCallback(
     (field: string, value: any) => {
       episodioStrutturaState.setCurrentEpisodio(prev => {
         const newState = { ...prev, [field]: value };
-        
-        // Reset campi dipendenti
+
         if (field === 'regioneId') {
           newState.latoCoinvolto = null;
           newState.strutturaPrincipaleId = null;
@@ -189,21 +173,19 @@ const EpisidioClinico = () => {
         } else if (field === 'strutturaPrincipaleId') {
           newState.strutturaSpecificaId = null;
         }
-        
+
         return newState;
       });
     },
     [episodioStrutturaState]
   );
 
-  // Validazione form completo
   const isFormValid = useCallback((): boolean => {
     if (!statoSaluteId) return false;
     if (isFullHealth) return true;
     return episodioClinicoState.episodiClinici.length > 0;
   }, [statoSaluteId, isFullHealth, episodioClinicoState.episodiClinici.length]);
 
-  // Reset completo
   const handleReset = useCallback(() => {
     setStatoSaluteId(null);
     episodioClinicoState.handleReset();
@@ -212,9 +194,7 @@ const EpisidioClinico = () => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
-      {/* Area Principale */}
       <div className="lg:col-span-2 space-y-4 lg:space-y-6">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex-1">
             <h2 className="text-xl sm:text-2xl font-bold text-foreground">
@@ -227,7 +207,6 @@ const EpisidioClinico = () => {
         </div>
 
         <div className="space-y-6">
-          {/* Card 1: Stato di Salute */}
           <div className="bg-gradient-to-br from-blue-50/50 to-blue-100/30 dark:from-blue-950/20 dark:to-blue-900/10 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-5 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 dark:bg-blue-500 text-white font-bold text-sm shadow-md">
@@ -237,21 +216,20 @@ const EpisidioClinico = () => {
                 Stato di Salute
               </h3>
             </div>
-          <SelectFieldWithDescription
-            id="stato-salute"
-            options={statiSaluteData}
-            selectedId={statoSaluteId ? String(statoSaluteId) : ''}
-            onSelectChange={(value: string) => {
-              setStatoSaluteId(value ? Number(value) : null);
-            }}
-            label="Stato di Salute *"
-            placeholder="Seleziona stato di salute..."
-            searchPlaceholder="Cerca stato..."
-            isSearchable={false}
-          />
+            <SelectFieldWithDescription
+              id="stato-salute"
+              options={statiSaluteData}
+              selectedId={statoSaluteId ? String(statoSaluteId) : ''}
+              onSelectChange={(value: string) => {
+                setStatoSaluteId(value ? Number(value) : null);
+              }}
+              label="Stato di Salute *"
+              placeholder="Seleziona stato di salute..."
+              searchPlaceholder="Cerca stato..."
+              isSearchable={false}
+            />
           </div>
 
-          {/* Card 2: Episodi Clinici */}
           {!isFullHealth && statoSaluteId && (
             <>
               <EpisodioClinicoList
@@ -264,7 +242,9 @@ const EpisidioClinico = () => {
                 <EpisodioClinicoForm
                   currentEpisodio={episodioClinicoState.currentEpisodioClinico}
                   selectedId={episodioClinicoState.selectedEpisodioClinicoId}
-                  episodiClinicoCount={episodioClinicoState.episodiClinici.length}
+                  episodiClinicoCount={
+                    episodioClinicoState.episodiClinici.length
+                  }
                   regioniData={regioniData}
                   strutturePrincipaliData={strutturePrincipaliData}
                   struttureSpecificheData={struttureSpecificheData}
@@ -281,7 +261,6 @@ const EpisidioClinico = () => {
             </>
           )}
 
-          {/* Card 3: Form Episodio Struttura */}
           {!isFullHealth &&
             statoSaluteId &&
             episodioClinicoState.isFormVisible &&
@@ -303,9 +282,8 @@ const EpisidioClinico = () => {
                 onSave={handleSaveEpisodioStruttura}
                 onCancel={episodioStrutturaState.handleCancel}
               />
-          )}
+            )}
 
-          {/* Pulsanti Azione Finale */}
           <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t">
             <Button
               type="button"
@@ -327,7 +305,6 @@ const EpisidioClinico = () => {
         </div>
       </div>
 
-      {/* Sidebar Riepilogo */}
       <div className="lg:col-span-1 order-first lg:order-last">
         <RiepilogoSidebar
           statoSaluteId={statoSaluteId}
@@ -348,4 +325,3 @@ const EpisidioClinico = () => {
 };
 
 export default EpisidioClinico;
-

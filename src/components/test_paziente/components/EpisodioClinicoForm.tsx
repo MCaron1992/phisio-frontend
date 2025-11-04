@@ -6,14 +6,20 @@ import { DateInput } from '@/components/ui/date-input';
 import { Textarea } from '@/components/ui/textarea';
 import { EpisodioClinicoFormData } from '../types/episodio.types';
 import EpisodioStrutturaList from './EpisodioStrutturaList';
+import {
+  RegioniAnatomicha,
+  StrutturePrincipali,
+  StruttureSpecifiche,
+} from '@/hooks/useCrud';
 
 interface EpisodioClinicoFormProps {
   currentEpisodio: EpisodioClinicoFormData;
   selectedId: string | null;
   episodiClinicoCount: number;
-  regioniData: any;
-  strutturePrincipaliData: any;
-  struttureSpecificheData: any;
+  struttureSpecificheDisponibili: StruttureSpecifiche[];
+  regioniData: RegioniAnatomicha[];
+  strutturePrincipaliData: StrutturePrincipali[];
+  struttureSpecificheData: StruttureSpecifiche[];
   isValid: boolean;
   onDataChange: (data: string) => void;
   onNotaChange: (nota: string) => void;
@@ -51,12 +57,13 @@ const EpisodioClinicoForm = memo(
             {episodiClinicoCount > 0 ? '✏️' : '2'}
           </div>
           <h3 className="text-lg font-bold text-foreground">
-            {selectedId ? 'Modifica Episodio Clinico' : 'Nuovo Episodio Clinico'}
+            {selectedId
+              ? 'Modifica Episodio Clinico'
+              : 'Nuovo Episodio Clinico'}
           </h3>
         </div>
 
         <div className="space-y-4">
-          {/* Data Episodio */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <Calendar className="w-4 h-4 text-green-600 dark:text-green-400" />
@@ -69,7 +76,8 @@ const EpisodioClinicoForm = memo(
               defaultValue={currentEpisodio.dataEpisodio}
               onChange={e => {
                 if (!e) return;
-                const target = e.currentTarget || (e.target as HTMLInputElement);
+                const target =
+                  e.currentTarget || (e.target as HTMLInputElement);
                 if (target?.value !== undefined) {
                   onDataChange(target.value);
                 }
@@ -78,11 +86,10 @@ const EpisodioClinicoForm = memo(
               className="w-full"
             />
             <p className="text-xs text-muted-foreground mt-1.5">
-              Quando è avvenuto l'episodio clinico
+              Quando è avvenuto l&#39;episodio clinico
             </p>
           </div>
 
-          {/* Nota Episodio */}
           <div>
             <div className="flex items-center gap-2 mb-2">
               <ClipboardList className="w-4 h-4 text-green-600 dark:text-green-400" />
@@ -100,7 +107,6 @@ const EpisodioClinicoForm = memo(
             />
           </div>
 
-          {/* Lista Episodi Struttura */}
           {currentEpisodio.dataEpisodio && (
             <div className="border-t border-green-200 dark:border-green-800 pt-4 mt-4">
               <div className="flex items-center justify-between mb-3">
@@ -132,7 +138,6 @@ const EpisodioClinicoForm = memo(
             </div>
           )}
 
-          {/* Pulsanti Salva/Annulla Episodio Clinico */}
           <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t">
             <Button
               type="button"
@@ -163,4 +168,3 @@ const EpisodioClinicoForm = memo(
 EpisodioClinicoForm.displayName = 'EpisodioClinicoForm';
 
 export default EpisodioClinicoForm;
-

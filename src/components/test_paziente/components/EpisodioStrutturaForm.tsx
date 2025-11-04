@@ -6,18 +6,25 @@ import { cn } from '@/lib/utils';
 import SelectFieldWithDescription from '@/components/custom/SelectFieldWithDescription';
 import { EpisodioStrutturaFormData } from '../types/episodio.types';
 import { LATI, NON_DETERMINABILE_ID } from '../constants/episodio.constants';
+import {
+  Approccio,
+  MeccanismoProblema,
+  RegioniAnatomicha,
+  StrutturePrincipali,
+  StruttureSpecifiche,
+} from '@/hooks/useCrud';
 
 interface EpisodioStrutturaFormProps {
   currentEpisodio: EpisodioStrutturaFormData;
   selectedId: string | null;
   richiedeLato: boolean;
-  struttureSpecificheDisponibili: any[];
-  regioniData: any;
-  strutturePrincipaliData: any;
-  meccanismiData: any;
-  approcciData: any;
+  struttureSpecificheDisponibili: StruttureSpecifiche[];
+  regioniData: RegioniAnatomicha[];
+  strutturePrincipaliData: StrutturePrincipali[];
+  meccanismiData: MeccanismoProblema[];
+  approcciData: Approccio[];
   isValid: boolean;
-  onFieldChange: (field: string, value: any) => void;
+  onFieldChange: (field: string, value: string | number | null) => void;
   onSave: () => void;
   onCancel: () => void;
 }
@@ -61,13 +68,12 @@ const EpisodioStrutturaForm = memo(
         </div>
 
         <div className="space-y-6">
-          {/* Regione Anatomica */}
           <SelectFieldWithDescription
             id="regione-anatomica"
             options={
-              regioniData?.data && regioniData.data.length > 0
+              regioniData && regioniData.length > 0
                 ? [
-                    ...regioniData.data.map((r: any) => ({
+                    ...regioniData.map((r: RegioniAnatomicha) => ({
                       id: r.id,
                       nome: r.nome,
                       descrizione: r.descrizione,
@@ -97,7 +103,6 @@ const EpisodioStrutturaForm = memo(
             searchPlaceholder="Cerca regione..."
           />
 
-          {/* Lato Coinvolto */}
           {richiedeLato && (
             <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <Label className="text-sm font-medium leading-none text-foreground pb-1 mb-3 block">
@@ -139,18 +144,18 @@ const EpisodioStrutturaForm = memo(
             </div>
           )}
 
-          {/* Struttura Principale */}
           <SelectFieldWithDescription
             id="struttura-principale"
             options={
-              strutturePrincipaliData?.data &&
-              strutturePrincipaliData.data.length > 0
+              strutturePrincipaliData && strutturePrincipaliData.length > 0
                 ? [
-                    ...strutturePrincipaliData.data.map((s: any) => ({
-                      id: s.id,
-                      nome: s.nome,
-                      descrizione: s.descrizione,
-                    })),
+                    ...strutturePrincipaliData.map(
+                      (s: StrutturePrincipali) => ({
+                        id: s.id,
+                        nome: s.nome,
+                        descrizione: s.descrizione,
+                      })
+                    ),
                     {
                       id: NON_DETERMINABILE_ID,
                       nome: 'Non determinabile',
@@ -171,7 +176,10 @@ const EpisodioStrutturaForm = memo(
                 : ''
             }
             onSelectChange={(value: string) => {
-              onFieldChange('strutturaPrincipaleId', value ? Number(value) : null);
+              onFieldChange(
+                'strutturaPrincipaleId',
+                value ? Number(value) : null
+              );
             }}
             label="Qual è la struttura o il tessuto primariamente coinvolto? *"
             placeholder="Seleziona struttura principale..."
@@ -182,17 +190,18 @@ const EpisodioStrutturaForm = memo(
             }
           />
 
-          {/* Struttura Specifica */}
           <SelectFieldWithDescription
             id="struttura-specifica"
             options={
               struttureSpecificheDisponibili.length > 0
                 ? [
-                    ...struttureSpecificheDisponibili.map((s: any) => ({
-                      id: s.id,
-                      nome: s.nome,
-                      descrizione: s.descrizione,
-                    })),
+                    ...struttureSpecificheDisponibili.map(
+                      (s: StruttureSpecifiche) => ({
+                        id: s.id,
+                        nome: s.nome,
+                        descrizione: s.descrizione,
+                      })
+                    ),
                     {
                       id: NON_DETERMINABILE_ID,
                       nome: 'Non determinabile',
@@ -213,7 +222,10 @@ const EpisodioStrutturaForm = memo(
                 : ''
             }
             onSelectChange={(value: string) => {
-              onFieldChange('strutturaSpecificaId', value ? Number(value) : null);
+              onFieldChange(
+                'strutturaSpecificaId',
+                value ? Number(value) : null
+              );
             }}
             label="Qual è la struttura anatomica specifica coinvolta? *"
             placeholder="Seleziona struttura specifica..."
@@ -226,13 +238,12 @@ const EpisodioStrutturaForm = memo(
             }
           />
 
-          {/* Meccanismo Problema */}
           <SelectFieldWithDescription
             id="meccanismo-problema"
             options={
-              meccanismiData?.data && meccanismiData.data.length > 0
+              meccanismiData && meccanismiData.length > 0
                 ? [
-                    ...meccanismiData.data.map((m: any) => ({
+                    ...meccanismiData.map((m: MeccanismoProblema) => ({
                       id: m.id,
                       nome: m.nome,
                       descrizione: m.descrizione,
@@ -264,13 +275,12 @@ const EpisodioStrutturaForm = memo(
             searchPlaceholder="Cerca meccanismo..."
           />
 
-          {/* Approccio Terapeutico */}
           <SelectFieldWithDescription
             id="approccio-terapeutico"
             options={
-              approcciData?.data && approcciData.data.length > 0
+              approcciData && approcciData.length > 0
                 ? [
-                    ...approcciData.data.map((a: any) => ({
+                    ...approcciData.map((a: Approccio) => ({
                       id: a.id,
                       nome: a.nome,
                       descrizione: a.descrizione,
@@ -302,7 +312,6 @@ const EpisodioStrutturaForm = memo(
             searchPlaceholder="Cerca approccio..."
           />
 
-          {/* Pulsanti Azione */}
           <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t">
             <Button
               type="button"
@@ -331,4 +340,3 @@ const EpisodioStrutturaForm = memo(
 EpisodioStrutturaForm.displayName = 'EpisodioStrutturaForm';
 
 export default EpisodioStrutturaForm;
-

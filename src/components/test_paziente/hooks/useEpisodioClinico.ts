@@ -10,12 +10,20 @@ import {
 
 export const useEpisodioClinico = () => {
   const [episodiClinici, setEpisodiClinici] = useState<EpisodioClinico[]>([]);
-  const [currentEpisodioClinico, setCurrentEpisodioClinico] =
+  const [currentEpisodioClinico, setCurrentEpisodioClinicoState] =
     useState<EpisodioClinicoFormData>(createEmptyEpisodioClinico());
   const [selectedEpisodioClinicoId, setSelectedEpisodioClinicoId] = useState<
     string | null
   >(null);
   const [isFormVisible, setIsFormVisible] = useState(false);
+
+  // Wrap setter in useCallback for stability
+  const setCurrentEpisodioClinico = useCallback(
+    (value: EpisodioClinicoFormData | ((prev: EpisodioClinicoFormData) => EpisodioClinicoFormData)) => {
+      setCurrentEpisodioClinicoState(value);
+    },
+    []
+  );
 
   const handleNew = useCallback(() => {
     setCurrentEpisodioClinico(createEmptyEpisodioClinico());
