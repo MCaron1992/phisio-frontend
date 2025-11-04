@@ -50,16 +50,8 @@ const EpisidioClinico = () => {
       episodioClinicoState.handleReset();
       episodioStrutturaState.reset();
     }
-  }, [episodioClinicoState, episodioStrutturaState, isFullHealth]);
-
-  useEffect(() => {
-    if (!episodioStrutturaState.richiedeLato) {
-      episodioStrutturaState.setCurrentEpisodio(prev => ({
-        ...prev,
-        latoCoinvolto: null,
-      }));
-    }
-  }, [episodioStrutturaState, episodioStrutturaState.richiedeLato]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFullHealth]);
 
   const handleDataEpisodioChange = useCallback(
     (data: string) => {
@@ -68,7 +60,7 @@ const EpisidioClinico = () => {
         dataEpisodio: data,
       }));
     },
-    [episodioClinicoState]
+    [episodioClinicoState.setCurrentEpisodioClinico]
   );
 
   const handleNotaEpisodioChange = useCallback(
@@ -78,12 +70,12 @@ const EpisidioClinico = () => {
         notaEpisodio: nota,
       }));
     },
-    [episodioClinicoState]
+    [episodioClinicoState.setCurrentEpisodioClinico]
   );
 
   const handleNewEpisodioStruttura = useCallback(() => {
     episodioStrutturaState.handleNew();
-  }, [episodioStrutturaState]);
+  }, [episodioStrutturaState.handleNew]);
 
   const handleSelectEpisodioStruttura = useCallback(
     (episodioId: string) => {
@@ -110,7 +102,9 @@ const EpisidioClinico = () => {
     },
     [
       episodioClinicoState.currentEpisodioClinico.episodiStruttura,
-      episodioStrutturaState,
+      episodioStrutturaState.setSelectedId,
+      episodioStrutturaState.setCurrentEpisodio,
+      episodioStrutturaState.setIsFormVisible,
     ]
   );
 
@@ -144,7 +138,12 @@ const EpisidioClinico = () => {
     }
 
     episodioStrutturaState.handleCancel();
-  }, [episodioStrutturaState, episodioClinicoState]);
+  }, [
+    episodioStrutturaState.currentEpisodio,
+    episodioStrutturaState.selectedId,
+    episodioStrutturaState.handleCancel,
+    episodioClinicoState.setCurrentEpisodioClinico,
+  ]);
 
   const handleDeleteEpisodioStruttura = useCallback(
     (episodioId: string) => {
@@ -158,11 +157,15 @@ const EpisidioClinico = () => {
         episodioStrutturaState.handleCancel();
       }
     },
-    [episodioClinicoState, episodioStrutturaState]
+    [
+      episodioClinicoState.setCurrentEpisodioClinico,
+      episodioStrutturaState.selectedId,
+      episodioStrutturaState.handleCancel,
+    ]
   );
 
   const handleEpisodioStrutturaFieldChange = useCallback(
-    (field: string, value: any) => {
+    (field: string, value: string | number | null) => {
       episodioStrutturaState.setCurrentEpisodio(prev => {
         const newState = { ...prev, [field]: value };
 
@@ -177,7 +180,7 @@ const EpisidioClinico = () => {
         return newState;
       });
     },
-    [episodioStrutturaState]
+    [episodioStrutturaState.setCurrentEpisodio]
   );
 
   const isFormValid = useCallback((): boolean => {
@@ -190,7 +193,7 @@ const EpisidioClinico = () => {
     setStatoSaluteId(null);
     episodioClinicoState.handleReset();
     episodioStrutturaState.reset();
-  }, [episodioClinicoState, episodioStrutturaState]);
+  }, [episodioClinicoState.handleReset, episodioStrutturaState.reset]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">

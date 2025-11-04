@@ -6,20 +6,14 @@ import { DateInput } from '@/components/ui/date-input';
 import { Textarea } from '@/components/ui/textarea';
 import { EpisodioClinicoFormData } from '../types/episodio.types';
 import EpisodioStrutturaList from './EpisodioStrutturaList';
-import {
-  RegioniAnatomicha,
-  StrutturePrincipali,
-  StruttureSpecifiche,
-} from '@/hooks/useCrud';
 
 interface EpisodioClinicoFormProps {
   currentEpisodio: EpisodioClinicoFormData;
   selectedId: string | null;
   episodiClinicoCount: number;
-  struttureSpecificheDisponibili: StruttureSpecifiche[];
-  regioniData: RegioniAnatomicha[];
-  strutturePrincipaliData: StrutturePrincipali[];
-  struttureSpecificheData: StruttureSpecifiche[];
+  regioniData: any;
+  strutturePrincipaliData: any;
+  struttureSpecificheData: any;
   isValid: boolean;
   onDataChange: (data: string) => void;
   onNotaChange: (nota: string) => void;
