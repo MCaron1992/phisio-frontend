@@ -10,29 +10,6 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-/*
-*
-        {isEditable && (
-          <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={close}
-              className="hover:bg-muted/50"
-            >
-              Annulla
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!isFormValid}
-              className="bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all disabled:opacity-50"
-            >
-              {mode === 'create' ? 'Crea' : 'Aggiorna'}
-            </Button>
-          </DialogFooter>
-        )}*/
 interface OptionWithDescription {
   id: number | string;
   nome: string;
@@ -52,6 +29,7 @@ interface SelectFieldWithDescriptionProps {
   disabled?: boolean;
   isLoading?: boolean;
   loadingText?: string;
+  isSearchable?: boolean;
 }
 
 const SelectFieldWithDescription = ({
@@ -66,6 +44,7 @@ const SelectFieldWithDescription = ({
   error,
   disabled = false,
   isLoading = false,
+  isSearchable = true,
   loadingText = 'Caricamento...',
 }: SelectFieldWithDescriptionProps) => {
   const [search, setSearch] = React.useState('');
@@ -111,17 +90,19 @@ const SelectFieldWithDescription = ({
           </SelectValue>
         </SelectTrigger>
 
-        <SelectContent>
-          <div className="p-2 border-b">
-            <Input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="h-8 text-sm"
-              disabled={disabled || isLoading}
-            />
-          </div>
+        <SelectContent className="w-[var(--radix-select-trigger-width)] max-w-full">
+          {isSearchable && (
+            <div className="p-2 border-b">
+              <Input
+                type="text"
+                placeholder={searchPlaceholder}
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                className="h-8 text-sm"
+                disabled={disabled || isLoading}
+              />
+            </div>
+          )}
 
           {isLoading ? (
             <div className="px-3 py-2 text-sm text-muted-foreground">
@@ -140,7 +121,7 @@ const SelectFieldWithDescription = ({
                     {item.nome}
                   </span>
                   {item.descrizione && (
-                    <span className="text-xs text-muted-foreground mt-1 leading-tight">
+                    <span className="text-xs text-muted-foreground mt-1 leading-tight whitespace-normal break-words overflow-hidden text-ellipsis">
                       {item.descrizione}
                     </span>
                   )}

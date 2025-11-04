@@ -1,23 +1,11 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { usePaziente, useStudi } from '@/hooks/useCrud';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { usePaziente } from '@/hooks/useCrud';
 import { useState } from 'react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert from '@/components/custom/UniversalAlert';
 import TableConatiner from '@/components/custom/TableContainer';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import SelectField from '@/components/custom/CustomSelectField';
-import { DateInput } from '@/components/ui/date-input';
 import { useForm, FormProvider } from 'react-hook-form';
 import { StepIndicator } from '@/components/custom/step-indicator';
 import Anagrafica from '@/components/test_paziente/Anagrafica';

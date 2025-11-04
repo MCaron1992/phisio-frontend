@@ -57,8 +57,7 @@ const EpisidioClinico = () => {
       episodioClinicoState.handleReset();
       episodioStrutturaState.reset();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isFullHealth]);
+  }, [isFullHealth, episodioClinicoState, episodioStrutturaState]);
 
   // Reset lato se la regione non lo richiede
   useEffect(() => {
@@ -68,8 +67,7 @@ const EpisidioClinico = () => {
         latoCoinvolto: null,
       }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [episodioStrutturaState.richiedeLato]);
+  }, [episodioStrutturaState]);
 
   // Handler cambio data episodio clinico
   const handleDataEpisodioChange = useCallback(
@@ -79,7 +77,7 @@ const EpisidioClinico = () => {
         dataEpisodio: data,
       }));
     },
-    [episodioClinicoState.setCurrentEpisodioClinico]
+    [episodioClinicoState]
   );
 
   // Handler cambio nota episodio clinico
@@ -90,13 +88,13 @@ const EpisidioClinico = () => {
         notaEpisodio: nota,
       }));
     },
-    [episodioClinicoState.setCurrentEpisodioClinico]
+    [episodioClinicoState]
   );
 
   // Handler nuovo episodio struttura
   const handleNewEpisodioStruttura = useCallback(() => {
     episodioStrutturaState.handleNew();
-  }, [episodioStrutturaState.handleNew]);
+  }, [episodioStrutturaState]);
 
   // Handler select episodio struttura
   const handleSelectEpisodioStruttura = useCallback(
@@ -237,18 +235,18 @@ const EpisidioClinico = () => {
                 Stato di Salute
               </h3>
             </div>
-          <SelectFieldWithDescription
-            id="stato-salute"
-            options={statiSaluteData}
-            selectedId={statoSaluteId ? String(statoSaluteId) : ''}
-            onSelectChange={(value: string) => {
-              setStatoSaluteId(value ? Number(value) : null);
-            }}
-            label="Stato di Salute *"
-            placeholder="Seleziona stato di salute..."
-            searchPlaceholder="Cerca stato..."
-            isSearchable={false}
-          />
+            <SelectFieldWithDescription
+              id="stato-salute"
+              options={statiSaluteData}
+              selectedId={statoSaluteId ? String(statoSaluteId) : ''}
+              onSelectChange={(value: string) => {
+                setStatoSaluteId(value ? Number(value) : null);
+              }}
+              label="Stato di Salute *"
+              placeholder="Seleziona stato di salute..."
+              searchPlaceholder="Cerca stato..."
+              isSearchable={false}
+            />
           </div>
 
           {/* Card 2: Episodi Clinici */}
@@ -303,7 +301,7 @@ const EpisidioClinico = () => {
                 onSave={handleSaveEpisodioStruttura}
                 onCancel={episodioStrutturaState.handleCancel}
               />
-          )}
+            )}
 
           {/* Pulsanti Azione Finale */}
           <div className="flex flex-col-reverse sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t">
