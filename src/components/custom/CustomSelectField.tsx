@@ -13,6 +13,9 @@ import {
   Studio,
   Teams,
   LivelloSportivi,
+  Test,
+  Metrica,
+  UnitaMisura,
 } from '@/hooks/useCrud';
 
 type FKOption =
@@ -22,7 +25,10 @@ type FKOption =
   | CategoriaFunzionale
   | Studio
   | Teams
-  | LivelloSportivi;
+  | LivelloSportivi
+  | Test
+  | Metrica
+  | UnitaMisura;
 
 interface SelectFieldProps {
   id: string;
@@ -32,6 +38,7 @@ interface SelectFieldProps {
   label: string;
   placeholder: string;
   error?: string;
+  disabled?: boolean;
 }
 
 const SelectField = ({
@@ -42,10 +49,17 @@ const SelectField = ({
   label,
   placeholder,
   error,
+  disabled = false,
 }: SelectFieldProps) => {
   if (!options) return null;
 
   const getLabel = (opt: FKOption): string => {
+    // Gestione speciale per Test che ha nome_abbreviato e nome_esteso
+    if ('nome_abbreviato' in opt || 'nome_esteso' in opt) {
+      const test = opt as Test;
+      return test.nome_abbreviato || test.nome_esteso || '';
+    }
+    
     if (opt.nome === '' || opt.nome === undefined) {
       if ('descrizione' in opt && typeof opt.descrizione === 'string') {
         return opt.descrizione;
@@ -59,6 +73,8 @@ const SelectField = ({
             | StrutturePrincipali
             | CategoriaFunzionale
             | Studio
+            | Metrica
+            | UnitaMisura
         ).nome ?? ''
       );
     }
@@ -75,7 +91,7 @@ const SelectField = ({
         </label>
       )}
 
-      <Select value={selectedId} onValueChange={onSelectChange}>
+      <Select value={selectedId} onValueChange={onSelectChange} disabled={disabled}>
         <SelectTrigger id={id} className="w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

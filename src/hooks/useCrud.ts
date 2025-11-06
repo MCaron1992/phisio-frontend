@@ -1,4 +1,6 @@
 import { createCrudHooks } from '@/lib/crudFactory';
+import { useQuery } from '@tanstack/react-query';
+import axiosInstance from '@/lib/axios';
 
 /**
  *
@@ -361,6 +363,20 @@ export const {
 } = createCrudHooks<Teams>('/system/teams', 'teams');
 
 /**
+ * Hook custom per ottenere i pazienti di una squadra specifica
+ * */
+export const usePazientiByTeam = (teamId: string | number) => {
+  return useQuery({
+    queryKey: ['pazienti-team', teamId],
+    queryFn: async () => {
+      const { data } = await axiosInstance.get(`/system/teams/${teamId}/pazienti`);
+      return data;
+    },
+    enabled: !!teamId,
+  });
+};
+
+/**
  *
  *
  * */
@@ -379,6 +395,32 @@ export const {
   useUpdate: useUpdateUnitaMisura,
   useDestroy: useDeleteUnitaMisura,
 } = createCrudHooks<UnitaMisura>('/system/unita-misura', 'unita-misura');
+
+/**
+ *
+ * Test Metrica Unità
+ * */
+
+export interface TestMetricaUnita {
+  id: number;
+  id_test: number;
+  id_metrica: number;
+  id_unita: number;
+  nome: string;
+  test?: Test;
+  metrica?: Metrica;
+  unita?: UnitaMisura;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export const {
+  useIndex: useTestMetricaUnita,
+  useShow: useSingolaTestMetricaUnita,
+  useStore: useCreateTestMetricaUnita,
+  useUpdate: useUpdateTestMetricaUnita,
+  useDestroy: useDeleteTestMetricaUnita,
+} = createCrudHooks<TestMetricaUnita>('/system/test-metrica-unita', 'test-metrica-unita');
 
 /**
  * boh da vedere
@@ -460,6 +502,10 @@ export interface Paziente {
   id_studio?: number;
   codice_fiscale?: string;
   attivo?: boolean;
+  sport_id?: number;
+  ruolo_sport_id?: number;
+  team_id?: number;
+  livello_sportivo_id?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -486,3 +532,60 @@ export const {
   useUpdate: useUpdateFattiGiocatore,
   useDestroy: useDeleteFattiGiocatore,
 } = createCrudHooks<FattiGiocatore>('/fatti-giocatore', 'fatti-giocatore');
+
+/**
+ * Test Squadra - Configurazione test per una squadra
+ *
+ * */
+export interface TestSquadra {
+  id: number;
+  team_id: number;
+  categoria_funzionale_id: number;
+  test_id: number;
+  metrica_id: number;
+  unita_misura_id: number;
+  strumento_id: number;
+  fase_temporale_id: number;
+  categoria_funzionale?: CategoriaFunzionale;
+  test?: Test;
+  metrica?: Metrica;
+  unita?: UnitaMisura;
+  strumento?: Strumenti;
+  fase_temporale?: any;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export const {
+  useIndex: useTestiSquadra,
+  useShow: useTestSquadra,
+  useStore: useCreateTestSquadra,
+  useUpdate: useUpdateTestSquadra,
+  useDestroy: useDeleteTestSquadra,
+} = createCrudHooks<TestSquadra>('/system/test-squadra', 'test-squadra');
+
+/**
+ * Risultato Test Giocatore - Valori test per singolo giocatore
+ *
+ * */
+export interface RisultatoTestGiocatore {
+  id: number;
+  test_squadra_id: number;
+  paziente_id: number;
+  valore_test_1?: string;
+  valore_test_2?: string;
+  valore_test_3?: string;
+  data_esecuzione?: string;
+  test_squadra?: TestSquadra;
+  paziente?: Paziente;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export const {
+  useIndex: useRisultatiTest,
+  useShow: useRisultatoTest,
+  useStore: useCreateRisultatoTest,
+  useUpdate: useUpdateRisultatoTest,
+  useDestroy: useDeleteRisultatoTest,
+} = createCrudHooks<RisultatoTestGiocatore>('/system/risultato-test', 'risultato-test');

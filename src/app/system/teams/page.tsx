@@ -16,6 +16,7 @@ import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 const TeamsTable = () => {
   const { data, isLoading } = useTeams();
@@ -29,6 +30,7 @@ const TeamsTable = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user, isLoadingUser } = useAuth();
   const isSuperAdmin = user?.data.ruolo === 'super_admin';
+  const router = useRouter();
 
   const [alert, setAlert] = useState<AlertState>({
     show: false,
@@ -57,35 +59,36 @@ const TeamsTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Teams>[] = isSuperAdmin ? [
+  const rowActions: DataTableAction<Teams>[] = [
     {
       id: 'view',
       label: 'Visualizza',
-      onClick: row => console.log('Visualizza', row),
+      onClick: row => router.push(`/system/teams/${row.id}`),
       icon: <Eye className="h-4 w-4" />,
-      show: () => false,
     },
-    {
-      id: 'edit',
-      label: 'Modifica',
-      onClick: row => {
-        setTitle('Modifica Squadra');
-        setSelectedRow(row);
-        setDialogOpen(true);
+    ...(isSuperAdmin ? [
+      {
+        id: 'edit',
+        label: 'Modifica',
+        onClick: (row: Teams) => {
+          setTitle('Modifica Squadra');
+          setSelectedRow(row);
+          setDialogOpen(true);
+        },
+        icon: <Edit className="h-4 w-4" />,
       },
-      icon: <Edit className="h-4 w-4" />,
-    },
-    {
-      id: 'delete',
-      label: 'Elimina',
-      onClick: row => {
-        setSelectedRow(row);
-        setOpenDeleteDialog(true);
+      {
+        id: 'delete',
+        label: 'Elimina',
+        onClick: (row: Teams) => {
+          setSelectedRow(row);
+          setOpenDeleteDialog(true);
+        },
+        icon: <Trash2 className="h-4 w-4" />,
+        variant: 'destructive' as const,
       },
-      icon: <Trash2 className="h-4 w-4" />,
-      variant: 'destructive',
-    },
-  ] : [];
+    ] : []),
+  ];
 
   const handleSave = (data: { newNome?: string }) => {
     setLoading(true);

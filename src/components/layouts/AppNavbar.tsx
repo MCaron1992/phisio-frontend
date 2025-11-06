@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { ChevronDown } from 'lucide-react';
 import {
-  itemsPresteazioniTest,
   itemsUtente,
   itemsStudio,
   itemsGiocatori,
@@ -89,18 +88,16 @@ function NavDropdown({ label, items, isActive }: NavDropdownProps) {
 export function AppNavbar() {
   const pathname = usePathname();
 
-  // Determina quale dropdown è attivo
   const isPrestazioniActive = pathname.startsWith('/fatti_giocatore');
-  const isGiocatoriActive = pathname.startsWith('/giocatori') || pathname.startsWith('/system/teams');
+  const isGiocatoriActive =
+    pathname.startsWith('/giocatori') || pathname.startsWith('/system/teams');
   const isStudioActive = pathname.startsWith('/studio');
   const isUtenteActive = pathname.startsWith('/utente');
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-800/50 bg-slate-900/95 backdrop-blur-sm">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
-        {/* Left side: Logo + Navigation */}
         <div className="flex items-center gap-6">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-700/30 backdrop-blur-sm hover:bg-slate-600/40 transition-colors">
               <img src="/logo_white.png" alt="Logo" className="h-8 w-8" />
@@ -122,13 +119,7 @@ export function AppNavbar() {
             </div>
           </Link>
 
-          {/* Navigation Dropdowns */}
           <div className="hidden md:flex items-center gap-1">
-            <NavDropdown
-              label="Prestazioni & Test"
-              items={itemsPresteazioniTest}
-              isActive={isPrestazioniActive}
-            />
             <NavDropdown
               label="Giocatori"
               items={itemsGiocatori}
@@ -147,20 +138,13 @@ export function AppNavbar() {
           </div>
         </div>
 
-        {/* Right side: User Menu */}
         <div className="flex items-center">
           <UserMenu />
         </div>
       </div>
 
-      {/* Mobile Navigation - Simple version */}
       <div className="md:hidden px-4 pb-4">
         <div className="flex flex-col gap-2">
-          <NavDropdown
-            label="Prestazioni & Test"
-            items={itemsPresteazioniTest}
-            isActive={isPrestazioniActive}
-          />
           <NavDropdown
             label="Giocatori"
             items={itemsGiocatori}
@@ -181,4 +165,5 @@ export function AppNavbar() {
     </nav>
   );
 }
+
 

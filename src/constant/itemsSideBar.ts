@@ -16,29 +16,6 @@ import {
   Microscope,
 } from 'lucide-react';
 
-export const itemsPresteazioniTest = [
-  {
-    key: 'PresteazioniTest-nuovo1',
-    label: 'Elenco test fatti giocatori ',
-    icon: Zap,
-    href: '/fatti_giocatore/new',
-    onClick: () => console.log('Nuovo clicked!'),
-  },
-  {
-    key: 'PresteazioniTest-elenco2',
-    label: 'Nuovo test fatti giocatori ',
-    icon: Activity,
-    href: '/fatti_giocatore/new',
-  },
-  {
-    key: 'PresteazioniTest-nuovo3',
-    label: 'Analisi test fatti giocatori ',
-    icon: Zap,
-    href: '/fatti_giocatore/new',
-    onClick: () => console.log('Nuovo clicked!'),
-  },
-];
-
 export const itemsUtente = [
   {
     key: 'utente-elenco',
@@ -148,12 +125,12 @@ export const itemsTestMetriche = [
     icon: Ruler,
     href: '/system/unita-misura',
   },
-  /*  {
+  {
     key: 'test-metrica-unita',
-    label: 'Test - Metrica - Unità',
+    label: 'Test Metrica Unità',
     icon: TestTube,
     href: '/system/test-metrica-unita',
-  },*/
+  },
   {
     key: 'strumento-elenco',
     label: 'Strumento',

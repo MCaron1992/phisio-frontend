@@ -2,28 +2,38 @@
 import { DataTable } from '@/components/ui/data-table';
 import { DataTableAction, DataTableColumn } from '@/types/data-table';
 import {
-  Approccio,
-  useApprocci,
-  useDeleteApproccio,
-  useUpdateApproccio,
-  useCreateApproccio
+  TestMetricaUnita,
+  useTestMetricaUnita,
+  useDeleteTestMetricaUnita,
+  useUpdateTestMetricaUnita,
+  useCreateTestMetricaUnita,
+  useTests,
+  useMetriche,
+  useUnitaMisura,
 } from '@/hooks/useCrud';
 import TableConatiner from '@/components/custom/TableContainer';
 import { useState } from 'react';
-import CustomDialog from '@/components/custom/CustomDialog';
+import TestMetricaUnitaDialog from '@/components/custom/TestMetricaUnitaDialog';
 import { Edit, Eye, Trash2 } from 'lucide-react';
 import { Loader } from '@/components/custom/Loader';
 import UniversalAlert, { AlertState } from '@/components/custom/UniversalAlert';
 import DeleteConfirmDialog from '@/components/custom/DeleteConfirmDialog';
 import { useAuth } from '@/hooks/useAuth';
+import Link from 'next/link';
 
 const TestMetricaUnitaTable = () => {
-  const { data, isLoading } = useApprocci();
-  const { mutate: deleteApproccio } = useDeleteApproccio();
-  const { mutate: updateApproccio } = useUpdateApproccio();
-  const { mutate: createApproccio } = useCreateApproccio();
+  const { data, isLoading } = useTestMetricaUnita();
+  const { mutate: deleteTestMetricaUnita } = useDeleteTestMetricaUnita();
+  const { mutate: updateTestMetricaUnita } = useUpdateTestMetricaUnita();
+  const { mutate: createTestMetricaUnita } = useCreateTestMetricaUnita();
+  
+  // Carico le opzioni per i select
+  const { data: testsData } = useTests();
+  const { data: metricheData } = useMetriche();
+  const { data: unitaData } = useUnitaMisura();
+  
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<Approccio | null>(null);
+  const [selectedRow, setSelectedRow] = useState<TestMetricaUnita | null>(null);
   const [title, setTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -37,26 +47,81 @@ const TestMetricaUnitaTable = () => {
     description: '',
   });
 
-  const columns: DataTableColumn<Approccio>[] = [
+  const columns: DataTableColumn<TestMetricaUnita>[] = [
     {
       id: 'nome',
       header: 'Nome',
       accessorKey: 'nome',
       sortable: true,
       filterable: true,
-      width: 'w-32 md:w-40',
-    },
-    {
-      id: 'descrizione',
-      header: 'Descrizione',
-      accessorKey: 'descrizione',
-      sortable: true,
-      filterable: true,
       width: 'w-64 md:w-96 lg:w-[500px]',
     },
     {
+      id: 'test',
+      header: 'Test',
+      accessorKey: 'test',
+      sortable: true,
+      filterable: true,
+      width: 'w-32 md:w-40',
+      cell: ({ row }) => {
+        const test = row.test;
+        return test ? (
+          <Link
+            href={`/system/test/${test.id}`}
+            className="lg:rt-r-weight-medium text-blue-600 hover:underline"
+          >
+            {test.nome_abbreviato || test.nome_esteso}
+          </Link>
+        ) : (
+          '-'
+        );
+      },
+    },
+    {
+      id: 'metrica',
+      header: 'Metrica',
+      accessorKey: 'metrica',
+      sortable: true,
+      filterable: true,
+      width: 'w-32 md:w-40',
+      cell: ({ row }) => {
+        const metrica = row.metrica;
+        return metrica ? (
+          <Link
+            href={`/system/metrica`}
+            className="lg:rt-r-weight-medium text-blue-600 hover:underline"
+          >
+            {metrica.nome}
+          </Link>
+        ) : (
+          '-'
+        );
+      },
+    },
+    {
+      id: 'unita',
+      header: 'Unità di Misura',
+      accessorKey: 'unita',
+      sortable: true,
+      filterable: true,
+      width: 'w-24 md:w-32',
+      cell: ({ row }) => {
+        const unita = row.unita;
+        return unita ? (
+          <Link
+            href={`/system/unita-misura`}
+            className="lg:rt-r-weight-medium text-blue-600 hover:underline"
+          >
+            {unita.nome}
+          </Link>
+        ) : (
+          '-'
+        );
+      },
+    },
+    {
       id: 'ultimo-aggiornamento',
-      header: 'ultimo aggiornamento',
+      header: 'Ultimo aggiornamento',
       accessorKey: 'updated_at',
       sortable: true,
       width: 'w-24 md:w-32',
@@ -65,7 +130,7 @@ const TestMetricaUnitaTable = () => {
     },
   ];
 
-  const rowActions: DataTableAction<Approccio>[] = isSuperAdmin ? [
+  const rowActions: DataTableAction<TestMetricaUnita>[] = isSuperAdmin ? [
     {
       id: 'view',
       label: 'Visualizza',
@@ -95,17 +160,24 @@ const TestMetricaUnitaTable = () => {
     },
   ] : [];
 
-  const handleSave = (data: { newDescrizione?: string, newNome?: string }) => {
+  const handleSave = (data: { 
+    newNome?: string;
+    newTestId?: number;
+    newMetricaId?: number;
+    newUnitaId?: number;
+  }) => {
     setLoading(true);
 
     if (selectedRow) {
-      const payload: Partial<Approccio> = {
+      const payload: Partial<TestMetricaUnita> = {
         id: selectedRow.id,
-        descrizione: data.newDescrizione,
-        nome: data.newNome 
+        nome: data.newNome,
+        id_test: data.newTestId,
+        id_metrica: data.newMetricaId,
+        id_unita: data.newUnitaId,
       };
 
-      updateApproccio(payload, {
+      updateTestMetricaUnita(payload, {
         onSuccess: () => {
           setAlert({
             show: true,
@@ -127,12 +199,14 @@ const TestMetricaUnitaTable = () => {
         },
       });
     } else {
-      const payload: Partial<Approccio> = {
-        descrizione: data.newDescrizione,
-        nome: data.newNome 
+      const payload: Partial<TestMetricaUnita> = {
+        nome: data.newNome,
+        id_test: data.newTestId,
+        id_metrica: data.newMetricaId,
+        id_unita: data.newUnitaId,
       };
 
-      createApproccio(payload, {
+      createTestMetricaUnita(payload, {
         onSuccess: () => {
           setAlert({
             show: true,
@@ -153,13 +227,13 @@ const TestMetricaUnitaTable = () => {
           setLoading(false);
         },
       });
-    };
+    }
   };
 
   const handleDeleteConfirm = () => {
     if (!selectedRow?.id) return; 
 
-    deleteApproccio(
+    deleteTestMetricaUnita(
       { id: selectedRow.id },
       {
         onSuccess: () => {
@@ -190,6 +264,7 @@ const TestMetricaUnitaTable = () => {
     setSelectedRow(null);
     setDialogOpen(true);
   };
+  
   const handleAlertClose = () => setAlert(prev => ({ ...prev, show: false }));
 
   return (
@@ -218,14 +293,20 @@ const TestMetricaUnitaTable = () => {
           }}
         />
       </TableConatiner>
-      <CustomDialog
+      <TestMetricaUnitaDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onSave={handleSave}
-        descrizione={selectedRow?.descrizione || ''}
         nome={selectedRow?.nome || ''}
+        testId={selectedRow?.id_test}
+        metricaId={selectedRow?.id_metrica}
+        unitaId={selectedRow?.id_unita}
+        testsOptions={testsData ?? []}
+        metricheOptions={metricheData ?? []}
+        unitaOptions={unitaData ?? []}
         title={title}
         mode={selectedRow ? 'edit' : 'create'}
+        isCreating={loading}
       />
       {loading && <Loader />}
       <UniversalAlert

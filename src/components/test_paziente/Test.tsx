@@ -10,6 +10,7 @@ import {
   useStrumenti,
   useFasiTemporali,
   Test as TestType,
+  CategoriaFunzionale,
 } from '@/hooks/useCrud';
 import SelectFieldWithSearch from '@/components/custom/SelectFieldWithSearch';
 import SelectFieldWithDescription from '@/components/custom/SelectFieldWithDescription';
@@ -315,7 +316,7 @@ const Test = () => {
             searchPlaceholder="Cerca strumento..."
           />
 
-          <SelectFieldWithSearch
+          {/*        <SelectFieldWithSearch
             id="fase-temporale"
             options={fasiTemporaliData}
             selectedId={currentTest.fase_temporale_id || ''}
@@ -328,7 +329,7 @@ const Test = () => {
             label="Fase Temporale *"
             placeholder="Seleziona una fase temporale..."
             searchPlaceholder="Cerca fase temporale..."
-          />
+          />*/}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 pt-4 border-t">
             <div className="flex flex-col space-y-2">
@@ -420,11 +421,12 @@ const Test = () => {
 
           <div className="space-y-3 mb-4 overflow-y-auto flex-1 min-h-0 lg:overflow-visible lg:flex-none">
             {tests.map((test, index) => {
-              const testInfo = testsData?.data?.find(
+              const testInfo = testsData?.find(
                 (t: TestType) => String(t.id) === test.test_id
               );
-              const categoriaInfo = categorieData?.data?.find(
-                c => String(c.id) === test.categoria_funzionale_id
+              const categoriaInfo = categorieData?.find(
+                (c: CategoriaFunzionale) =>
+                  String(c.id) === test.categoria_funzionale_id
               );
 
               return (
